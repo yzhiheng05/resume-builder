@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/styles.css",
+    "src/types/resume.ts",
+    "src/data/defaultResume.ts",
+    "src/lib/storage.ts",
+    "src/store/useResumeStore.ts",
+    "src/test/store.test.ts",
+    "src/test/renderApp.test.tsx",
+    "src/test/preview-sort.test.tsx",
+    "src/components/preview/**/*.tsx"
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
