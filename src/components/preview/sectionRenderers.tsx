@@ -20,7 +20,9 @@ export interface PersonalSectionData {
   phone: string;
   email: string;
   city: string;
-  website: string;
+  blog: string;
+  github: string;
+  photoDataUrl: string;
   summary: string;
 }
 
@@ -104,24 +106,31 @@ function renderPlaceholder(text: string): ReactNode {
 }
 
 function renderPersonalSection(data: ResumeSections["personal"]): ReactNode {
-  const contacts = [data.phone, data.email, data.city, data.website].filter(hasText);
+  const contacts = [data.phone, data.email, data.city, data.blog, data.github].filter(hasText);
 
   return (
     <div className="resume-personal">
-      <div className="resume-personal__headline">
-        <h3 className="resume-personal__name">{data.name || "请填写姓名"}</h3>
-        {hasText(data.title) ? <p className="resume-personal__title">{data.title}</p> : null}
+      <div className="resume-personal__layout">
+        <div className="resume-personal__content">
+          <div className="resume-personal__headline">
+            <h3 className="resume-personal__name">{data.name || "请填写姓名"}</h3>
+            {hasText(data.title) ? <p className="resume-personal__title">{data.title}</p> : null}
+          </div>
+          {contacts.length > 0 ? (
+            <p className="resume-personal__contacts">{contacts.join(" | ")}</p>
+          ) : (
+            renderPlaceholder("电话、邮箱、城市和个人链接会显示在这里")
+          )}
+          {hasText(data.summary) ? (
+            <p className="resume-personal__summary">{data.summary}</p>
+          ) : (
+            renderPlaceholder("请补充一句简短的个人简介或求职方向")
+          )}
+        </div>
+        {hasText(data.photoDataUrl) ? (
+          <img className="resume-personal__photo" src={data.photoDataUrl} alt="个人照片" />
+        ) : null}
       </div>
-      {contacts.length > 0 ? (
-        <p className="resume-personal__contacts">{contacts.join(" | ")}</p>
-      ) : (
-        renderPlaceholder("电话、邮箱、城市和个人链接会显示在这里")
-      )}
-      {hasText(data.summary) ? (
-        <p className="resume-personal__summary">{data.summary}</p>
-      ) : (
-        renderPlaceholder("请补充一句简短的个人简介或求职方向")
-      )}
     </div>
   );
 }

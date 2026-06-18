@@ -1,6 +1,6 @@
-import { defaultResume, defaultSectionOrder } from "../data/defaultResume";
+import { defaultPersonalVisibility, defaultResume, defaultSectionOrder } from "../data/defaultResume";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
-import type { StoredResumeState } from "../types/resume";
+import type { ResumeData, StoredResumeState } from "../types/resume";
 
 export const FIXTURE_QUERY_PARAM = "fixture";
 export const MULTIPAGE_PRINT_FIXTURE_ID = "multipage-print";
@@ -24,6 +24,27 @@ const defaultStoredResumeState: StoredResumeState = {
 
 export function cloneStoredResumeState(state: StoredResumeState): StoredResumeState {
   return JSON.parse(JSON.stringify(state)) as StoredResumeState;
+}
+
+export function normalizeResumeData(resume: ResumeData): ResumeData {
+  return {
+    ...resume,
+    personal: {
+      ...defaultResume.personal,
+      ...resume.personal
+    },
+    personalVisibility: {
+      ...defaultPersonalVisibility,
+      ...resume.personalVisibility
+    }
+  };
+}
+
+export function normalizeStoredResumeState(state: StoredResumeState): StoredResumeState {
+  return {
+    ...state,
+    resume: normalizeResumeData(state.resume)
+  };
 }
 
 export function getFixtureIdFromSearch(search: string): ResumeFixtureId | null {
@@ -54,20 +75,20 @@ export function resolveInitialResumeSeed({
 
   if (fixtureId) {
     return {
-      ...cloneStoredResumeState(getFixtureState(fixtureId)),
+      ...normalizeStoredResumeState(cloneStoredResumeState(getFixtureState(fixtureId))),
       fixtureId
     };
   }
 
   if (storedState) {
     return {
-      ...cloneStoredResumeState(storedState),
+      ...normalizeStoredResumeState(cloneStoredResumeState(storedState)),
       fixtureId: null
     };
   }
 
   return {
-    ...cloneStoredResumeState(getDefaultStoredResumeState()),
+    ...normalizeStoredResumeState(cloneStoredResumeState(getDefaultStoredResumeState())),
     fixtureId: null
   };
 }

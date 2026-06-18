@@ -139,6 +139,50 @@ describe("resume store", () => {
     expect(useResumeStore.getState().sectionOrder[2]).toBe("personal");
   });
 
+  test("updates optional personal fields and visibility", () => {
+    act(() => {
+      useResumeStore.getState().updatePersonal("blog", "zhangsan.dev");
+      useResumeStore.getState().updatePersonal("github", "github.com/zhangsan");
+      useResumeStore.getState().updatePersonal("photoDataUrl", "data:image/jpeg;base64,test");
+      useResumeStore.getState().togglePersonalField("blog");
+    });
+
+    expect(useResumeStore.getState().resume.personal.blog).toBe("zhangsan.dev");
+    expect(useResumeStore.getState().resume.personal.github).toBe("github.com/zhangsan");
+    expect(useResumeStore.getState().resume.personal.photoDataUrl).toBe("data:image/jpeg;base64,test");
+    expect(useResumeStore.getState().resume.personalVisibility.blog).toBe(true);
+  });
+
+  test("normalizes old stored state without personal visibility", () => {
+    const legacyState = {
+      resume: {
+        ...defaultResume,
+        personal: {
+          name: "旧数据用户",
+          title: "求职意向",
+          phone: "13800000000",
+          email: "legacy@example.com",
+          city: "北京",
+          summary: "旧版简介"
+        }
+      },
+      sectionOrder: defaultSectionOrder
+    } as unknown as Parameters<typeof resolveInitialResumeSeed>[0]["storedState"];
+
+    const resolved = resolveInitialResumeSeed({
+      isDev: false,
+      search: "",
+      storedState: legacyState
+    });
+
+    expect(resolved.resume.personal.name).toBe("旧数据用户");
+    expect(resolved.resume.personal.blog).toBe("");
+    expect(resolved.resume.personal.github).toBe("");
+    expect(resolved.resume.personal.photoDataUrl).toBe("");
+    expect(resolved.resume.personalVisibility.phone).toBe(true);
+    expect(resolved.resume.personalVisibility.blog).toBe(false);
+  });
+
   test("persists updates into localStorage", () => {
     act(() => {
       useResumeStore.getState().updatePersonal("name", "韩梅梅");

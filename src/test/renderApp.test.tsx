@@ -1,8 +1,12 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
-import { beforeEach } from "vitest";
+import { beforeEach, vi } from "vitest";
 import App from "../App";
 import { useResumeStore } from "../store/useResumeStore";
+
+vi.mock("../lib/image", () => ({
+  fileToResizedDataUrl: vi.fn(async () => "data:image/jpeg;base64,photo")
+}));
 
 function createMemoryStorage(): Storage {
   const data = new Map<string, string>();
@@ -68,6 +72,37 @@ describe("App", () => {
     fireEvent.change(nameInput, { target: { value: "李雷" } });
 
     expect(screen.getByText("李雷")).toBeInTheDocument();
+  });
+
+  test("optional personal fields can be shown, hidden, and keep draft values", () => {
+    render(<App />);
+
+    const blogInput = screen.getByLabelText("个人博客");
+    fireEvent.change(blogInput, { target: { value: "zhangsan.dev" } });
+    expect(screen.queryByText(/zhangsan\.dev/)).not.toBeInTheDocument();
+
+    fireEvent.click(within(blogInput.closest(".personal-field") as HTMLElement).getByLabelText("显示到简历"));
+    expect(screen.getByText(/zhangsan\.dev/)).toBeInTheDocument();
+
+    fireEvent.click(within(blogInput.closest(".personal-field") as HTMLElement).getByLabelText("显示到简历"));
+    expect(screen.queryByText(/zhangsan\.dev/)).not.toBeInTheDocument();
+    expect(screen.getByLabelText("个人博客")).toHaveValue("zhangsan.dev");
+  });
+
+  test("personal photo upload displays in preview and can be removed", async () => {
+    render(<App />);
+
+    const fileInput = screen.getByLabelText("上传照片", { selector: "input" });
+    const photo = new File(["photo"], "photo.png", { type: "image/png" });
+    fireEvent.change(fileInput, { target: { files: [photo] } });
+
+    expect(await screen.findByAltText("个人照片")).toHaveAttribute(
+      "src",
+      "data:image/jpeg;base64,photo"
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "移除照片" }));
+    expect(screen.queryByAltText("个人照片")).not.toBeInTheDocument();
   });
 
   test("education entries can be added and deleted", () => {

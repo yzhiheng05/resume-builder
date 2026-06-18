@@ -7,7 +7,13 @@ import {
   toggleSectionVisibility
 } from "../lib/storage";
 import { cloneStoredResumeState, resolveInitialResumeSeed } from "../lib/resumeSeed";
-import type { ResumeData, SectionId, StoredResumeState, TimelineEntry } from "../types/resume";
+import type {
+  PersonalVisibleField,
+  ResumeData,
+  SectionId,
+  StoredResumeState,
+  TimelineEntry
+} from "../types/resume";
 
 type PersonalField = keyof ResumeData["personal"];
 type TimelineSectionId = "education" | "projects" | "internships" | "campus";
@@ -16,6 +22,7 @@ interface ResumeState {
   resume: ResumeData;
   sectionOrder: SectionId[];
   updatePersonal: (field: PersonalField, value: string) => void;
+  togglePersonalField: (field: PersonalVisibleField) => void;
   updateTimelineEntry: (
     section: TimelineSectionId,
     index: number,
@@ -58,6 +65,18 @@ export function createResumeStore(seed: StoredResumeState = initialSeed) {
         personal: {
           ...state.resume.personal,
           [field]: value
+        }
+      };
+      persistState({ resume, sectionOrder: get().sectionOrder });
+      return { resume };
+    }),
+  togglePersonalField: (field) =>
+    set((state) => {
+      const resume = {
+        ...state.resume,
+        personalVisibility: {
+          ...state.resume.personalVisibility,
+          [field]: !state.resume.personalVisibility[field]
         }
       };
       persistState({ resume, sectionOrder: get().sectionOrder });

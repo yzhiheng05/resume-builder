@@ -2,7 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
 import type { ResumeSections, SectionId } from "./components/preview/sectionRenderers";
+import { fileToResizedDataUrl } from "./lib/image";
 import { useResumeStore } from "./store/useResumeStore";
+import type { PersonalVisibleField, ResumeData } from "./types/resume";
 import "./styles.css";
 
 const sectionLabels: Record<SectionId, string> = {
@@ -16,6 +18,32 @@ const sectionLabels: Record<SectionId, string> = {
 };
 
 type TimelineSectionId = "education" | "projects" | "internships" | "campus";
+type PersonalField = keyof ResumeData["personal"];
+
+const personalFields: Array<{
+  key: PersonalField;
+  label: string;
+  visibilityKey?: PersonalVisibleField;
+  className?: string;
+  multiline?: boolean;
+  rows?: number;
+}> = [
+  { key: "name", label: "姓名" },
+  { key: "title", label: "求职意向", visibilityKey: "title" },
+  { key: "phone", label: "手机", visibilityKey: "phone" },
+  { key: "email", label: "邮箱", visibilityKey: "email" },
+  { key: "city", label: "城市", visibilityKey: "city" },
+  { key: "blog", label: "个人博客", visibilityKey: "blog" },
+  { key: "github", label: "GitHub", visibilityKey: "github" },
+  {
+    key: "summary",
+    label: "个人简介",
+    visibilityKey: "summary",
+    className: "form-span-full",
+    multiline: true,
+    rows: 4
+  }
+];
 
 function SectionCard({
   title,
@@ -79,6 +107,56 @@ function getAdjacentVisibleSectionId(sectionOrder: SectionId[], visibleSectionId
 
 function EmptyDraftNote({ text }: { text: string }) {
   return <p className="editor-empty-note">{text}</p>;
+}
+
+function PersonalFieldEditor({
+  field,
+  value,
+  visible,
+  onChange,
+  onToggleVisibility
+}: {
+  field: (typeof personalFields)[number];
+  value: string;
+  visible?: boolean;
+  onChange: (value: string) => void;
+  onToggleVisibility?: () => void;
+}) {
+  const inputId = `personal-${field.key}`;
+
+  return (
+    <div className={`personal-field${field.className ? ` ${field.className}` : ""}`}>
+      <div className="personal-field__header">
+        <label htmlFor={inputId}>{field.label}</label>
+        {field.visibilityKey ? (
+          <label className="visibility-toggle">
+            <input
+              type="checkbox"
+              checked={Boolean(visible)}
+              onChange={onToggleVisibility}
+            />
+            <span>显示到简历</span>
+          </label>
+        ) : null}
+      </div>
+      {field.multiline ? (
+        <textarea
+          id={inputId}
+          aria-label={field.label}
+          rows={field.rows ?? 3}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      ) : (
+        <input
+          id={inputId}
+          aria-label={field.label}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      )}
+    </div>
+  );
 }
 
 function BulletListEditor({
@@ -178,6 +256,7 @@ export default function App() {
   const setSectionOrder = useResumeStore((state) => state.setSectionOrder);
   const toggleSection = useResumeStore((state) => state.toggleSection);
   const updatePersonal = useResumeStore((state) => state.updatePersonal);
+  const togglePersonalField = useResumeStore((state) => state.togglePersonalField);
   const updateTimelineEntry = useResumeStore((state) => state.updateTimelineEntry);
   const addTimelineEntry = useResumeStore((state) => state.addTimelineEntry);
   const removeTimelineEntry = useResumeStore((state) => state.removeTimelineEntry);
@@ -195,7 +274,13 @@ export default function App() {
     () => ({
       personal: {
         ...resume.personal,
-        website: ""
+        title: resume.personalVisibility.title ? resume.personal.title : "",
+        phone: resume.personalVisibility.phone ? resume.personal.phone : "",
+        email: resume.personalVisibility.email ? resume.personal.email : "",
+        city: resume.personalVisibility.city ? resume.personal.city : "",
+        blog: resume.personalVisibility.blog ? resume.personal.blog : "",
+        github: resume.personalVisibility.github ? resume.personal.github : "",
+        summary: resume.personalVisibility.summary ? resume.personal.summary : ""
       },
       education: {
         items: resume.education.map((item) => ({
@@ -342,6 +427,15 @@ export default function App() {
     );
   }
 
+  async function handlePhotoUpload(file: File | undefined) {
+    if (!file) {
+      return;
+    }
+
+    const nextPhoto = await fileToResizedDataUrl(file);
+    updatePersonal("photoDataUrl", nextPhoto);
+  }
+
   return (
     <div className="app-shell">
       <HeaderBar onReset={reset} />
@@ -370,50 +464,55 @@ export default function App() {
               >
                 {sectionId === "personal" ? (
                   <div className="form-grid">
-                    <label>
-                      姓名
-                      <input
-                        aria-label="姓名"
-                        value={resume.personal.name}
-                        onChange={(event) => updatePersonal("name", event.target.value)}
+                    <div className="photo-editor form-span-full">
+                      <div className="photo-editor__preview">
+                        {resume.personal.photoDataUrl ? (
+                          <img src={resume.personal.photoDataUrl} alt="个人照片预览" />
+                        ) : (
+                          <span>照片</span>
+                        )}
+                      </div>
+                      <div className="photo-editor__body">
+                        <span className="field-stack__label">个人照片</span>
+                        <p>可选上传，上传后会自动显示在简历个人信息区右侧。</p>
+                        <div className="photo-editor__actions">
+                          <label className="secondary-button photo-editor__upload">
+                            上传照片
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(event) => {
+                                void handlePhotoUpload(event.target.files?.[0]);
+                                event.target.value = "";
+                              }}
+                            />
+                          </label>
+                          {resume.personal.photoDataUrl ? (
+                            <button
+                              type="button"
+                              className="ghost-button"
+                              onClick={() => updatePersonal("photoDataUrl", "")}
+                            >
+                              移除照片
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                    {personalFields.map((field) => (
+                      <PersonalFieldEditor
+                        key={field.key}
+                        field={field}
+                        value={resume.personal[field.key]}
+                        visible={field.visibilityKey ? resume.personalVisibility[field.visibilityKey] : undefined}
+                        onChange={(value) => updatePersonal(field.key, value)}
+                        onToggleVisibility={
+                          field.visibilityKey
+                            ? () => togglePersonalField(field.visibilityKey as PersonalVisibleField)
+                            : undefined
+                        }
                       />
-                    </label>
-                    <label>
-                      求职意向
-                      <input
-                        value={resume.personal.title}
-                        onChange={(event) => updatePersonal("title", event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      手机
-                      <input
-                        value={resume.personal.phone}
-                        onChange={(event) => updatePersonal("phone", event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      邮箱
-                      <input
-                        value={resume.personal.email}
-                        onChange={(event) => updatePersonal("email", event.target.value)}
-                      />
-                    </label>
-                    <label>
-                      城市
-                      <input
-                        value={resume.personal.city}
-                        onChange={(event) => updatePersonal("city", event.target.value)}
-                      />
-                    </label>
-                    <label className="form-span-full">
-                      个人简介
-                      <textarea
-                        rows={4}
-                        value={resume.personal.summary}
-                        onChange={(event) => updatePersonal("summary", event.target.value)}
-                      />
-                    </label>
+                    ))}
                   </div>
                 ) : null}
 

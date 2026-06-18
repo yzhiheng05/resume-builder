@@ -8,6 +8,9 @@ export const multipagePrintFixture: StoredResumeState = {
       phone: "139-1111-2222",
       email: "linzhixia@example.com",
       city: "上海",
+      blog: "linzhixia.dev",
+      github: "github.com/linzhixia",
+      photoDataUrl: "",
       summary:
         "具备前端开发、内容结构化表达与项目协同经验，关注复杂信息在 Web 端的可读性、可维护性与交付稳定性，希望在校招岗位中继续深耕体验与工程质量。"
     },
@@ -167,6 +170,15 @@ export const multipagePrintFixture: StoredResumeState = {
       campus: true,
       skills: true,
       awards: true
+    },
+    personalVisibility: {
+      title: true,
+      phone: true,
+      email: true,
+      city: true,
+      summary: true,
+      blog: true,
+      github: true
     }
   },
   sectionOrder: [

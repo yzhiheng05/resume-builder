@@ -16,7 +16,9 @@ const sampleSections: ResumeSections = {
     phone: "13800000000",
     email: "chenchen@example.com",
     city: "上海",
-    website: "github.com/chenchen",
+    blog: "chenchen.dev",
+    github: "github.com/chenchen",
+    photoDataUrl: "",
     summary: "熟悉 Web 全栈开发，关注工程效率与用户体验。",
   },
   education: {

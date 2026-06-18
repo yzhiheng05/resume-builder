@@ -7,6 +7,15 @@ export type SectionId =
   | "skills"
   | "awards";
 
+export type PersonalVisibleField =
+  | "title"
+  | "phone"
+  | "email"
+  | "city"
+  | "summary"
+  | "blog"
+  | "github";
+
 export interface TimelineEntry {
   id: string;
   title: string;
@@ -24,6 +33,9 @@ export interface ResumeData {
     phone: string;
     email: string;
     city: string;
+    blog: string;
+    github: string;
+    photoDataUrl: string;
     summary: string;
   };
   education: TimelineEntry[];
@@ -33,6 +45,7 @@ export interface ResumeData {
   skills: string[];
   awards: string[];
   sectionVisibility: Record<SectionId, boolean>;
+  personalVisibility: Record<PersonalVisibleField, boolean>;
 }
 
 export interface StoredResumeState {

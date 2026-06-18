@@ -1,4 +1,4 @@
-import type { ResumeData, SectionId } from "../types/resume";
+import type { PersonalVisibleField, ResumeData, SectionId } from "../types/resume";
 
 export function createTimelineEntry(seed: string) {
   return {
@@ -22,6 +22,16 @@ export const defaultSectionOrder: SectionId[] = [
   "awards"
 ];
 
+export const defaultPersonalVisibility: Record<PersonalVisibleField, boolean> = {
+  title: true,
+  phone: true,
+  email: true,
+  city: true,
+  summary: true,
+  blog: false,
+  github: false
+};
+
 export const defaultResume: ResumeData = {
   personal: {
     name: "张三",
@@ -29,6 +39,9 @@ export const defaultResume: ResumeData = {
     phone: "138-0000-0000",
     email: "zhangsan@example.com",
     city: "上海",
+    blog: "",
+    github: "",
+    photoDataUrl: "",
     summary: "请用一两句话总结你的优势、方向和求职目标。"
   },
   education: [
@@ -85,5 +98,6 @@ export const defaultResume: ResumeData = {
     campus: true,
     skills: true,
     awards: true
-  }
+  },
+  personalVisibility: defaultPersonalVisibility
 };
