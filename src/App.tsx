@@ -15,6 +15,8 @@ const sectionLabels: Record<SectionId, string> = {
   awards: "获奖 / 证书"
 };
 
+type TimelineSectionId = "education" | "projects" | "internships" | "campus";
+
 function SectionCard({
   title,
   visible,
@@ -73,6 +75,101 @@ function getAdjacentVisibleSectionId(sectionOrder: SectionId[], visibleSectionId
   }
 
   return visibleSectionIds[visibleIndex + 1] ?? visibleSectionIds[visibleIndex - 1] ?? null;
+}
+
+function EmptyDraftNote({ text }: { text: string }) {
+  return <p className="editor-empty-note">{text}</p>;
+}
+
+function BulletListEditor({
+  items,
+  onChangeItem,
+  onRemoveItem,
+  onAddItem
+}: {
+  items: string[];
+  onChangeItem: (index: number, value: string) => void;
+  onRemoveItem: (index: number) => void;
+  onAddItem: () => void;
+}) {
+  return (
+    <div className="field-stack form-span-full">
+      <span className="field-stack__label">亮点</span>
+      {items.length === 0 ? <EmptyDraftNote text="暂无亮点，可点击下方新增。" /> : null}
+      <div className="section-list section-list--nested">
+        {items.map((item, index) => (
+          <div key={`bullet-${index}`} className="inline-row inline-row--stacked">
+            <label className="inline-row__field">
+              亮点 {index + 1}
+              <input
+                aria-label={`亮点 ${index + 1}`}
+                value={item}
+                onChange={(event) => onChangeItem(index, event.target.value)}
+              />
+            </label>
+            <button
+              type="button"
+              className="ghost-button"
+              aria-label={`删除亮点 ${index + 1}`}
+              onClick={() => onRemoveItem(index)}
+            >
+              删除
+            </button>
+          </div>
+        ))}
+      </div>
+      <button type="button" className="secondary-button" onClick={onAddItem}>
+        新增亮点
+      </button>
+    </div>
+  );
+}
+
+function SimpleListEditor({
+  items,
+  itemLabel,
+  addLabel,
+  emptyNote,
+  onChangeItem,
+  onRemoveItem,
+  onAddItem
+}: {
+  items: string[];
+  itemLabel: string;
+  addLabel: string;
+  emptyNote: string;
+  onChangeItem: (index: number, value: string) => void;
+  onRemoveItem: (index: number) => void;
+  onAddItem: () => void;
+}) {
+  return (
+    <div className="section-list">
+      {items.length === 0 ? <EmptyDraftNote text={emptyNote} /> : null}
+      {items.map((item, index) => (
+        <div key={`${itemLabel}-${index}`} className="inline-row">
+          <label className="inline-row__field">
+            {itemLabel} {index + 1}
+            <input
+              aria-label={`${itemLabel} ${index + 1}`}
+              value={item}
+              onChange={(event) => onChangeItem(index, event.target.value)}
+            />
+          </label>
+          <button
+            type="button"
+            className="ghost-button"
+            aria-label={`删除${itemLabel} ${index + 1}`}
+            onClick={() => onRemoveItem(index)}
+          >
+            删除
+          </button>
+        </div>
+      ))}
+      <button type="button" className="secondary-button" onClick={onAddItem}>
+        {addLabel}
+      </button>
+    </div>
+  );
 }
 
 export default function App() {
@@ -206,6 +303,45 @@ export default function App() {
     setActiveSectionId(sectionId);
   }
 
+  function updateTimelineBullets(
+    sectionId: TimelineSectionId,
+    entryIndex: number,
+    updater: (bullets: string[]) => string[]
+  ) {
+    const entry = resume[sectionId][entryIndex];
+
+    if (!entry) {
+      return;
+    }
+
+    updateTimelineEntry(sectionId, entryIndex, {
+      bullets: updater(entry.bullets)
+    });
+  }
+
+  function updateBulletItem(
+    sectionId: TimelineSectionId,
+    entryIndex: number,
+    bulletIndex: number,
+    value: string
+  ) {
+    updateTimelineBullets(sectionId, entryIndex, (bullets) => {
+      const next = [...bullets];
+      next[bulletIndex] = value;
+      return next;
+    });
+  }
+
+  function addBulletItem(sectionId: TimelineSectionId, entryIndex: number) {
+    updateTimelineBullets(sectionId, entryIndex, (bullets) => [...bullets, ""]);
+  }
+
+  function removeBulletItem(sectionId: TimelineSectionId, entryIndex: number, bulletIndex: number) {
+    updateTimelineBullets(sectionId, entryIndex, (bullets) =>
+      bullets.filter((_, currentIndex) => currentIndex !== bulletIndex)
+    );
+  }
+
   return (
     <div className="app-shell">
       <HeaderBar onReset={reset} />
@@ -322,24 +458,36 @@ export default function App() {
                               }
                             />
                           </label>
-                          <label className="form-span-full">
-                            亮点（每行一条）
-                            <textarea
-                              rows={3}
-                              value={entry.bullets.join("\n")}
-                              onChange={(event) =>
-                                updateTimelineEntry("education", index, {
-                                  bullets: event.target.value
-                                    .split("\n")
-                                    .map((line) => line.trim())
-                                    .filter(Boolean)
-                                })
-                              }
-                            />
-                          </label>
+                          <BulletListEditor
+                            items={entry.bullets}
+                            onChangeItem={(bulletIndex, value) =>
+                              updateBulletItem("education", index, bulletIndex, value)
+                            }
+                            onRemoveItem={(bulletIndex) =>
+                              removeBulletItem("education", index, bulletIndex)
+                            }
+                            onAddItem={() => addBulletItem("education", index)}
+                          />
+                        </div>
+                        <div className="list-item__actions">
+                          <button
+                            type="button"
+                            className="ghost-button"
+                            aria-label={`删除教育经历条目 ${index + 1}`}
+                            onClick={() => removeTimelineEntry("education", index)}
+                          >
+                            删除条目
+                          </button>
                         </div>
                       </article>
                     ))}
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => addTimelineEntry("education")}
+                    >
+                      新增教育经历
+                    </button>
                   </div>
                 ) : null}
 
@@ -394,28 +542,28 @@ export default function App() {
                             />
                           </label>
                           <label className="form-span-full">
-                            亮点（每行一条）
-                            <textarea
-                              rows={4}
-                              value={entry.bullets.join("\n")}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, {
-                                  bullets: event.target.value
-                                    .split("\n")
-                                    .map((line) => line.trim())
-                                    .filter(Boolean)
-                                })
+                            <BulletListEditor
+                              items={entry.bullets}
+                              onChangeItem={(bulletIndex, value) =>
+                                updateBulletItem(sectionId, index, bulletIndex, value)
                               }
+                              onRemoveItem={(bulletIndex) =>
+                                removeBulletItem(sectionId, index, bulletIndex)
+                              }
+                              onAddItem={() => addBulletItem(sectionId, index)}
                             />
                           </label>
                         </div>
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          onClick={() => removeTimelineEntry(sectionId, index)}
-                        >
-                          删除条目
-                        </button>
+                        <div className="list-item__actions">
+                          <button
+                            type="button"
+                            className="ghost-button"
+                            aria-label={`删除${sectionLabels[sectionId]}条目 ${index + 1}`}
+                            onClick={() => removeTimelineEntry(sectionId, index)}
+                          >
+                            删除条目
+                          </button>
+                        </div>
                       </article>
                     ))}
                     <button
@@ -429,47 +577,27 @@ export default function App() {
                 ) : null}
 
                 {sectionId === "skills" ? (
-                  <div className="section-list">
-                    {resume.skills.map((skill, index) => (
-                      <div key={`${skill}-${index}`} className="inline-row">
-                        <label className="inline-row__field">
-                          技能 {index + 1}
-                          <input
-                            value={skill}
-                            onChange={(event) => updateSkill(index, event.target.value)}
-                          />
-                        </label>
-                        <button type="button" className="ghost-button" onClick={() => removeSkill(index)}>
-                          删除
-                        </button>
-                      </div>
-                    ))}
-                    <button type="button" className="secondary-button" onClick={addSkill}>
-                      新增技能
-                    </button>
-                  </div>
+                  <SimpleListEditor
+                    items={resume.skills}
+                    itemLabel="技能"
+                    addLabel="新增技能"
+                    emptyNote="暂无技能，可点击下方新增。"
+                    onChangeItem={updateSkill}
+                    onRemoveItem={removeSkill}
+                    onAddItem={addSkill}
+                  />
                 ) : null}
 
                 {sectionId === "awards" ? (
-                  <div className="section-list">
-                    {resume.awards.map((award, index) => (
-                      <div key={`${award}-${index}`} className="inline-row">
-                        <label className="inline-row__field">
-                          条目 {index + 1}
-                          <input
-                            value={award}
-                            onChange={(event) => updateAward(index, event.target.value)}
-                          />
-                        </label>
-                        <button type="button" className="ghost-button" onClick={() => removeAward(index)}>
-                          删除
-                        </button>
-                      </div>
-                    ))}
-                    <button type="button" className="secondary-button" onClick={addAward}>
-                      新增获奖 / 证书
-                    </button>
-                  </div>
+                  <SimpleListEditor
+                    items={resume.awards}
+                    itemLabel="获奖 / 证书"
+                    addLabel="新增获奖 / 证书"
+                    emptyNote="暂无获奖或证书，可点击下方新增。"
+                    onChangeItem={updateAward}
+                    onRemoveItem={removeAward}
+                    onAddItem={addAward}
+                  />
                 ) : null}
               </SectionCard>
             ))}

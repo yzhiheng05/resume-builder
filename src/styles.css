@@ -272,6 +272,10 @@ button {
   gap: 12px;
 }
 
+.section-list--nested {
+  gap: 8px;
+}
+
 .list-item,
 .inline-row {
   border: 1px solid rgba(226, 232, 240, 0.95);
@@ -286,8 +290,42 @@ button {
   align-items: flex-end;
 }
 
+.inline-row--stacked {
+  padding: 10px 12px;
+  background: #ffffff;
+}
+
 .inline-row__field {
   flex: 1;
+}
+
+.field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-stack__label {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.list-item__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.editor-empty-note {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px dashed rgba(191, 219, 254, 0.9);
+  border-radius: 12px;
+  background: rgba(239, 246, 255, 0.7);
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .ghost-button,

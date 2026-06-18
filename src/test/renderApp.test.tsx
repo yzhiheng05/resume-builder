@@ -35,6 +35,19 @@ Object.defineProperty(window, "localStorage", {
   configurable: true
 });
 
+function expandSection(name: string) {
+  const toggle = screen.getByRole("checkbox", { name });
+  const card = toggle.closest(".section-card");
+  expect(card).not.toBeNull();
+  fireEvent.click(within(card as HTMLElement).getByRole("button", { name: /显示中/i }));
+}
+
+function getInputCountByLabel(label: RegExp) {
+  return screen
+    .getAllByLabelText(label)
+    .filter((node) => node.tagName.toLowerCase() === "input").length;
+}
+
 describe("App", () => {
   beforeEach(() => {
     storage.clear();
@@ -55,6 +68,44 @@ describe("App", () => {
     fireEvent.change(nameInput, { target: { value: "李雷" } });
 
     expect(screen.getByText("李雷")).toBeInTheDocument();
+  });
+
+  test("education entries can be added and deleted", () => {
+    render(<App />);
+
+    expandSection("教育经历");
+
+    fireEvent.click(screen.getByRole("button", { name: "新增教育经历" }));
+    expect(screen.getAllByLabelText("学校").length).toBe(2);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /删除教育经历条目/i })[0]);
+    expect(screen.getAllByLabelText("学校").length).toBe(1);
+  });
+
+  test("bullet entries edit independently in project sections", () => {
+    render(<App />);
+
+    expandSection("项目经历");
+
+    const bulletInput = screen.getByLabelText("亮点 1");
+    fireEvent.change(bulletInput, { target: { value: "新的项目亮点" } });
+
+    expect(screen.getByText("新的项目亮点")).toBeInTheDocument();
+  });
+
+  test("skills and awards still support add and remove", () => {
+    render(<App />);
+
+    expandSection("技能");
+
+    fireEvent.click(screen.getByRole("button", { name: "新增技能" }));
+    expect(getInputCountByLabel(/^技能 \d+$/)).toBeGreaterThan(3);
+
+    expandSection("获奖 / 证书");
+
+    const awardCountBefore = getInputCountByLabel(/^获奖 \/ 证书 \d+$/);
+    fireEvent.click(screen.getByRole("button", { name: "新增获奖 / 证书" }));
+    expect(getInputCountByLabel(/^获奖 \/ 证书 \d+$/)).toBe(awardCountBefore + 1);
   });
 
   test("section toggle hides preview block", () => {

@@ -153,6 +153,17 @@ describe("resume store", () => {
     expect(useResumeStore.getState().sectionOrder[0]).toBe("personal");
   });
 
+  test("timeline bullets can be updated without changing other fields", () => {
+    act(() => {
+      useResumeStore.getState().updateTimelineEntry("projects", 0, {
+        bullets: ["第一条", "第二条"]
+      });
+    });
+
+    expect(useResumeStore.getState().resume.projects[0].title).toBe(defaultResume.projects[0].title);
+    expect(useResumeStore.getState().resume.projects[0].bullets).toEqual(["第一条", "第二条"]);
+  });
+
   test("reset restores the fixture seed when the store starts from multipage fixture", () => {
     const store = createResumeStore(multipagePrintFixture);
 
