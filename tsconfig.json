@@ -18,12 +18,15 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
+    "src/vite-env.d.ts",
     "src/main.tsx",
     "src/App.tsx",
     "src/styles.css",
     "src/types/resume.ts",
     "src/data/defaultResume.ts",
+    "src/data/multipagePrintFixture.ts",
     "src/lib/storage.ts",
+    "src/lib/resumeSeed.ts",
     "src/store/useResumeStore.ts",
     "src/test/store.test.ts",
     "src/test/renderApp.test.tsx",

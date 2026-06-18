@@ -1,8 +1,14 @@
 import { act } from "@testing-library/react";
 import { describe, expect, test, beforeEach } from "vitest";
 import { defaultResume, defaultSectionOrder } from "../data/defaultResume";
+import { multipagePrintFixture } from "../data/multipagePrintFixture";
 import { loadResumeState, moveSection, toggleSectionVisibility, STORAGE_KEY } from "../lib/storage";
-import { useResumeStore } from "../store/useResumeStore";
+import {
+  MULTIPAGE_PRINT_FIXTURE_ID,
+  getDefaultStoredResumeState,
+  resolveInitialResumeSeed
+} from "../lib/resumeSeed";
+import { createResumeStore, useResumeStore } from "../store/useResumeStore";
 
 function createMemoryStorage(): Storage {
   const data = new Map<string, string>();
@@ -67,6 +73,54 @@ describe("resume helpers", () => {
       sectionOrder: defaultSectionOrder
     });
   });
+
+  test("resolves multipage fixture in dev mode", () => {
+    const resolved = resolveInitialResumeSeed({
+      isDev: true,
+      search: `?fixture=${MULTIPAGE_PRINT_FIXTURE_ID}`,
+      storedState: {
+        resume: defaultResume,
+        sectionOrder: defaultSectionOrder
+      }
+    });
+
+    expect(resolved.fixtureId).toBe(MULTIPAGE_PRINT_FIXTURE_ID);
+    expect(resolved.resume.personal.name).toBe(multipagePrintFixture.resume.personal.name);
+    expect(resolved.resume.projects.length).toBe(multipagePrintFixture.resume.projects.length);
+  });
+
+  test("ignores fixture query outside dev mode", () => {
+    const resolved = resolveInitialResumeSeed({
+      isDev: false,
+      search: `?fixture=${MULTIPAGE_PRINT_FIXTURE_ID}`,
+      storedState: null
+    });
+
+    expect(resolved.fixtureId).toBeNull();
+    expect(resolved.resume.personal.name).toBe(getDefaultStoredResumeState().resume.personal.name);
+  });
+
+  test("keeps stored state when no fixture is requested", () => {
+    const storedState = {
+      resume: {
+        ...defaultResume,
+        personal: {
+          ...defaultResume.personal,
+          name: "测试用户"
+        }
+      },
+      sectionOrder: defaultSectionOrder
+    };
+
+    const resolved = resolveInitialResumeSeed({
+      isDev: true,
+      search: "",
+      storedState
+    });
+
+    expect(resolved.fixtureId).toBeNull();
+    expect(resolved.resume.personal.name).toBe("测试用户");
+  });
 });
 
 describe("resume store", () => {
@@ -97,5 +151,22 @@ describe("resume store", () => {
 
   test("personal section stays at the top by default", () => {
     expect(useResumeStore.getState().sectionOrder[0]).toBe("personal");
+  });
+
+  test("reset restores the fixture seed when the store starts from multipage fixture", () => {
+    const store = createResumeStore(multipagePrintFixture);
+
+    act(() => {
+      store.getState().updatePersonal("name", "临时姓名");
+      store.getState().removeAward(0);
+    });
+
+    act(() => {
+      store.getState().reset();
+    });
+
+    expect(store.getState().resume.personal.name).toBe(multipagePrintFixture.resume.personal.name);
+    expect(store.getState().resume.awards).toEqual(multipagePrintFixture.resume.awards);
+    expect(store.getState().sectionOrder).toEqual(multipagePrintFixture.sectionOrder);
   });
 });

@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import { createTimelineEntry, defaultResume, defaultSectionOrder } from "../data/defaultResume";
+import { createTimelineEntry } from "../data/defaultResume";
 import {
   loadResumeState,
   moveSection,
   saveResumeState,
   toggleSectionVisibility
 } from "../lib/storage";
+import { cloneStoredResumeState, resolveInitialResumeSeed } from "../lib/resumeSeed";
 import type { ResumeData, SectionId, StoredResumeState, TimelineEntry } from "../types/resume";
 
 type PersonalField = keyof ResumeData["personal"];
@@ -38,13 +39,18 @@ function persistState(state: StoredResumeState) {
   saveResumeState(state);
 }
 
-const hydrated = loadResumeState();
-const initialResume = hydrated?.resume ?? defaultResume;
-const initialOrder = hydrated?.sectionOrder ?? defaultSectionOrder;
+const initialSeed = resolveInitialResumeSeed({
+  isDev: import.meta.env.DEV,
+  search: typeof window === "undefined" ? "" : window.location.search,
+  storedState: loadResumeState()
+});
 
-export const useResumeStore = create<ResumeState>((set, get) => ({
-  resume: initialResume,
-  sectionOrder: initialOrder,
+export function createResumeStore(seed: StoredResumeState = initialSeed) {
+  const initialState = cloneStoredResumeState(seed);
+
+  return create<ResumeState>((set, get) => ({
+    resume: initialState.resume,
+    sectionOrder: initialState.sectionOrder,
   updatePersonal: (field, value) =>
     set((state) => {
       const resume = {
@@ -147,9 +153,11 @@ export const useResumeStore = create<ResumeState>((set, get) => ({
       return { sectionOrder };
     }),
   reset: () => {
-    const resume = defaultResume;
-    const sectionOrder = defaultSectionOrder;
-    persistState({ resume, sectionOrder });
-    set({ resume, sectionOrder });
+    const nextState = cloneStoredResumeState(seed);
+    persistState(nextState);
+    set(nextState);
   }
-}));
+  }));
+}
+
+export const useResumeStore = createResumeStore(initialSeed);
