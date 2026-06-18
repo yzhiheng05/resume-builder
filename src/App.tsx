@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
 import type { ResumeSections, SectionId } from "./components/preview/sectionRenderers";
@@ -109,6 +109,46 @@ function EmptyDraftNote({ text }: { text: string }) {
   return <p className="editor-empty-note">{text}</p>;
 }
 
+function AutoResizeTextarea({
+  value,
+  minRows = 3,
+  className,
+  ...props
+}: Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value"> & {
+  value: string;
+  minRows?: number;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "auto";
+    const computed = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(computed.lineHeight) || 24;
+    const borderSize =
+      Number.parseFloat(computed.borderTopWidth) + Number.parseFloat(computed.borderBottomWidth);
+    const paddingSize =
+      Number.parseFloat(computed.paddingTop) + Number.parseFloat(computed.paddingBottom);
+    const minHeight = lineHeight * minRows + borderSize + paddingSize;
+
+    textarea.style.height = `${Math.max(textarea.scrollHeight, minHeight)}px`;
+  }, [minRows, value]);
+
+  return (
+    <textarea
+      {...props}
+      ref={textareaRef}
+      className={`auto-resize-textarea${className ? ` ${className}` : ""}`}
+      rows={minRows}
+      value={value}
+    />
+  );
+}
+
 function PersonalFieldEditor({
   field,
   value,
@@ -140,10 +180,10 @@ function PersonalFieldEditor({
         ) : null}
       </div>
       {field.multiline ? (
-        <textarea
+        <AutoResizeTextarea
           id={inputId}
           aria-label={field.label}
-          rows={field.rows ?? 3}
+          minRows={field.rows ?? 3}
           value={value}
           onChange={(event) => onChange(event.target.value)}
         />
@@ -179,8 +219,9 @@ function BulletListEditor({
           <div key={`bullet-${index}`} className="inline-row inline-row--stacked">
             <label className="inline-row__field">
               亮点 {index + 1}
-              <input
+              <AutoResizeTextarea
                 aria-label={`亮点 ${index + 1}`}
+                minRows={3}
                 value={item}
                 onChange={(event) => onChangeItem(index, event.target.value)}
               />
@@ -208,6 +249,7 @@ function SimpleListEditor({
   itemLabel,
   addLabel,
   emptyNote,
+  multiline = false,
   onChangeItem,
   onRemoveItem,
   onAddItem
@@ -216,6 +258,7 @@ function SimpleListEditor({
   itemLabel: string;
   addLabel: string;
   emptyNote: string;
+  multiline?: boolean;
   onChangeItem: (index: number, value: string) => void;
   onRemoveItem: (index: number) => void;
   onAddItem: () => void;
@@ -227,11 +270,20 @@ function SimpleListEditor({
         <div key={`${itemLabel}-${index}`} className="inline-row">
           <label className="inline-row__field">
             {itemLabel} {index + 1}
-            <input
-              aria-label={`${itemLabel} ${index + 1}`}
-              value={item}
-              onChange={(event) => onChangeItem(index, event.target.value)}
-            />
+            {multiline ? (
+              <AutoResizeTextarea
+                aria-label={`${itemLabel} ${index + 1}`}
+                minRows={3}
+                value={item}
+                onChange={(event) => onChangeItem(index, event.target.value)}
+              />
+            ) : (
+              <input
+                aria-label={`${itemLabel} ${index + 1}`}
+                value={item}
+                onChange={(event) => onChangeItem(index, event.target.value)}
+              />
+            )}
           </label>
           <button
             type="button"
@@ -693,6 +745,7 @@ export default function App() {
                     itemLabel="获奖 / 证书"
                     addLabel="新增获奖 / 证书"
                     emptyNote="暂无获奖或证书，可点击下方新增。"
+                    multiline
                     onChangeItem={updateAward}
                     onRemoveItem={removeAward}
                     onAddItem={addAward}

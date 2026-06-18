@@ -255,12 +255,30 @@ button {
     box-shadow 120ms ease;
 }
 
+.inline-row__field textarea {
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: var(--text);
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
 .form-grid input:focus,
 .form-grid textarea:focus,
-.inline-row__field input:focus {
+.inline-row__field input:focus,
+.inline-row__field textarea:focus {
   outline: none;
   border-color: rgba(29, 78, 216, 0.45);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.auto-resize-textarea {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.6;
 }
 
 .personal-field__header {
@@ -381,6 +399,7 @@ button {
 }
 
 .inline-row--stacked {
+  align-items: stretch;
   padding: 10px 12px;
   background: #ffffff;
 }

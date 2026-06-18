@@ -52,6 +52,12 @@ function getInputCountByLabel(label: RegExp) {
     .filter((node) => node.tagName.toLowerCase() === "input").length;
 }
 
+function getTextareaCountByLabel(label: RegExp) {
+  return screen
+    .getAllByLabelText(label)
+    .filter((node) => node.tagName.toLowerCase() === "textarea").length;
+}
+
 describe("App", () => {
   beforeEach(() => {
     storage.clear();
@@ -123,24 +129,27 @@ describe("App", () => {
     expandSection("项目经历");
 
     const bulletInput = screen.getByLabelText("亮点 1");
+    expect(bulletInput.tagName.toLowerCase()).toBe("textarea");
     fireEvent.change(bulletInput, { target: { value: "新的项目亮点" } });
 
-    expect(screen.getByText("新的项目亮点")).toBeInTheDocument();
+    expect(screen.getAllByText("新的项目亮点").length).toBeGreaterThan(0);
   });
 
-  test("skills and awards still support add and remove", () => {
+  test("skills stay single-line while awards support multiline editing", () => {
     render(<App />);
 
     expandSection("技能");
 
     fireEvent.click(screen.getByRole("button", { name: "新增技能" }));
     expect(getInputCountByLabel(/^技能 \d+$/)).toBeGreaterThan(3);
+    expect(getTextareaCountByLabel(/^技能 \d+$/)).toBe(0);
 
     expandSection("获奖 / 证书");
 
-    const awardCountBefore = getInputCountByLabel(/^获奖 \/ 证书 \d+$/);
+    const awardTextareaCountBefore = getTextareaCountByLabel(/^获奖 \/ 证书 \d+$/);
     fireEvent.click(screen.getByRole("button", { name: "新增获奖 / 证书" }));
-    expect(getInputCountByLabel(/^获奖 \/ 证书 \d+$/)).toBe(awardCountBefore + 1);
+    expect(getTextareaCountByLabel(/^获奖 \/ 证书 \d+$/)).toBe(awardTextareaCountBefore + 1);
+    expect(screen.getByLabelText("获奖 / 证书 1").tagName.toLowerCase()).toBe("textarea");
   });
 
   test("section toggle hides preview block", () => {
