@@ -621,7 +621,7 @@ button {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.resume-print-mode .header-bar,
+.resume-print-mode .topbar,
 .resume-print-mode .editor-panel,
 .resume-print-mode [data-editor-panel] {
   display: none !important;
@@ -694,7 +694,7 @@ button {
     background: #ffffff;
   }
 
-  .header-bar,
+  .topbar,
   .editor-panel,
   [data-editor-panel],
   .preview-panel__header,

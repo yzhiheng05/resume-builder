@@ -1,3 +1,4 @@
+import { printResume } from "../lib/print";
 import { useResumeStore } from "../store/useResumeStore";
 
 interface HeaderBarProps {
@@ -17,7 +18,7 @@ export function HeaderBar({ onReset }: HeaderBarProps) {
         <button type="button" onClick={onReset ?? reset}>
           重置
         </button>
-        <button type="button" onClick={() => window.print()}>
+        <button type="button" onClick={() => printResume()}>
           导出 PDF
         </button>
       </div>
