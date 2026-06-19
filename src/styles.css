@@ -56,6 +56,65 @@ button {
   padding: 24px;
 }
 
+.identity-screen {
+  display: grid;
+  gap: 24px;
+  min-height: calc(100vh - 48px);
+  align-content: center;
+}
+
+.identity-screen__hero {
+  max-width: 760px;
+}
+
+.identity-screen__hero h1 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.05;
+}
+
+.identity-screen__hero p:last-child {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.identity-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.identity-card {
+  display: grid;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  text-align: left;
+  cursor: pointer;
+}
+
+.identity-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-strong);
+  transform: translateY(-1px);
+}
+
+.identity-card__label {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.identity-card__intro,
+.identity-card__hint {
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -135,6 +194,13 @@ button {
   margin: 8px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
+
+.topbar__identity {
+  margin: 8px 0 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .topbar__file-action {
@@ -402,6 +468,34 @@ button {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.module-library {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(203, 213, 225, 0.95);
+}
+
+.module-library__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.module-library__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.module-library__item small {
+  color: var(--muted);
 }
 
 .section-list--nested {
@@ -844,6 +938,10 @@ button {
     padding: 18px;
   }
 
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
   .workspace {
     grid-template-columns: 1fr;
   }
@@ -878,6 +976,12 @@ button {
 
   .resume-personal__layout {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .identity-screen__hero h1 {
+    font-size: 32px;
   }
 }
 

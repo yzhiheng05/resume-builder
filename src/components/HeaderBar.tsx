@@ -1,21 +1,31 @@
 import { printResume } from "../lib/print";
-import { useResumeStore } from "../store/useResumeStore";
+import type { IdentityPreset } from "../types/resume";
 
 interface HeaderBarProps {
+  identityLabel: string;
+  statusMessage?: string;
   onReset: () => void;
   onExportData: () => void;
   onImportData: (file: File) => void;
-  statusMessage?: string;
+  onSwitchIdentity: (identity: IdentityPreset) => void;
+  onApplyPreset: () => void;
 }
 
-export function HeaderBar({ onReset, onExportData, onImportData, statusMessage }: HeaderBarProps) {
-  const reset = useResumeStore((state) => state.reset);
-
+export function HeaderBar({
+  identityLabel,
+  statusMessage,
+  onReset,
+  onExportData,
+  onImportData,
+  onSwitchIdentity,
+  onApplyPreset
+}: HeaderBarProps) {
   return (
     <header className="topbar">
       <div>
-        <p className="eyebrow">Campus Resume Builder</p>
-        <h1>校园简历编辑器</h1>
+        <p className="eyebrow">General Job Resume Builder</p>
+        <h1>通用求职简历编辑器</h1>
+        <p className="topbar__identity">当前身份：{identityLabel}</p>
         {statusMessage ? (
           <p className="topbar__status" role="status">
             {statusMessage}
@@ -23,7 +33,19 @@ export function HeaderBar({ onReset, onExportData, onImportData, statusMessage }
         ) : null}
       </div>
       <div className="topbar__actions">
-        <button type="button" onClick={onReset ?? reset}>
+        <button type="button" onClick={() => onSwitchIdentity("student")}>
+          切到学生
+        </button>
+        <button type="button" onClick={() => onSwitchIdentity("professional")}>
+          切到职场人
+        </button>
+        <button type="button" onClick={() => onSwitchIdentity("general")}>
+          切到通用
+        </button>
+        <button type="button" onClick={onApplyPreset}>
+          应用推荐配置
+        </button>
+        <button type="button" onClick={onReset}>
           重置
         </button>
         <button type="button" onClick={onExportData}>

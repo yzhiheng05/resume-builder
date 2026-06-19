@@ -1,12 +1,9 @@
 import type { ReactNode } from "react";
-
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import type { SectionId } from "./sectionRenderers";
-
 export interface PreviewSectionProps {
-  sectionId: SectionId;
+  moduleId: string;
   title: string;
   children: ReactNode;
   isActive?: boolean;
@@ -14,19 +11,19 @@ export interface PreviewSectionProps {
 }
 
 export default function PreviewSection({
-  sectionId,
+  moduleId,
   title,
   children,
   isActive = false,
-  onSelect,
+  onSelect
 }: PreviewSectionProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: sectionId,
+    id: moduleId
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition
   };
 
   return (
@@ -34,13 +31,13 @@ export default function PreviewSection({
       ref={setNodeRef}
       style={style}
       className={`resume-section${isDragging ? " resume-section--dragging" : ""}${isActive ? " resume-section--active" : ""}`}
-      data-section-id={sectionId}
-      aria-labelledby={`resume-section-title-${sectionId}`}
+      data-module-id={moduleId}
+      aria-labelledby={`resume-section-title-${moduleId}`}
       onClick={onSelect}
     >
       <header className="resume-section__header">
         <div className="resume-section__heading">
-          <h2 className="resume-section__title" id={`resume-section-title-${sectionId}`}>
+          <h2 className="resume-section__title" id={`resume-section-title-${moduleId}`}>
             {title}
           </h2>
         </div>

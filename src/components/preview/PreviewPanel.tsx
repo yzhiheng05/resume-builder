@@ -5,135 +5,116 @@ import {
   PointerSensor,
   type DragEndEvent,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
 import PreviewSection from "./PreviewSection";
-import {
-  ALL_SECTION_IDS,
-  SECTION_LABELS,
-  renderSectionContent,
-  type ResumeSections,
-  type SectionId,
-} from "./sectionRenderers";
-
-export const DEFAULT_SECTION_ORDER: SectionId[] = [...ALL_SECTION_IDS];
-
-export type SectionVisibility = Partial<Record<SectionId, boolean>>;
+import { renderModuleContent } from "./sectionRenderers";
+import type { ResumeModuleInstance } from "../../types/resume";
 
 export interface PreviewPanelProps {
-  sections: ResumeSections;
-  sectionOrder: SectionId[];
-  sectionVisibility?: SectionVisibility;
-  activeSectionId?: SectionId | null;
+  modules: ResumeModuleInstance[];
+  moduleOrder: string[];
+  activeModuleId?: string | null;
   heading?: string;
-  onSectionOrderChange?: (nextOrder: SectionId[]) => void;
-  onSectionSelect?: (sectionId: SectionId) => void;
+  hint?: string;
+  onModuleOrderChange?: (nextOrder: string[]) => void;
+  onModuleSelect?: (moduleId: string) => void;
 }
 
-export interface PreviewSectionItem {
-  id: SectionId;
+export interface PreviewModuleItem {
+  id: string;
   title: string;
-  content: ResumeSections[SectionId];
+  module: ResumeModuleInstance;
 }
 
-function isSectionVisible(sectionId: SectionId, sectionVisibility?: SectionVisibility): boolean {
-  return sectionVisibility?.[sectionId] !== false;
-}
-
-export function normalizeSectionOrder(sectionOrder: SectionId[]): SectionId[] {
-  const deduped = sectionOrder.filter(
-    (sectionId, index) => ALL_SECTION_IDS.includes(sectionId) && sectionOrder.indexOf(sectionId) === index
+export function normalizeModuleOrder(moduleOrder: string[], modules: ResumeModuleInstance[]): string[] {
+  const moduleIds = modules.map((module) => module.id);
+  const deduped = moduleOrder.filter(
+    (moduleId, index) => moduleIds.includes(moduleId) && moduleOrder.indexOf(moduleId) === index
   );
 
-  return [...deduped, ...ALL_SECTION_IDS.filter((sectionId) => !deduped.includes(sectionId))];
+  return [...deduped, ...moduleIds.filter((moduleId) => !deduped.includes(moduleId))];
 }
 
-export function moveSectionOrder(
-  sectionOrder: SectionId[],
-  activeId: SectionId,
-  overId: SectionId
-): SectionId[] {
+export function moveModuleOrder(moduleOrder: string[], activeId: string, overId: string): string[] {
   if (activeId === overId) {
-    return sectionOrder;
+    return moduleOrder;
   }
 
-  const normalizedOrder = normalizeSectionOrder(sectionOrder);
-  const activeIndex = normalizedOrder.indexOf(activeId);
-  const overIndex = normalizedOrder.indexOf(overId);
+  const activeIndex = moduleOrder.indexOf(activeId);
+  const overIndex = moduleOrder.indexOf(overId);
 
   if (activeIndex === -1 || overIndex === -1) {
-    return normalizedOrder;
+    return moduleOrder;
   }
 
-  return arrayMove(normalizedOrder, activeIndex, overIndex);
+  return arrayMove(moduleOrder, activeIndex, overIndex);
 }
 
-export function getVisibleSectionOrder(
-  sectionOrder: SectionId[],
-  sectionVisibility: SectionVisibility | undefined,
-  sections: ResumeSections
-): SectionId[] {
-  const availableIds = Object.keys(sections) as SectionId[];
-  const normalizedOrder = normalizeSectionOrder(sectionOrder).filter((sectionId) =>
-    availableIds.includes(sectionId)
-  );
+export function getVisibleModuleOrder(moduleOrder: string[], modules: ResumeModuleInstance[]): string[] {
+  const normalizedOrder = normalizeModuleOrder(moduleOrder, modules);
+  const visibleIds = new Set(modules.filter((module) => module.visible).map((module) => module.id));
 
-  return normalizedOrder.filter((sectionId) => isSectionVisible(sectionId, sectionVisibility));
+  return normalizedOrder.filter((moduleId) => visibleIds.has(moduleId));
 }
 
-export function buildPreviewSections(
-  sections: ResumeSections,
-  sectionOrder: SectionId[],
-  sectionVisibility?: SectionVisibility
-): PreviewSectionItem[] {
-  return getVisibleSectionOrder(sectionOrder, sectionVisibility, sections).map((sectionId) => ({
-    id: sectionId,
-    title: SECTION_LABELS[sectionId],
-    content: sections[sectionId],
-  }));
+export function buildPreviewModules(
+  modules: ResumeModuleInstance[],
+  moduleOrder: string[]
+): PreviewModuleItem[] {
+  const moduleById = new Map(modules.map((module) => [module.id, module] as const));
+
+  return getVisibleModuleOrder(moduleOrder, modules)
+    .map((moduleId) => moduleById.get(moduleId))
+    .filter((module): module is ResumeModuleInstance => Boolean(module))
+    .map((module) => ({
+      id: module.id,
+      title: module.title,
+      module
+    }));
 }
 
 export default function PreviewPanel({
-  sections,
-  sectionOrder,
-  sectionVisibility,
-  activeSectionId,
+  modules,
+  moduleOrder,
+  activeModuleId,
   heading = "实时预览",
-  onSectionOrderChange,
-  onSectionSelect,
+  hint = "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。",
+  onModuleOrderChange,
+  onModuleSelect
 }: PreviewPanelProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
-      },
+        distance: 8
+      }
     }),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates
     })
   );
 
-  const previewSections = buildPreviewSections(sections, sectionOrder, sectionVisibility);
+  const previewModules = buildPreviewModules(modules, moduleOrder);
 
   function handleDragEnd(event: DragEndEvent) {
-    const activeId = String(event.active.id) as SectionId;
-    const overId = event.over ? (String(event.over.id) as SectionId) : undefined;
+    const activeId = String(event.active.id);
+    const overId = event.over ? String(event.over.id) : undefined;
 
     if (!overId) {
       return;
     }
 
-    const nextOrder = moveSectionOrder(sectionOrder, activeId, overId);
+    const nextOrder = moveModuleOrder(moduleOrder, activeId, overId);
 
-    if (nextOrder !== sectionOrder) {
-      onSectionOrderChange?.(nextOrder);
+    if (nextOrder !== moduleOrder) {
+      onModuleOrderChange?.(nextOrder);
     }
   }
 
@@ -141,34 +122,34 @@ export default function PreviewPanel({
     <section className="preview-panel" aria-label="简历预览面板">
       <div className="preview-panel__header">
         <div>
-          <p className="preview-panel__eyebrow">中文优先模板</p>
+          <p className="preview-panel__eyebrow">通用求职模板</p>
           <h1 className="preview-panel__title">{heading}</h1>
         </div>
-        <p className="preview-panel__hint">在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。</p>
+        <p className="preview-panel__hint">{hint}</p>
       </div>
 
       <div className="preview-surface" data-resume-preview-root="true">
         <div className="resume-paper">
-          {previewSections.length === 0 ? (
+          {previewModules.length === 0 ? (
             <div className="preview-empty-state">
               <h2>暂无可展示模块</h2>
-              <p>请在左侧开启至少一个模块，预览会按当前排序实时更新。</p>
+              <p>请在左侧添加并开启至少一个模块，预览会按当前排序实时更新。</p>
             </div>
           ) : (
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} sensors={sensors}>
               <SortableContext
-                items={previewSections.map((section) => section.id)}
+                items={previewModules.map((module) => module.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {previewSections.map((section) => (
+                {previewModules.map((previewModule) => (
                   <PreviewSection
-                    key={section.id}
-                    sectionId={section.id}
-                    title={section.title}
-                    isActive={activeSectionId === section.id}
-                    onSelect={() => onSectionSelect?.(section.id)}
+                    key={previewModule.id}
+                    moduleId={previewModule.id}
+                    title={previewModule.title}
+                    isActive={activeModuleId === previewModule.id}
+                    onSelect={() => onModuleSelect?.(previewModule.id)}
                   >
-                    {renderSectionContent({ sectionId: section.id, data: section.content })}
+                    {renderModuleContent(previewModule.module)}
                   </PreviewSection>
                 ))}
               </SortableContext>

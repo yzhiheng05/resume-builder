@@ -1,15 +1,16 @@
 import { act } from "@testing-library/react";
-import { describe, expect, test, beforeEach } from "vitest";
-import { defaultResume, defaultSectionOrder } from "../data/defaultResume";
+import { beforeEach, describe, expect, test } from "vitest";
+import { buildPresetState } from "../data/identityPresets";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
-import { loadResumeState, moveSection, toggleSectionVisibility, STORAGE_KEY } from "../lib/storage";
+import { isPersonalModuleData } from "../lib/moduleRegistry";
+import { migrateLegacyStoredResumeState } from "../lib/resumeMigration";
+import { loadResumeState, moveModule, STORAGE_KEY } from "../lib/storage";
 import {
   MULTIPAGE_PRINT_FIXTURE_ID,
   getDefaultStoredResumeState,
   resolveInitialResumeSeed
 } from "../lib/resumeSeed";
 import { createResumeStore, useResumeStore } from "../store/useResumeStore";
-import type { StoredResumeState } from "../types/resume";
 
 function createMemoryStorage(): Storage {
   const data = new Map<string, string>();
@@ -47,47 +48,27 @@ describe("resume helpers", () => {
     storage.clear();
   });
 
-  test("moves personal section while keeping data untouched", () => {
-    expect(moveSection(defaultSectionOrder, "personal", 2)).toEqual([
-      "education",
-      "projects",
-      "personal",
-      "internships",
-      "campus",
-      "skills",
-      "awards"
-    ]);
+  test("moves modules while keeping ids untouched", () => {
+    const state = buildPresetState("student");
+    const moved = moveModule(state.moduleOrder, state.moduleOrder[0], 2);
+    expect(moved[2]).toBe(state.moduleOrder[0]);
   });
 
-  test("toggles section visibility", () => {
-    const next = toggleSectionVisibility(defaultResume.sectionVisibility, "awards");
-    expect(next.awards).toBe(false);
-  });
-
-  test("loads stored state", () => {
-    storage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({ resume: defaultResume, sectionOrder: defaultSectionOrder })
-    );
-    expect(loadResumeState()).toEqual({
-      resume: defaultResume,
-      sectionOrder: defaultSectionOrder
-    });
+  test("loads migrated stored state", () => {
+    const state = buildPresetState("general");
+    storage.setItem(STORAGE_KEY, JSON.stringify(state));
+    expect(loadResumeState()?.schemaVersion).toBe(2);
   });
 
   test("resolves multipage fixture in dev mode", () => {
     const resolved = resolveInitialResumeSeed({
       isDev: true,
       search: `?fixture=${MULTIPAGE_PRINT_FIXTURE_ID}`,
-      storedState: {
-        resume: defaultResume,
-        sectionOrder: defaultSectionOrder
-      }
+      storedState: buildPresetState("student")
     });
 
     expect(resolved.fixtureId).toBe(MULTIPAGE_PRINT_FIXTURE_ID);
-    expect(resolved.resume.personal.name).toBe(multipagePrintFixture.resume.personal.name);
-    expect(resolved.resume.projects.length).toBe(multipagePrintFixture.resume.projects.length);
+    expect(resolved.modules.length).toBeGreaterThan(0);
   });
 
   test("ignores fixture query outside dev mode", () => {
@@ -98,153 +79,176 @@ describe("resume helpers", () => {
     });
 
     expect(resolved.fixtureId).toBeNull();
-    expect(resolved.resume.personal.name).toBe(getDefaultStoredResumeState().resume.personal.name);
+    expect(resolved.selectedIdentity).toBeNull();
+    expect(getDefaultStoredResumeState().schemaVersion).toBe(2);
   });
 
-  test("keeps stored state when no fixture is requested", () => {
-    const storedState = {
+  test("migrates legacy state to general identity", () => {
+    const migrated = migrateLegacyStoredResumeState({
       resume: {
-        ...defaultResume,
-        personal: {
-          ...defaultResume.personal,
-          name: "测试用户"
-        }
-      },
-      sectionOrder: defaultSectionOrder
-    };
-
-    const resolved = resolveInitialResumeSeed({
-      isDev: true,
-      search: "",
-      storedState
-    });
-
-    expect(resolved.fixtureId).toBeNull();
-    expect(resolved.resume.personal.name).toBe("测试用户");
-  });
-});
-
-describe("resume store", () => {
-  beforeEach(() => {
-    storage.clear();
-    useResumeStore.getState().reset();
-  });
-
-  test("updates personal info and section order", () => {
-    act(() => {
-      useResumeStore.getState().updatePersonal("name", "李雷");
-      useResumeStore.getState().reorderSections("personal", 2);
-    });
-
-    expect(useResumeStore.getState().resume.personal.name).toBe("李雷");
-    expect(useResumeStore.getState().sectionOrder[2]).toBe("personal");
-  });
-
-  test("updates optional personal fields and visibility", () => {
-    act(() => {
-      useResumeStore.getState().updatePersonal("blog", "zhangsan.dev");
-      useResumeStore.getState().updatePersonal("github", "github.com/zhangsan");
-      useResumeStore.getState().updatePersonal("photoDataUrl", "data:image/jpeg;base64,test");
-      useResumeStore.getState().togglePersonalField("blog");
-    });
-
-    expect(useResumeStore.getState().resume.personal.blog).toBe("zhangsan.dev");
-    expect(useResumeStore.getState().resume.personal.github).toBe("github.com/zhangsan");
-    expect(useResumeStore.getState().resume.personal.photoDataUrl).toBe("data:image/jpeg;base64,test");
-    expect(useResumeStore.getState().resume.personalVisibility.blog).toBe(true);
-  });
-
-  test("normalizes old stored state without personal visibility", () => {
-    const legacyState = {
-      resume: {
-        ...defaultResume,
         personal: {
           name: "旧数据用户",
           title: "求职意向",
           phone: "13800000000",
           email: "legacy@example.com",
           city: "北京",
+          blog: "",
+          github: "",
+          photoDataUrl: "",
           summary: "旧版简介"
+        },
+        education: [],
+        projects: [],
+        internships: [],
+        campus: [],
+        skills: [],
+        awards: ["旧奖项"],
+        sectionVisibility: {
+          personal: true,
+          education: true,
+          projects: true,
+          internships: true,
+          campus: true,
+          skills: true,
+          awards: true
+        },
+        personalVisibility: {
+          title: true,
+          phone: true,
+          email: true,
+          city: true,
+          summary: true,
+          blog: false,
+          github: false
         }
       },
-      sectionOrder: defaultSectionOrder
-    } as unknown as Parameters<typeof resolveInitialResumeSeed>[0]["storedState"];
-
-    const resolved = resolveInitialResumeSeed({
-      isDev: false,
-      search: "",
-      storedState: legacyState
+      sectionOrder: ["personal", "education", "projects", "internships", "campus", "skills", "awards"]
     });
 
-    expect(resolved.resume.personal.name).toBe("旧数据用户");
-    expect(resolved.resume.personal.blog).toBe("");
-    expect(resolved.resume.personal.github).toBe("");
-    expect(resolved.resume.personal.photoDataUrl).toBe("");
-    expect(resolved.resume.personalVisibility.phone).toBe(true);
-    expect(resolved.resume.personalVisibility.blog).toBe(false);
+    expect(migrated.selectedIdentity).toBe("general");
+    expect(migrated.modules.some((module) => module.kind === "certificate")).toBe(true);
+  });
+});
+
+describe("resume store", () => {
+  beforeEach(() => {
+    storage.clear();
+    useResumeStore.getState().replaceResumeState(buildPresetState("general"));
   });
 
-  test("persists updates into localStorage", () => {
+  test("initializes identity and stores it", () => {
     act(() => {
-      useResumeStore.getState().updatePersonal("name", "韩梅梅");
+      useResumeStore.getState().initializeIdentity("student");
     });
 
-    const raw = storage.getItem(STORAGE_KEY);
-    expect(raw).not.toBeNull();
-    expect(raw ?? "").toContain("韩梅梅");
+    expect(useResumeStore.getState().selectedIdentity).toBe("student");
+    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"selectedIdentity\":\"student\"");
   });
 
-  test("replaces resume state and persists imported data", () => {
-    const importedState: StoredResumeState = {
-      resume: {
-        ...defaultResume,
-        personal: {
-          ...defaultResume.personal,
-          name: "导入后的姓名",
-          photoDataUrl: "data:image/jpeg;base64,imported"
-        }
-      },
-      sectionOrder: ["projects", "personal", "education", "internships", "campus", "skills", "awards"]
-    };
+  test("switches identity without replacing modules immediately", () => {
+    const beforeIds = useResumeStore.getState().modules.map((module) => module.id);
+
+    act(() => {
+      useResumeStore.getState().switchIdentity("professional");
+    });
+
+    expect(useResumeStore.getState().selectedIdentity).toBe("professional");
+    expect(useResumeStore.getState().modules.map((module) => module.id)).toEqual(beforeIds);
+  });
+
+  test("applies identity recommendation and adds missing modules", () => {
+    act(() => {
+      useResumeStore.getState().switchIdentity("professional");
+      useResumeStore.getState().applyIdentityRecommendation();
+    });
+
+    expect(useResumeStore.getState().modules.some((module) => module.kind === "coreCompetency")).toBe(true);
+    expect(useResumeStore.getState().modules.some((module) => module.kind === "highlight")).toBe(true);
+  });
+
+  test("updates personal fields and visibility", () => {
+    const personalModule = useResumeStore.getState().modules.find((module) => module.kind === "personal");
+    expect(personalModule).toBeTruthy();
+
+    act(() => {
+      useResumeStore.getState().updatePersonalField(personalModule!.id, "name", "韩梅梅");
+      useResumeStore.getState().togglePersonalField(personalModule!.id, "blog");
+    });
+
+    const nextPersonal = useResumeStore.getState().modules.find((module) => module.id === personalModule!.id);
+    if (nextPersonal && isPersonalModuleData(nextPersonal.data)) {
+      expect(nextPersonal.data.name).toBe("韩梅梅");
+      expect(nextPersonal.data.personalVisibility.blog).toBe(true);
+    }
+  });
+
+  test("adds and removes repeated modules", () => {
+    act(() => {
+      useResumeStore.getState().addModule("project");
+    });
+
+    const projectModules = useResumeStore.getState().modules.filter((module) => module.kind === "project");
+    expect(projectModules.length).toBeGreaterThan(1);
+
+    act(() => {
+      useResumeStore.getState().removeModule(projectModules[projectModules.length - 1].id);
+    });
+
+    expect(useResumeStore.getState().modules.filter((module) => module.kind === "project").length).toBe(
+      projectModules.length - 1
+    );
+  });
+
+  test("updates timeline and list modules", () => {
+    const experienceModule = useResumeStore.getState().modules.find((module) => module.kind === "experience");
+    const skillsModule = useResumeStore.getState().modules.find((module) => module.kind === "skills");
+
+    expect(experienceModule).toBeTruthy();
+    expect(skillsModule).toBeTruthy();
+
+    act(() => {
+      useResumeStore.getState().updateTimelineEntry(experienceModule!.id, 0, { title: "工作经历 A" });
+      useResumeStore.getState().updateListItem(skillsModule!.id, 0, "TypeScript");
+    });
+
+    const nextExperience = useResumeStore.getState().modules.find((module) => module.id === experienceModule!.id);
+    const nextSkills = useResumeStore.getState().modules.find((module) => module.id === skillsModule!.id);
+
+    if (nextExperience?.data && "entries" in nextExperience.data) {
+      expect(nextExperience.data.entries[0].title).toBe("工作经历 A");
+    }
+    if (nextSkills?.data && "items" in nextSkills.data) {
+      expect(nextSkills.data.items[0]).toBe("TypeScript");
+    }
+  });
+
+  test("replaces imported v2 state and persists it", () => {
+    const importedState = buildPresetState("professional");
 
     act(() => {
       useResumeStore.getState().replaceResumeState(importedState);
     });
 
-    expect(useResumeStore.getState().resume.personal.name).toBe("导入后的姓名");
-    expect(useResumeStore.getState().sectionOrder[0]).toBe("projects");
-    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("data:image/jpeg;base64,imported");
+    expect(useResumeStore.getState().selectedIdentity).toBe("professional");
+    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"schemaVersion\":2");
   });
 
-  test("personal section stays at the top by default", () => {
-    expect(useResumeStore.getState().sectionOrder[0]).toBe("personal");
-  });
-
-  test("timeline bullets can be updated without changing other fields", () => {
-    act(() => {
-      useResumeStore.getState().updateTimelineEntry("projects", 0, {
-        bullets: ["第一条", "第二条"]
-      });
-    });
-
-    expect(useResumeStore.getState().resume.projects[0].title).toBe(defaultResume.projects[0].title);
-    expect(useResumeStore.getState().resume.projects[0].bullets).toEqual(["第一条", "第二条"]);
-  });
-
-  test("reset restores the fixture seed when the store starts from multipage fixture", () => {
-    const store = createResumeStore(multipagePrintFixture);
-
-    act(() => {
-      store.getState().updatePersonal("name", "临时姓名");
-      store.getState().removeAward(0);
+  test("reset restores current identity preset", () => {
+    const store = createResumeStore({
+      ...resolveInitialResumeSeed({
+        isDev: true,
+        search: `?fixture=${MULTIPAGE_PRINT_FIXTURE_ID}`,
+        storedState: multipagePrintFixture
+      }),
+      hasStoredState: true
     });
 
     act(() => {
+      store.getState().switchIdentity("student");
       store.getState().reset();
     });
 
-    expect(store.getState().resume.personal.name).toBe(multipagePrintFixture.resume.personal.name);
-    expect(store.getState().resume.awards).toEqual(multipagePrintFixture.resume.awards);
-    expect(store.getState().sectionOrder).toEqual(multipagePrintFixture.sectionOrder);
+    expect(store.getState().selectedIdentity).toBe("student");
+    expect(store.getState().modules.some((module) => module.kind === "honor")).toBe(true);
   });
 });

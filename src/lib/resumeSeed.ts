@@ -1,50 +1,26 @@
-import { defaultPersonalVisibility, defaultResume, defaultSectionOrder } from "../data/defaultResume";
+import { buildPresetState, normalizeModuleOrder } from "../data/identityPresets";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
-import type { ResumeData, StoredResumeState } from "../types/resume";
+import { cloneStoredResumeStateV2, normalizeResumeDraftState } from "./resumeMigration";
+import type { ResumeDraftState, StoredResumeStateV2 } from "../types/resume";
 
 export const FIXTURE_QUERY_PARAM = "fixture";
 export const MULTIPAGE_PRINT_FIXTURE_ID = "multipage-print";
 
 export type ResumeFixtureId = typeof MULTIPAGE_PRINT_FIXTURE_ID;
 
-export interface ResolvedResumeSeed extends StoredResumeState {
+export interface ResolvedResumeSeed extends ResumeDraftState {
   fixtureId: ResumeFixtureId | null;
+  hasStoredState: boolean;
 }
 
 interface ResolveResumeSeedOptions {
   isDev: boolean;
   search: string;
-  storedState: StoredResumeState | null;
+  storedState: StoredResumeStateV2 | null;
 }
 
-const defaultStoredResumeState: StoredResumeState = {
-  resume: defaultResume,
-  sectionOrder: defaultSectionOrder
-};
-
-export function cloneStoredResumeState(state: StoredResumeState): StoredResumeState {
-  return JSON.parse(JSON.stringify(state)) as StoredResumeState;
-}
-
-export function normalizeResumeData(resume: ResumeData): ResumeData {
-  return {
-    ...resume,
-    personal: {
-      ...defaultResume.personal,
-      ...resume.personal
-    },
-    personalVisibility: {
-      ...defaultPersonalVisibility,
-      ...resume.personalVisibility
-    }
-  };
-}
-
-export function normalizeStoredResumeState(state: StoredResumeState): StoredResumeState {
-  return {
-    ...state,
-    resume: normalizeResumeData(state.resume)
-  };
+export function cloneStoredResumeState(state: StoredResumeStateV2): StoredResumeStateV2 {
+  return cloneStoredResumeStateV2(state);
 }
 
 export function getFixtureIdFromSearch(search: string): ResumeFixtureId | null {
@@ -54,16 +30,31 @@ export function getFixtureIdFromSearch(search: string): ResumeFixtureId | null {
   return value === MULTIPAGE_PRINT_FIXTURE_ID ? MULTIPAGE_PRINT_FIXTURE_ID : null;
 }
 
-export function getFixtureState(fixtureId: ResumeFixtureId): StoredResumeState {
+export function getFixtureState(fixtureId: ResumeFixtureId): StoredResumeStateV2 {
   if (fixtureId === MULTIPAGE_PRINT_FIXTURE_ID) {
     return multipagePrintFixture;
   }
 
-  return defaultStoredResumeState;
+  return buildPresetState("general");
 }
 
-export function getDefaultStoredResumeState(): StoredResumeState {
-  return defaultStoredResumeState;
+export function getDefaultStoredResumeState(): StoredResumeStateV2 {
+  return buildPresetState("general");
+}
+
+export function normalizeStoredResumeState(state: StoredResumeStateV2): StoredResumeStateV2 {
+  const normalized = normalizeResumeDraftState({
+    selectedIdentity: state.selectedIdentity,
+    modules: state.modules,
+    moduleOrder: normalizeModuleOrder(state.moduleOrder, state.modules)
+  });
+
+  return {
+    schemaVersion: 2,
+    selectedIdentity: normalized.selectedIdentity ?? "general",
+    modules: normalized.modules,
+    moduleOrder: normalized.moduleOrder
+  };
 }
 
 export function resolveInitialResumeSeed({
@@ -74,21 +65,34 @@ export function resolveInitialResumeSeed({
   const fixtureId = isDev ? getFixtureIdFromSearch(search) : null;
 
   if (fixtureId) {
+    const fixtureState = normalizeStoredResumeState(cloneStoredResumeState(getFixtureState(fixtureId)));
+
     return {
-      ...normalizeStoredResumeState(cloneStoredResumeState(getFixtureState(fixtureId))),
-      fixtureId
+      selectedIdentity: fixtureState.selectedIdentity,
+      modules: fixtureState.modules,
+      moduleOrder: fixtureState.moduleOrder,
+      fixtureId,
+      hasStoredState: true
     };
   }
 
   if (storedState) {
+    const normalized = normalizeStoredResumeState(cloneStoredResumeState(storedState));
+
     return {
-      ...normalizeStoredResumeState(cloneStoredResumeState(storedState)),
-      fixtureId: null
+      selectedIdentity: normalized.selectedIdentity,
+      modules: normalized.modules,
+      moduleOrder: normalized.moduleOrder,
+      fixtureId: null,
+      hasStoredState: true
     };
   }
 
   return {
-    ...normalizeStoredResumeState(cloneStoredResumeState(getDefaultStoredResumeState())),
-    fixtureId: null
+    selectedIdentity: null,
+    modules: [],
+    moduleOrder: [],
+    fixtureId: null,
+    hasStoredState: false
   };
 }

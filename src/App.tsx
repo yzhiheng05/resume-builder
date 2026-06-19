@@ -1,7 +1,17 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
-import type { ResumeSections, SectionId } from "./components/preview/sectionRenderers";
+import { getIdentityPreset, getIdentityPresets } from "./data/identityPresets";
+import {
+  canAddMultipleModules,
+  getModuleCatalog,
+  getModuleLabel,
+  getModuleShape,
+  isListModuleData,
+  isPersonalModuleData,
+  isTextModuleData,
+  isTimelineModuleData
+} from "./lib/moduleRegistry";
 import { fileToResizedDataUrl } from "./lib/image";
 import {
   createResumeBackupFilename,
@@ -9,248 +19,49 @@ import {
   serializeResumeBackup
 } from "./lib/resumeBackup";
 import { useResumeStore } from "./store/useResumeStore";
-import type { PersonalVisibleField, ResumeData } from "./types/resume";
+import type {
+  IdentityPreset,
+  ModuleKind,
+  PersonalModuleData,
+  PersonalVisibleField,
+  ResumeModuleInstance
+} from "./types/resume";
 import "./styles.css";
-
-const sectionLabels: Record<SectionId, string> = {
-  personal: "个人信息",
-  education: "教育经历",
-  projects: "项目经历",
-  internships: "实习经历",
-  campus: "校园经历",
-  skills: "技能",
-  awards: "获奖 / 证书"
-};
-
-type TimelineSectionId = "education" | "projects" | "internships" | "campus";
-type PersonalField = keyof ResumeData["personal"];
-
-const personalFields: Array<{
-  key: PersonalField;
-  label: string;
-  visibilityKey?: PersonalVisibleField;
-  className?: string;
-  multiline?: boolean;
-  rows?: number;
-}> = [
-  { key: "name", label: "姓名" },
-  { key: "title", label: "求职意向", visibilityKey: "title" },
-  { key: "phone", label: "手机", visibilityKey: "phone" },
-  { key: "email", label: "邮箱", visibilityKey: "email" },
-  { key: "city", label: "城市", visibilityKey: "city" },
-  { key: "blog", label: "个人博客", visibilityKey: "blog" },
-  { key: "github", label: "GitHub", visibilityKey: "github" },
-  {
-    key: "summary",
-    label: "个人简介",
-    visibilityKey: "summary",
-    className: "form-span-full",
-    multiline: true,
-    rows: 4
-  }
-];
-
-function SectionCard({
-  title,
-  visible,
-  isExpanded,
-  isActive,
-  sectionRef,
-  onToggle,
-  onExpand,
-  children
-}: {
-  title: string;
-  visible: boolean;
-  isExpanded: boolean;
-  isActive: boolean;
-  sectionRef?: (node: HTMLDivElement | null) => void;
-  onToggle: () => void;
-  onExpand: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <article
-      ref={sectionRef}
-      className={`section-card${isExpanded ? " section-card--expanded" : ""}${isActive ? " section-card--active" : ""}`}
-    >
-      <div className="section-card__header">
-        <label className="section-card__toggle">
-          <input
-            type="checkbox"
-            checked={visible}
-            onChange={onToggle}
-          />
-          <span>{title}</span>
-        </label>
-        <button
-          type="button"
-          className="section-card__summary"
-          onClick={onExpand}
-          aria-expanded={visible && isExpanded}
-        >
-          <span className="section-card__state">{visible ? "显示中" : "已隐藏"}</span>
-          <span className="section-card__chevron" aria-hidden="true">
-            {visible && isExpanded ? "−" : "+"}
-          </span>
-        </button>
-      </div>
-      {visible && isExpanded ? <div className="section-card__body">{children}</div> : null}
-    </article>
-  );
-}
-
-function getAdjacentVisibleSectionId(sectionOrder: SectionId[], visibleSectionIds: SectionId[], sectionId: SectionId) {
-  const visibleIndex = visibleSectionIds.indexOf(sectionId);
-
-  if (visibleIndex === -1) {
-    return visibleSectionIds[0] ?? null;
-  }
-
-  return visibleSectionIds[visibleIndex + 1] ?? visibleSectionIds[visibleIndex - 1] ?? null;
-}
 
 function EmptyDraftNote({ text }: { text: string }) {
   return <p className="editor-empty-note">{text}</p>;
 }
 
-function AutoResizeTextarea({
-  value,
-  minRows = 3,
-  className,
-  ...props
-}: Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value"> & {
-  value: string;
-  minRows?: number;
-}) {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useLayoutEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) {
-      return;
-    }
-
-    textarea.style.height = "auto";
-    const computed = window.getComputedStyle(textarea);
-    const lineHeight = Number.parseFloat(computed.lineHeight) || 24;
-    const borderSize =
-      Number.parseFloat(computed.borderTopWidth) + Number.parseFloat(computed.borderBottomWidth);
-    const paddingSize =
-      Number.parseFloat(computed.paddingTop) + Number.parseFloat(computed.paddingBottom);
-    const minHeight = lineHeight * minRows + borderSize + paddingSize;
-
-    textarea.style.height = `${Math.max(textarea.scrollHeight, minHeight)}px`;
-  }, [minRows, value]);
+function IdentityEntryScreen({ onSelect }: { onSelect: (identity: IdentityPreset) => void }) {
+  const presets = getIdentityPresets();
 
   return (
-    <textarea
-      {...props}
-      ref={textareaRef}
-      className={`auto-resize-textarea${className ? ` ${className}` : ""}`}
-      rows={minRows}
-      value={value}
-    />
-  );
-}
-
-function PersonalFieldEditor({
-  field,
-  value,
-  visible,
-  onChange,
-  onToggleVisibility
-}: {
-  field: (typeof personalFields)[number];
-  value: string;
-  visible?: boolean;
-  onChange: (value: string) => void;
-  onToggleVisibility?: () => void;
-}) {
-  const inputId = `personal-${field.key}`;
-
-  return (
-    <div className={`personal-field${field.className ? ` ${field.className}` : ""}`}>
-      <div className="personal-field__header">
-        <label htmlFor={inputId}>{field.label}</label>
-        {field.visibilityKey ? (
-          <label className="visibility-toggle">
-            <input
-              type="checkbox"
-              checked={Boolean(visible)}
-              onChange={onToggleVisibility}
-            />
-            <span>显示到简历</span>
-          </label>
-        ) : null}
+    <div className="identity-screen">
+      <div className="identity-screen__hero">
+        <p className="eyebrow">General Job Resume Builder</p>
+        <h1>先选择你的简历起点</h1>
+        <p>学生、职场人和通用求职者使用同一个编辑器内核，但会获得不同的默认模块、排序和填写提示。</p>
       </div>
-      {field.multiline ? (
-        <AutoResizeTextarea
-          id={inputId}
-          aria-label={field.label}
-          minRows={field.rows ?? 3}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <input
-          id={inputId}
-          aria-label={field.label}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      )}
-    </div>
-  );
-}
-
-function BulletListEditor({
-  items,
-  onChangeItem,
-  onRemoveItem,
-  onAddItem
-}: {
-  items: string[];
-  onChangeItem: (index: number, value: string) => void;
-  onRemoveItem: (index: number) => void;
-  onAddItem: () => void;
-}) {
-  return (
-    <div className="field-stack form-span-full">
-      <span className="field-stack__label">亮点</span>
-      {items.length === 0 ? <EmptyDraftNote text="暂无亮点，可点击下方新增。" /> : null}
-      <div className="section-list section-list--nested">
-        {items.map((item, index) => (
-          <div key={`bullet-${index}`} className="inline-row inline-row--stacked">
-            <label className="inline-row__field">
-              亮点 {index + 1}
-              <AutoResizeTextarea
-                aria-label={`亮点 ${index + 1}`}
-                minRows={3}
-                value={item}
-                onChange={(event) => onChangeItem(index, event.target.value)}
-              />
-            </label>
-            <button
-              type="button"
-              className="ghost-button"
-              aria-label={`删除亮点 ${index + 1}`}
-              onClick={() => onRemoveItem(index)}
-            >
-              删除
-            </button>
-          </div>
+      <div className="identity-grid">
+        {presets.map((preset) => (
+          <button
+            key={preset.id}
+            type="button"
+            className="identity-card"
+            onClick={() => onSelect(preset.id)}
+          >
+            <span className="identity-card__label">{preset.label}</span>
+            <span className="identity-card__intro">{preset.intro}</span>
+            <span className="identity-card__hint">{preset.focusHint}</span>
+          </button>
         ))}
       </div>
-      <button type="button" className="secondary-button" onClick={onAddItem}>
-        新增亮点
-      </button>
     </div>
   );
 }
 
 function SimpleListEditor({
-  items,
+  module,
   itemLabel,
   addLabel,
   emptyNote,
@@ -259,7 +70,7 @@ function SimpleListEditor({
   onRemoveItem,
   onAddItem
 }: {
-  items: string[];
+  module: ResumeModuleInstance;
   itemLabel: string;
   addLabel: string;
   emptyNote: string;
@@ -268,17 +79,21 @@ function SimpleListEditor({
   onRemoveItem: (index: number) => void;
   onAddItem: () => void;
 }) {
+  if (!isListModuleData(module.data)) {
+    return null;
+  }
+
   return (
     <div className="section-list">
-      {items.length === 0 ? <EmptyDraftNote text={emptyNote} /> : null}
-      {items.map((item, index) => (
-        <div key={`${itemLabel}-${index}`} className="inline-row">
+      {module.data.items.length === 0 ? <EmptyDraftNote text={emptyNote} /> : null}
+      {module.data.items.map((item, index) => (
+        <div key={`${module.id}-${index}`} className="inline-row">
           <label className="inline-row__field">
             {itemLabel} {index + 1}
             {multiline ? (
-              <AutoResizeTextarea
+              <textarea
                 aria-label={`${itemLabel} ${index + 1}`}
-                minRows={3}
+                rows={3}
                 value={item}
                 onChange={(event) => onChangeItem(index, event.target.value)}
               />
@@ -307,200 +122,341 @@ function SimpleListEditor({
   );
 }
 
+function TimelineEditor({
+  module,
+  onUpdateEntry,
+  onAddEntry,
+  onRemoveEntry
+}: {
+  module: ResumeModuleInstance;
+  onUpdateEntry: (index: number, field: "title" | "org" | "start" | "end" | "location", value: string) => void;
+  onAddEntry: () => void;
+  onRemoveEntry: (index: number) => void;
+}) {
+  if (!isTimelineModuleData(module.data)) {
+    return null;
+  }
+
+  return (
+    <div className="section-list">
+      {module.data.entries.map((entry, index) => (
+        <article key={entry.id} className="list-item">
+          <div className="form-grid">
+            <label>
+              标题
+              <input value={entry.title} onChange={(event) => onUpdateEntry(index, "title", event.target.value)} />
+            </label>
+            <label>
+              组织
+              <input value={entry.org} onChange={(event) => onUpdateEntry(index, "org", event.target.value)} />
+            </label>
+            <label>
+              开始时间
+              <input value={entry.start} onChange={(event) => onUpdateEntry(index, "start", event.target.value)} />
+            </label>
+            <label>
+              结束时间
+              <input value={entry.end} onChange={(event) => onUpdateEntry(index, "end", event.target.value)} />
+            </label>
+            <label className="form-span-full">
+              地点
+              <input
+                value={entry.location}
+                onChange={(event) => onUpdateEntry(index, "location", event.target.value)}
+              />
+            </label>
+          </div>
+          <div className="list-item__actions">
+            <button
+              type="button"
+              className="ghost-button"
+              aria-label={`删除${module.title}条目 ${index + 1}`}
+              onClick={() => onRemoveEntry(index)}
+            >
+              删除条目
+            </button>
+          </div>
+        </article>
+      ))}
+      <button type="button" className="secondary-button" onClick={onAddEntry}>
+        新增{module.title}
+      </button>
+    </div>
+  );
+}
+
+function PersonalEditor({
+  module,
+  onUpdateField,
+  onToggleField
+}: {
+  module: ResumeModuleInstance;
+  onUpdateField: (field: keyof Omit<PersonalModuleData, "personalVisibility">, value: string) => void;
+  onToggleField: (field: PersonalVisibleField) => void;
+}) {
+  if (!isPersonalModuleData(module.data)) {
+    return null;
+  }
+
+  const personalData = module.data;
+
+  const fields: Array<{
+    key: keyof Omit<PersonalModuleData, "personalVisibility">;
+    label: string;
+    visibilityKey?: PersonalVisibleField;
+    multiline?: boolean;
+  }> = [
+    { key: "name", label: "姓名" },
+    { key: "title", label: "求职意向", visibilityKey: "title" },
+    { key: "phone", label: "手机", visibilityKey: "phone" },
+    { key: "email", label: "邮箱", visibilityKey: "email" },
+    { key: "city", label: "城市", visibilityKey: "city" },
+    { key: "blog", label: "个人博客", visibilityKey: "blog" },
+    { key: "github", label: "GitHub", visibilityKey: "github" }
+  ];
+
+  return (
+    <div className="form-grid">
+      <div className="photo-editor form-span-full">
+        <div className="photo-editor__preview">
+          {module.data.photoDataUrl ? <img src={module.data.photoDataUrl} alt="个人照片预览" /> : <span>照片</span>}
+        </div>
+        <div className="photo-editor__body">
+          <span className="field-stack__label">个人照片</span>
+          <p>可选上传，上传后会显示在简历右侧个人信息区。</p>
+          <div className="photo-editor__actions">
+            <label className="secondary-button photo-editor__upload">
+              上传照片
+              <input
+                type="file"
+                accept="image/*"
+                onChange={async (event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    const nextPhoto = await fileToResizedDataUrl(file);
+                    onUpdateField("photoDataUrl", nextPhoto);
+                  }
+                  event.target.value = "";
+                }}
+              />
+            </label>
+            {module.data.photoDataUrl ? (
+              <button type="button" className="ghost-button" onClick={() => onUpdateField("photoDataUrl", "")}>
+                移除照片
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </div>
+      {fields.map((field) => (
+        <div key={field.key} className="personal-field">
+          <div className="personal-field__header">
+            <label htmlFor={`${module.id}-${field.key}`}>{field.label}</label>
+            {field.visibilityKey ? (
+              <label className="visibility-toggle">
+                <input
+                  type="checkbox"
+                  checked={personalData.personalVisibility[field.visibilityKey]}
+                  onChange={() => onToggleField(field.visibilityKey as PersonalVisibleField)}
+                />
+                <span>显示到简历</span>
+              </label>
+            ) : null}
+          </div>
+          <input
+            id={`${module.id}-${field.key}`}
+            aria-label={field.label}
+            value={personalData[field.key] as string}
+            onChange={(event) => onUpdateField(field.key, event.target.value)}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TextEditor({
+  module,
+  onChange
+}: {
+  module: ResumeModuleInstance;
+  onChange: (value: string) => void;
+}) {
+  if (!isTextModuleData(module.data)) {
+    return null;
+  }
+
+  return (
+    <label className="inline-row__field">
+      正文
+      <textarea
+        aria-label={`${module.title}内容`}
+        rows={4}
+        value={module.data.value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </label>
+  );
+}
+
+function ModuleEditorCard({
+  module,
+  hint,
+  onUpdateTitle,
+  onToggleVisibility,
+  onRemove,
+  onUpdatePersonalField,
+  onTogglePersonalField,
+  onUpdateText,
+  onUpdateTimelineEntry,
+  onAddTimelineEntry,
+  onRemoveTimelineEntry,
+  onUpdateListItem,
+  onAddListItem,
+  onRemoveListItem
+}: {
+  module: ResumeModuleInstance;
+  hint?: string;
+  onUpdateTitle: (title: string) => void;
+  onToggleVisibility: () => void;
+  onRemove: () => void;
+  onUpdatePersonalField: (field: keyof Omit<PersonalModuleData, "personalVisibility">, value: string) => void;
+  onTogglePersonalField: (field: PersonalVisibleField) => void;
+  onUpdateText: (value: string) => void;
+  onUpdateTimelineEntry: (index: number, field: "title" | "org" | "start" | "end" | "location", value: string) => void;
+  onAddTimelineEntry: () => void;
+  onRemoveTimelineEntry: (index: number) => void;
+  onUpdateListItem: (index: number, value: string) => void;
+  onAddListItem: () => void;
+  onRemoveListItem: (index: number) => void;
+}) {
+  return (
+    <article className="section-card section-card--expanded">
+      <div className="section-card__header">
+        <label className="section-card__toggle">
+          <input type="checkbox" checked={module.visible} onChange={onToggleVisibility} />
+          <span>{module.title}</span>
+        </label>
+        {module.kind !== "personal" ? (
+          <button type="button" className="ghost-button" onClick={onRemove}>
+            删除模块
+          </button>
+        ) : null}
+      </div>
+      <div className="section-card__body">
+        <div className="form-grid">
+          <label className="form-span-full">
+            模块标题
+            <input aria-label={`${module.title}标题`} value={module.title} onChange={(event) => onUpdateTitle(event.target.value)} />
+          </label>
+        </div>
+        {hint ? <p className="editor-empty-note">{hint}</p> : null}
+        {module.kind === "personal" ? (
+          <PersonalEditor
+            module={module}
+            onUpdateField={onUpdatePersonalField}
+            onToggleField={onTogglePersonalField}
+          />
+        ) : null}
+        {getModuleShape(module.kind) === "text" ? (
+          <TextEditor module={module} onChange={onUpdateText} />
+        ) : null}
+        {getModuleShape(module.kind) === "timeline" ? (
+          <TimelineEditor
+            module={module}
+            onUpdateEntry={onUpdateTimelineEntry}
+            onAddEntry={onAddTimelineEntry}
+            onRemoveEntry={onRemoveTimelineEntry}
+          />
+        ) : null}
+        {getModuleShape(module.kind) === "list" ? (
+          <SimpleListEditor
+            module={module}
+            itemLabel={module.title}
+            addLabel={`新增${module.title}`}
+            emptyNote={`暂无${module.title}，可点击下方新增。`}
+            multiline={module.kind === "highlight"}
+            onChangeItem={onUpdateListItem}
+            onRemoveItem={onRemoveListItem}
+            onAddItem={onAddListItem}
+          />
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function ModuleLibrary({ onAdd }: { onAdd: (kind: ModuleKind) => void }) {
+  const catalog = getModuleCatalog();
+
+  return (
+    <section className="module-library">
+      <div className="editor-heading">
+        <p className="editor-heading__eyebrow">官方模块库</p>
+        <h2>添加更多模块</h2>
+      </div>
+      <div className="module-library__grid">
+        {catalog.map((kind) => (
+          <button key={kind} type="button" className="module-library__item" onClick={() => onAdd(kind)}>
+            <span>{getModuleLabel(kind)}</span>
+            <small>{canAddMultipleModules(kind) ? "可重复添加" : "单例模块"}</small>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
-  const resume = useResumeStore((state) => state.resume);
-  const sectionOrder = useResumeStore((state) => state.sectionOrder);
-  const setSectionOrder = useResumeStore((state) => state.setSectionOrder);
-  const toggleSection = useResumeStore((state) => state.toggleSection);
+  const hasStoredState = useResumeStore((state) => state.hasStoredState);
+  const selectedIdentity = useResumeStore((state) => state.selectedIdentity);
+  const modules = useResumeStore((state) => state.modules);
+  const moduleOrder = useResumeStore((state) => state.moduleOrder);
+  const initializeIdentity = useResumeStore((state) => state.initializeIdentity);
+  const switchIdentity = useResumeStore((state) => state.switchIdentity);
+  const applyIdentityRecommendation = useResumeStore((state) => state.applyIdentityRecommendation);
   const replaceResumeState = useResumeStore((state) => state.replaceResumeState);
-  const updatePersonal = useResumeStore((state) => state.updatePersonal);
+  const updateModuleTitle = useResumeStore((state) => state.updateModuleTitle);
+  const toggleModuleVisibility = useResumeStore((state) => state.toggleModuleVisibility);
+  const setModuleOrder = useResumeStore((state) => state.setModuleOrder);
+  const addModule = useResumeStore((state) => state.addModule);
+  const removeModule = useResumeStore((state) => state.removeModule);
+  const updatePersonalField = useResumeStore((state) => state.updatePersonalField);
   const togglePersonalField = useResumeStore((state) => state.togglePersonalField);
+  const updateTextValue = useResumeStore((state) => state.updateTextValue);
   const updateTimelineEntry = useResumeStore((state) => state.updateTimelineEntry);
   const addTimelineEntry = useResumeStore((state) => state.addTimelineEntry);
   const removeTimelineEntry = useResumeStore((state) => state.removeTimelineEntry);
-  const updateSkill = useResumeStore((state) => state.updateSkill);
-  const addSkill = useResumeStore((state) => state.addSkill);
-  const removeSkill = useResumeStore((state) => state.removeSkill);
-  const updateAward = useResumeStore((state) => state.updateAward);
-  const addAward = useResumeStore((state) => state.addAward);
-  const removeAward = useResumeStore((state) => state.removeAward);
+  const updateListItem = useResumeStore((state) => state.updateListItem);
+  const addListItem = useResumeStore((state) => state.addListItem);
+  const removeListItem = useResumeStore((state) => state.removeListItem);
   const reset = useResumeStore((state) => state.reset);
-  const [activeSectionId, setActiveSectionId] = useState<SectionId | null>(null);
+  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
-  const sectionRefs = useRef<Partial<Record<SectionId, HTMLDivElement | null>>>({});
 
-  const sections = useMemo<ResumeSections>(
-    () => ({
-      personal: {
-        ...resume.personal,
-        title: resume.personalVisibility.title ? resume.personal.title : "",
-        phone: resume.personalVisibility.phone ? resume.personal.phone : "",
-        email: resume.personalVisibility.email ? resume.personal.email : "",
-        city: resume.personalVisibility.city ? resume.personal.city : "",
-        blog: resume.personalVisibility.blog ? resume.personal.blog : "",
-        github: resume.personalVisibility.github ? resume.personal.github : "",
-        summary: resume.personalVisibility.summary ? resume.personal.summary : ""
-      },
-      education: {
-        items: resume.education.map((item) => ({
-          id: item.id,
-          school: item.title,
-          degree: "",
-          major: item.org,
-          start: item.start,
-          end: item.end,
-          location: item.location,
-          highlights: item.bullets.filter(Boolean)
-        }))
-      },
-      projects: {
-        items: resume.projects.map((item) => ({
-          ...item
-        }))
-      },
-      internships: {
-        items: resume.internships.map((item) => ({
-          ...item
-        }))
-      },
-      campus: {
-        items: resume.campus.map((item) => ({
-          ...item
-        }))
-      },
-      skills: {
-        skillGroups: [
-          {
-            id: "skills-group-1",
-            label: "技能特长",
-            items: resume.skills.filter(Boolean)
-          }
-        ]
-      },
-      awards: {
-        items: resume.awards.filter(Boolean).map((title, index) => ({
-          id: `award-${index}`,
-          title,
-          issuer: "",
-          date: "",
-          detail: ""
-        }))
-      }
-    }),
-    [resume]
-  );
-
-  const visibleSectionIds = useMemo(
-    () => sectionOrder.filter((sectionId) => resume.sectionVisibility[sectionId]),
-    [resume.sectionVisibility, sectionOrder]
-  );
-
-  useEffect(() => {
-    if (visibleSectionIds.length === 0) {
-      setActiveSectionId(null);
-      return;
-    }
-
-    setActiveSectionId((current) => {
-      if (current && visibleSectionIds.includes(current)) {
-        return current;
-      }
-
-      return visibleSectionIds[0] ?? null;
-    });
-  }, [visibleSectionIds]);
-
-  useEffect(() => {
-    if (!activeSectionId) {
-      return;
-    }
-
-    const target = sectionRefs.current[activeSectionId];
-    if (target && typeof target.scrollIntoView === "function") {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [activeSectionId]);
-
-  function handleSectionToggle(sectionId: SectionId) {
-    const isVisible = resume.sectionVisibility[sectionId];
-
-    if (isVisible && activeSectionId === sectionId) {
-      setActiveSectionId(getAdjacentVisibleSectionId(sectionOrder, visibleSectionIds, sectionId));
-    }
-
-    toggleSection(sectionId);
-  }
-
-  function handleSectionExpand(sectionId: SectionId) {
-    if (!resume.sectionVisibility[sectionId]) {
-      toggleSection(sectionId);
-    }
-
-    setActiveSectionId(sectionId);
-  }
-
-  function handleSectionSelect(sectionId: SectionId) {
-    if (!resume.sectionVisibility[sectionId]) {
-      toggleSection(sectionId);
-    }
-
-    setActiveSectionId(sectionId);
-  }
-
-  function updateTimelineBullets(
-    sectionId: TimelineSectionId,
-    entryIndex: number,
-    updater: (bullets: string[]) => string[]
-  ) {
-    const entry = resume[sectionId][entryIndex];
-
-    if (!entry) {
-      return;
-    }
-
-    updateTimelineEntry(sectionId, entryIndex, {
-      bullets: updater(entry.bullets)
-    });
-  }
-
-  function updateBulletItem(
-    sectionId: TimelineSectionId,
-    entryIndex: number,
-    bulletIndex: number,
-    value: string
-  ) {
-    updateTimelineBullets(sectionId, entryIndex, (bullets) => {
-      const next = [...bullets];
-      next[bulletIndex] = value;
-      return next;
-    });
-  }
-
-  function addBulletItem(sectionId: TimelineSectionId, entryIndex: number) {
-    updateTimelineBullets(sectionId, entryIndex, (bullets) => [...bullets, ""]);
-  }
-
-  function removeBulletItem(sectionId: TimelineSectionId, entryIndex: number, bulletIndex: number) {
-    updateTimelineBullets(sectionId, entryIndex, (bullets) =>
-      bullets.filter((_, currentIndex) => currentIndex !== bulletIndex)
-    );
-  }
-
-  async function handlePhotoUpload(file: File | undefined) {
-    if (!file) {
-      return;
-    }
-
-    const nextPhoto = await fileToResizedDataUrl(file);
-    updatePersonal("photoDataUrl", nextPhoto);
-  }
+  const selectedPreset = selectedIdentity ? getIdentityPreset(selectedIdentity) : null;
+  const orderedModules = useMemo(() => {
+    const moduleById = new Map(modules.map((module) => [module.id, module] as const));
+    return moduleOrder
+      .map((moduleId) => moduleById.get(moduleId))
+      .filter((module): module is ResumeModuleInstance => Boolean(module));
+  }, [moduleOrder, modules]);
 
   function showStatus(message: string) {
     setStatusMessage(message);
   }
 
   function handleExportData() {
-    const content = serializeResumeBackup({ resume, sectionOrder });
+    if (!selectedIdentity) {
+      return;
+    }
+
+    const content = serializeResumeBackup({
+      schemaVersion: 2,
+      selectedIdentity,
+      modules,
+      moduleOrder
+    });
     const blob = new Blob([content], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -540,15 +496,34 @@ export default function App() {
     showStatus("数据已导入。");
   }
 
+  if (!selectedIdentity && !hasStoredState) {
+    return (
+      <div className="app-shell">
+        <IdentityEntryScreen onSelect={initializeIdentity} />
+      </div>
+    );
+  }
+
+  const identityLabel = selectedPreset?.label ?? "通用求职者";
+
   return (
     <div className="app-shell">
       <HeaderBar
+        identityLabel={identityLabel}
+        statusMessage={statusMessage}
         onReset={reset}
         onExportData={handleExportData}
         onImportData={(file) => {
           void handleImportData(file);
         }}
-        statusMessage={statusMessage}
+        onSwitchIdentity={(identity) => {
+          switchIdentity(identity);
+          showStatus("身份已切换，当前内容不会自动覆盖。");
+        }}
+        onApplyPreset={() => {
+          applyIdentityRecommendation();
+          showStatus("已应用当前身份的推荐配置。");
+        }}
       />
 
       <main className="workspace">
@@ -556,276 +531,48 @@ export default function App() {
           <div className="editor-heading">
             <p className="editor-heading__eyebrow">模块化填写</p>
             <h2>简历编辑器</h2>
-            <p>左侧填写内容，右侧实时预览。预览区支持模块拖动排序。</p>
+            <p>{selectedPreset?.focusHint ?? "左侧填写内容，右侧实时预览。"}</p>
           </div>
 
           <div className="editor-sections">
-            {sectionOrder.map((sectionId) => (
-              <SectionCard
-                key={sectionId}
-                title={sectionLabels[sectionId]}
-                visible={resume.sectionVisibility[sectionId]}
-                isExpanded={activeSectionId === sectionId}
-                isActive={activeSectionId === sectionId}
-                sectionRef={(node) => {
-                  sectionRefs.current[sectionId] = node;
-                }}
-                onToggle={() => handleSectionToggle(sectionId)}
-                onExpand={() => handleSectionExpand(sectionId)}
-              >
-                {sectionId === "personal" ? (
-                  <div className="form-grid">
-                    <div className="photo-editor form-span-full">
-                      <div className="photo-editor__preview">
-                        {resume.personal.photoDataUrl ? (
-                          <img src={resume.personal.photoDataUrl} alt="个人照片预览" />
-                        ) : (
-                          <span>照片</span>
-                        )}
-                      </div>
-                      <div className="photo-editor__body">
-                        <span className="field-stack__label">个人照片</span>
-                        <p>可选上传，上传后会自动显示在简历个人信息区右侧。</p>
-                        <div className="photo-editor__actions">
-                          <label className="secondary-button photo-editor__upload">
-                            上传照片
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(event) => {
-                                void handlePhotoUpload(event.target.files?.[0]);
-                                event.target.value = "";
-                              }}
-                            />
-                          </label>
-                          {resume.personal.photoDataUrl ? (
-                            <button
-                              type="button"
-                              className="ghost-button"
-                              onClick={() => updatePersonal("photoDataUrl", "")}
-                            >
-                              移除照片
-                            </button>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
-                    {personalFields.map((field) => (
-                      <PersonalFieldEditor
-                        key={field.key}
-                        field={field}
-                        value={resume.personal[field.key]}
-                        visible={field.visibilityKey ? resume.personalVisibility[field.visibilityKey] : undefined}
-                        onChange={(value) => updatePersonal(field.key, value)}
-                        onToggleVisibility={
-                          field.visibilityKey
-                            ? () => togglePersonalField(field.visibilityKey as PersonalVisibleField)
-                            : undefined
-                        }
-                      />
-                    ))}
-                  </div>
-                ) : null}
-
-                {sectionId === "education" ? (
-                  <div className="section-list">
-                    {resume.education.map((entry, index) => (
-                      <article key={entry.id} className="list-item">
-                        <div className="form-grid">
-                          <label>
-                            学校
-                            <input
-                              value={entry.title}
-                              onChange={(event) =>
-                                updateTimelineEntry("education", index, { title: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            专业
-                            <input
-                              value={entry.org}
-                              onChange={(event) =>
-                                updateTimelineEntry("education", index, { org: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            开始时间
-                            <input
-                              value={entry.start}
-                              onChange={(event) =>
-                                updateTimelineEntry("education", index, { start: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            结束时间
-                            <input
-                              value={entry.end}
-                              onChange={(event) =>
-                                updateTimelineEntry("education", index, { end: event.target.value })
-                              }
-                            />
-                          </label>
-                          <BulletListEditor
-                            items={entry.bullets}
-                            onChangeItem={(bulletIndex, value) =>
-                              updateBulletItem("education", index, bulletIndex, value)
-                            }
-                            onRemoveItem={(bulletIndex) =>
-                              removeBulletItem("education", index, bulletIndex)
-                            }
-                            onAddItem={() => addBulletItem("education", index)}
-                          />
-                        </div>
-                        <div className="list-item__actions">
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            aria-label={`删除教育经历条目 ${index + 1}`}
-                            onClick={() => removeTimelineEntry("education", index)}
-                          >
-                            删除条目
-                          </button>
-                        </div>
-                      </article>
-                    ))}
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() => addTimelineEntry("education")}
-                    >
-                      新增教育经历
-                    </button>
-                  </div>
-                ) : null}
-
-                {sectionId === "projects" || sectionId === "internships" || sectionId === "campus" ? (
-                  <div className="section-list">
-                    {resume[sectionId].map((entry, index) => (
-                      <article key={entry.id} className="list-item">
-                        <div className="form-grid">
-                          <label>
-                            标题
-                            <input
-                              value={entry.title}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, { title: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            组织
-                            <input
-                              value={entry.org}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, { org: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            开始时间
-                            <input
-                              value={entry.start}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, { start: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            结束时间
-                            <input
-                              value={entry.end}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, { end: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label>
-                            地点
-                            <input
-                              value={entry.location}
-                              onChange={(event) =>
-                                updateTimelineEntry(sectionId, index, { location: event.target.value })
-                              }
-                            />
-                          </label>
-                          <label className="form-span-full">
-                            <BulletListEditor
-                              items={entry.bullets}
-                              onChangeItem={(bulletIndex, value) =>
-                                updateBulletItem(sectionId, index, bulletIndex, value)
-                              }
-                              onRemoveItem={(bulletIndex) =>
-                                removeBulletItem(sectionId, index, bulletIndex)
-                              }
-                              onAddItem={() => addBulletItem(sectionId, index)}
-                            />
-                          </label>
-                        </div>
-                        <div className="list-item__actions">
-                          <button
-                            type="button"
-                            className="ghost-button"
-                            aria-label={`删除${sectionLabels[sectionId]}条目 ${index + 1}`}
-                            onClick={() => removeTimelineEntry(sectionId, index)}
-                          >
-                            删除条目
-                          </button>
-                        </div>
-                      </article>
-                    ))}
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() => addTimelineEntry(sectionId)}
-                    >
-                      新增{sectionLabels[sectionId]}
-                    </button>
-                  </div>
-                ) : null}
-
-                {sectionId === "skills" ? (
-                  <SimpleListEditor
-                    items={resume.skills}
-                    itemLabel="技能"
-                    addLabel="新增技能"
-                    emptyNote="暂无技能，可点击下方新增。"
-                    onChangeItem={updateSkill}
-                    onRemoveItem={removeSkill}
-                    onAddItem={addSkill}
-                  />
-                ) : null}
-
-                {sectionId === "awards" ? (
-                  <SimpleListEditor
-                    items={resume.awards}
-                    itemLabel="获奖 / 证书"
-                    addLabel="新增获奖 / 证书"
-                    emptyNote="暂无获奖或证书，可点击下方新增。"
-                    multiline
-                    onChangeItem={updateAward}
-                    onRemoveItem={removeAward}
-                    onAddItem={addAward}
-                  />
-                ) : null}
-              </SectionCard>
+            {orderedModules.map((module) => (
+              <ModuleEditorCard
+                key={module.id}
+                module={module}
+                hint={selectedPreset?.moduleHints[module.kind]}
+                onUpdateTitle={(title) => updateModuleTitle(module.id, title)}
+                onToggleVisibility={() => toggleModuleVisibility(module.id)}
+                onRemove={() => removeModule(module.id)}
+                onUpdatePersonalField={(field, value) => updatePersonalField(module.id, field, value)}
+                onTogglePersonalField={(field) => togglePersonalField(module.id, field)}
+                onUpdateText={(value) => updateTextValue(module.id, value)}
+                onUpdateTimelineEntry={(index, field, value) =>
+                  updateTimelineEntry(module.id, index, { [field]: value })
+                }
+                onAddTimelineEntry={() => addTimelineEntry(module.id)}
+                onRemoveTimelineEntry={(index) => removeTimelineEntry(module.id, index)}
+                onUpdateListItem={(index, value) => updateListItem(module.id, index, value)}
+                onAddListItem={() => addListItem(module.id)}
+                onRemoveListItem={(index) => removeListItem(module.id, index)}
+              />
             ))}
           </div>
+
+          <ModuleLibrary onAdd={addModule} />
         </section>
 
         <PreviewPanel
-          sections={sections}
-          sectionOrder={sectionOrder}
-          sectionVisibility={resume.sectionVisibility}
-          activeSectionId={activeSectionId}
-          onSectionOrderChange={setSectionOrder}
-          onSectionSelect={handleSectionSelect}
+          modules={modules}
+          moduleOrder={moduleOrder}
+          activeModuleId={activeModuleId}
+          heading="实时预览"
+          hint="在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。"
+          onModuleOrderChange={setModuleOrder}
+          onModuleSelect={setActiveModuleId}
         />
       </main>
 
-      <footer className="footer-note">默认数据为中文，内容会自动保存在当前浏览器。</footer>
+      <footer className="footer-note">当前版本为桌面端优先，内容会自动保存在当前浏览器。</footer>
     </div>
   );
 }

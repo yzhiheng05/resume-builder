@@ -1,36 +1,28 @@
-import { normalizeStoredResumeState } from "./resumeSeed";
-import type { StoredResumeState } from "../types/resume";
+import { migrateUnknownStoredResumeState } from "./resumeMigration";
+import type { StoredResumeStateV2 } from "../types/resume";
 
 export const RESUME_BACKUP_APP_ID = "campus-resume-builder";
-export const RESUME_BACKUP_VERSION = 1;
+export const RESUME_BACKUP_VERSION = 2;
 
-export interface ResumeBackupPayload {
+export interface ResumeBackupPayloadV2 {
   app: typeof RESUME_BACKUP_APP_ID;
   version: typeof RESUME_BACKUP_VERSION;
   exportedAt: string;
-  data: StoredResumeState;
+  data: StoredResumeStateV2;
 }
 
 export type ImportResumeBackupResult =
-  | { ok: true; state: StoredResumeState }
+  | { ok: true; state: StoredResumeStateV2 }
   | { ok: false; error: string };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
 
-function isStoredResumeState(value: unknown): value is StoredResumeState {
-  if (!isRecord(value) || !isRecord(value.resume) || !Array.isArray(value.sectionOrder)) {
-    return false;
-  }
-
-  return isRecord(value.resume.personal);
-}
-
 export function createResumeBackupPayload(
-  state: StoredResumeState,
+  state: StoredResumeStateV2,
   exportedAt = new Date().toISOString()
-): ResumeBackupPayload {
+): ResumeBackupPayloadV2 {
   return {
     app: RESUME_BACKUP_APP_ID,
     version: RESUME_BACKUP_VERSION,
@@ -39,7 +31,7 @@ export function createResumeBackupPayload(
   };
 }
 
-export function serializeResumeBackup(state: StoredResumeState): string {
+export function serializeResumeBackup(state: StoredResumeStateV2): string {
   return JSON.stringify(createResumeBackupPayload(state), null, 2);
 }
 
@@ -56,17 +48,22 @@ export function parseResumeBackup(raw: string): ImportResumeBackupResult {
     return { ok: false, error: "文件格式不正确。" };
   }
 
-  if (payload.app !== RESUME_BACKUP_APP_ID || payload.version !== RESUME_BACKUP_VERSION) {
+  if (payload.app !== RESUME_BACKUP_APP_ID) {
     return { ok: false, error: "文件不是当前应用支持的备份格式。" };
   }
 
-  if (!isStoredResumeState(payload.data)) {
+  if (payload.version !== 1 && payload.version !== RESUME_BACKUP_VERSION) {
+    return { ok: false, error: "文件不是当前应用支持的备份格式。" };
+  }
+
+  const nextState = migrateUnknownStoredResumeState(payload.data, "general");
+  if (!nextState) {
     return { ok: false, error: "文件缺少必要的简历数据。" };
   }
 
   return {
     ok: true,
-    state: normalizeStoredResumeState(payload.data)
+    state: nextState
   };
 }
 

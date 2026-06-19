@@ -1,4 +1,5 @@
-import type { ResumeData, SectionId, StoredResumeState } from "../types/resume";
+import { migrateUnknownStoredResumeState } from "./resumeMigration";
+import type { StoredResumeStateV2 } from "../types/resume";
 
 export const STORAGE_KEY = "campus-resume-builder";
 
@@ -14,7 +15,7 @@ function getBrowserStorage(): Storage | null {
   }
 }
 
-export function moveSection(order: SectionId[], id: SectionId, toIndex: number) {
+export function moveModule(order: string[], id: string, toIndex: number) {
   const next = [...order];
   const fromIndex = next.indexOf(id);
   if (fromIndex < 0) {
@@ -27,14 +28,7 @@ export function moveSection(order: SectionId[], id: SectionId, toIndex: number) 
   return next;
 }
 
-export function toggleSectionVisibility(
-  visibility: Record<SectionId, boolean>,
-  id: SectionId
-) {
-  return { ...visibility, [id]: !visibility[id] };
-}
-
-export function saveResumeState(payload: StoredResumeState) {
+export function saveResumeState(payload: StoredResumeStateV2) {
   const storage = getBrowserStorage();
   if (!storage) {
     return;
@@ -43,7 +37,7 @@ export function saveResumeState(payload: StoredResumeState) {
   storage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
 
-export function loadResumeState(): StoredResumeState | null {
+export function loadResumeState(): StoredResumeStateV2 | null {
   const storage = getBrowserStorage();
   if (!storage) {
     return null;
@@ -55,20 +49,8 @@ export function loadResumeState(): StoredResumeState | null {
   }
 
   try {
-    return JSON.parse(raw) as StoredResumeState;
+    return migrateUnknownStoredResumeState(JSON.parse(raw), "general");
   } catch {
     return null;
   }
-}
-
-export function createEmptyResume(resume: ResumeData): ResumeData {
-  return {
-    ...resume,
-    education: [],
-    projects: [],
-    internships: [],
-    campus: [],
-    skills: [],
-    awards: []
-  };
 }
