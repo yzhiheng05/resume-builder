@@ -8,6 +8,8 @@ interface TemplateSectionProps {
   interactive?: boolean;
   onSelect?: () => void;
   children: ReactNode;
+  sortScope?: string;
+  handleLabel?: string;
 }
 
 export default function TemplateSection({
@@ -16,7 +18,9 @@ export default function TemplateSection({
   isActive = false,
   interactive = false,
   onSelect,
-  children
+  children,
+  sortScope,
+  handleLabel
 }: TemplateSectionProps) {
   if (!interactive) {
     return (
@@ -38,7 +42,14 @@ export default function TemplateSection({
   }
 
   return (
-    <PreviewSection moduleId={moduleId} title={title} isActive={isActive} onSelect={onSelect}>
+    <PreviewSection
+      moduleId={moduleId}
+      title={title}
+      isActive={isActive}
+      onSelect={onSelect}
+      sortScope={sortScope}
+      handleLabel={handleLabel}
+    >
       {children}
     </PreviewSection>
   );

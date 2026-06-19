@@ -19,6 +19,7 @@ import TemplateSelector from "./TemplateSelector";
 import ResumeTemplateRenderer from "./ResumeTemplateRenderer";
 import { getResumeTemplate, type ResumeTemplateDefinition } from "../../data/resumeTemplates";
 import type { ResumeModuleInstance, TemplateId } from "../../types/resume";
+import { getSidebarColumnForModuleKind } from "./templates/templateUtils";
 
 export interface PreviewPanelProps {
   modules: ResumeModuleInstance[];
@@ -65,6 +66,63 @@ export function moveModuleOrder(moduleOrder: string[], activeId: string, overId:
   return arrayMove(moduleOrder, activeIndex, overIndex);
 }
 
+export function moveSidebarModuleOrder(
+  moduleOrder: string[],
+  modules: ResumeModuleInstance[],
+  activeId: string,
+  overId: string
+): string[] {
+  const normalizedOrder = normalizeModuleOrder(moduleOrder, modules);
+  const visibleModules = modules.filter((module) => module.visible);
+  const visibleModuleById = new Map(visibleModules.map((module) => [module.id, module] as const));
+  const activeModule = visibleModuleById.get(activeId);
+  const overModule = visibleModuleById.get(overId);
+
+  if (!activeModule || !overModule) {
+    return normalizedOrder;
+  }
+
+  const activeColumn = getSidebarColumnForModuleKind(activeModule.kind);
+  const overColumn = getSidebarColumnForModuleKind(overModule.kind);
+
+  if (activeColumn !== overColumn) {
+    return normalizedOrder;
+  }
+
+  const visibleScopedIds = normalizedOrder.filter((moduleId) => {
+    const module = visibleModuleById.get(moduleId);
+    return module ? getSidebarColumnForModuleKind(module.kind) === activeColumn : false;
+  });
+
+  const activeIndex = visibleScopedIds.indexOf(activeId);
+  const overIndex = visibleScopedIds.indexOf(overId);
+
+  if (activeIndex === -1 || overIndex === -1 || activeIndex === overIndex) {
+    return normalizedOrder;
+  }
+
+  const reorderedScopedIds = arrayMove(visibleScopedIds, activeIndex, overIndex);
+  let nextScopedIndex = 0;
+
+  return normalizedOrder.map((moduleId) => {
+    if (!visibleScopedIds.includes(moduleId)) {
+      return moduleId;
+    }
+
+    const nextId = reorderedScopedIds[nextScopedIndex];
+    nextScopedIndex += 1;
+    return nextId;
+  });
+}
+
+export function getPreviewHint(templateId: TemplateId): string {
+  if (templateId === "sidebar") {
+    return "可在当前栏内拖动调整顺序，左右分栏由模板固定，打印时会自动隐藏编辑区。";
+  }
+
+  return "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。";
+}
+
 export function getVisibleModuleOrder(moduleOrder: string[], modules: ResumeModuleInstance[]): string[] {
   const normalizedOrder = normalizeModuleOrder(moduleOrder, modules);
   const visibleIds = new Set(modules.filter((module) => module.visible).map((module) => module.id));
@@ -96,7 +154,7 @@ export default function PreviewPanel({
   activeModuleId,
   eyebrow,
   heading = "实时预览",
-  hint = "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。",
+  hint,
   onSurfaceHeightChange,
   onTemplateChange,
   onModuleOrderChange,
@@ -116,6 +174,7 @@ export default function PreviewPanel({
 
   const previewModules = buildPreviewModules(modules, moduleOrder);
   const currentTemplate = getResumeTemplate(templateId);
+  const resolvedHint = hint ?? getPreviewHint(templateId);
 
   useEffect(() => {
     if (!onSurfaceHeightChange || !surfaceRef.current || typeof ResizeObserver === "undefined") {
@@ -146,7 +205,10 @@ export default function PreviewPanel({
       return;
     }
 
-    const nextOrder = moveModuleOrder(moduleOrder, activeId, overId);
+    const nextOrder =
+      templateId === "sidebar"
+        ? moveSidebarModuleOrder(moduleOrder, modules, activeId, overId)
+        : moveModuleOrder(moduleOrder, activeId, overId);
 
     if (nextOrder !== moduleOrder) {
       onModuleOrderChange?.(nextOrder);
@@ -159,7 +221,7 @@ export default function PreviewPanel({
         <div className="preview-panel__heading-group">
           <p className="preview-panel__eyebrow">{eyebrow ?? currentTemplate.name}</p>
           <h1 className="preview-panel__title">{heading}</h1>
-          <p className="preview-panel__hint">{hint}</p>
+          <p className="preview-panel__hint">{resolvedHint}</p>
         </div>
         <TemplateSelector
           templates={templateOptions}
@@ -178,10 +240,7 @@ export default function PreviewPanel({
             </div>
           ) : (
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} sensors={sensors}>
-              <SortableContext
-                items={previewModules.map((module) => module.id)}
-                strategy={verticalListSortingStrategy}
-              >
+              {templateId === "sidebar" ? (
                 <ResumeTemplateRenderer
                   templateId={templateId}
                   modules={previewModules}
@@ -189,7 +248,20 @@ export default function PreviewPanel({
                   activeModuleId={activeModuleId}
                   onModuleSelect={onModuleSelect}
                 />
-              </SortableContext>
+              ) : (
+                <SortableContext
+                  items={previewModules.map((module) => module.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <ResumeTemplateRenderer
+                    templateId={templateId}
+                    modules={previewModules}
+                    interactive
+                    activeModuleId={activeModuleId}
+                    onModuleSelect={onModuleSelect}
+                  />
+                </SortableContext>
+              )}
             </DndContext>
           )}
         </div>

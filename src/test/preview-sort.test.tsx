@@ -4,8 +4,10 @@ import { describe, expect, test } from "vitest";
 
 import PreviewPanel, {
   buildPreviewModules,
+  getPreviewHint,
   getVisibleModuleOrder,
   moveModuleOrder,
+  moveSidebarModuleOrder,
   normalizeModuleOrder
 } from "../components/preview/PreviewPanel";
 import { buildPresetState } from "../data/identityPresets";
@@ -98,6 +100,22 @@ describe("preview sorting", () => {
     const moved = moveModuleOrder(sampleState.moduleOrder, sampleState.moduleOrder[0], sampleState.moduleOrder[3]);
     expect(moved[3]).toBe(sampleState.moduleOrder[0]);
 
+    const sidebarMoved = moveSidebarModuleOrder(
+      sampleState.moduleOrder,
+      sampleState.modules,
+      sampleState.moduleOrder[7],
+      sampleState.moduleOrder[0]
+    );
+    expect(sidebarMoved[0]).toBe(sampleState.moduleOrder[7]);
+
+    const sidebarNoOp = moveSidebarModuleOrder(
+      sampleState.moduleOrder,
+      sampleState.modules,
+      sampleState.moduleOrder[0],
+      sampleState.moduleOrder[1]
+    );
+    expect(sidebarNoOp).toEqual(sampleState.moduleOrder);
+
     const previewModules = buildPreviewModules(sampleState.modules, sampleState.moduleOrder);
     expect(previewModules[0]?.title).toBe("个人信息");
   });
@@ -114,5 +132,7 @@ describe("preview sorting", () => {
 
     expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+    expect(screen.getByText(getPreviewHint("sidebar"))).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /调整当前栏顺序：/ }).length).toBeGreaterThan(0);
   });
 });

@@ -265,6 +265,7 @@ describe("App", () => {
 
     expect(getTopbarStatus()).toHaveTextContent("已切换到双栏简历。");
     expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+    expect(screen.getByText("可在当前栏内拖动调整顺序，左右分栏由模板固定，打印时会自动隐藏编辑区。")).toBeInTheDocument();
   });
 
   test("renders all template cards with realtime previews", () => {

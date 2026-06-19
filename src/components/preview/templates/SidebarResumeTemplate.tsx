@@ -1,5 +1,6 @@
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { renderSectionContent } from "../sectionRenderers";
-import type { OrderedPreviewModule } from "./templateUtils";
+import type { OrderedPreviewModule, SidebarColumn } from "./templateUtils";
 import { splitSidebarModules } from "./templateUtils";
 import TemplateSection from "./TemplateSection";
 
@@ -12,6 +13,7 @@ interface SidebarResumeTemplateProps {
 
 function renderColumnModules(
   items: OrderedPreviewModule[],
+  column: SidebarColumn,
   interactive: boolean,
   activeModuleId: string | null | undefined,
   onModuleSelect?: (moduleId: string) => void
@@ -24,6 +26,8 @@ function renderColumnModules(
       interactive={interactive}
       isActive={activeModuleId === item.id}
       onSelect={() => onModuleSelect?.(item.id)}
+      sortScope={column}
+      handleLabel="调整当前栏顺序"
     >
       {renderSectionContent(item.module)}
     </TemplateSection>
@@ -41,10 +45,14 @@ export default function SidebarResumeTemplate({
   return (
     <div className="resume-template resume-template--sidebar">
       <div className="resume-template__sidebar-column">
-        {renderColumnModules(left, interactive, activeModuleId, onModuleSelect)}
+        <SortableContext items={left.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+          {renderColumnModules(left, "left", interactive, activeModuleId, onModuleSelect)}
+        </SortableContext>
       </div>
       <div className="resume-template__main-column">
-        {renderColumnModules(right, interactive, activeModuleId, onModuleSelect)}
+        <SortableContext items={right.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+          {renderColumnModules(right, "right", interactive, activeModuleId, onModuleSelect)}
+        </SortableContext>
       </div>
     </div>
   );

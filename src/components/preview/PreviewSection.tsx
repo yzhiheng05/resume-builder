@@ -8,6 +8,8 @@ export interface PreviewSectionProps {
   children: ReactNode;
   isActive?: boolean;
   onSelect?: () => void;
+  sortScope?: string;
+  handleLabel?: string;
 }
 
 export default function PreviewSection({
@@ -15,10 +17,15 @@ export default function PreviewSection({
   title,
   children,
   isActive = false,
-  onSelect
+  onSelect,
+  sortScope = "all",
+  handleLabel = "拖动排序"
 }: PreviewSectionProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: moduleId
+    id: moduleId,
+    data: {
+      sortScope
+    }
   });
 
   const style = {
@@ -44,8 +51,8 @@ export default function PreviewSection({
         <button
           type="button"
           className="resume-section__handle"
-          aria-label={`拖动排序：${title}`}
-          title={`拖动排序：${title}`}
+          aria-label={`${handleLabel}：${title}`}
+          title={`${handleLabel}：${title}`}
           {...attributes}
           {...listeners}
         >

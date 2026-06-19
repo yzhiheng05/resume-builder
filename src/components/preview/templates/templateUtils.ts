@@ -14,12 +14,18 @@ const sidebarLeftKinds = new Set<ModuleKind>([
   "highlight"
 ]);
 
+export type SidebarColumn = "left" | "right";
+
+export function getSidebarColumnForModuleKind(kind: ModuleKind): SidebarColumn {
+  return sidebarLeftKinds.has(kind) ? "left" : "right";
+}
+
 export function splitSidebarModules(modules: OrderedPreviewModule[]) {
   const left: OrderedPreviewModule[] = [];
   const right: OrderedPreviewModule[] = [];
 
   for (const item of modules) {
-    if (sidebarLeftKinds.has(item.module.kind)) {
+    if (getSidebarColumnForModuleKind(item.module.kind) === "left") {
       left.push(item);
       continue;
     }

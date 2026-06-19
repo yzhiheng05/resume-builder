@@ -1,6 +1,6 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { HeaderBar } from "./components/HeaderBar";
-import PreviewPanel from "./components/preview/PreviewPanel";
+import PreviewPanel, { getPreviewHint } from "./components/preview/PreviewPanel";
 import {
   getIdentityPreset,
   getIdentityPresets,
@@ -617,7 +617,7 @@ export default function App() {
           activeModuleId={activeModuleId}
           eyebrow={selectedTemplate.name}
           heading="实时预览"
-          hint="在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。"
+          hint={getPreviewHint(templateId)}
           onSurfaceHeightChange={setPreviewSurfaceHeight}
           onTemplateChange={(nextTemplateId) => {
             setTemplate(nextTemplateId);
