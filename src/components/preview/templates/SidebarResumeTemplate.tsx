@@ -45,11 +45,13 @@ export default function SidebarResumeTemplate({
   return (
     <div className="resume-template resume-template--sidebar">
       <div className="resume-template__sidebar-column">
+        {interactive ? <p className="resume-template__column-label">左栏信息区</p> : null}
         <SortableContext items={left.map((item) => item.id)} strategy={verticalListSortingStrategy}>
           {renderColumnModules(left, "left", interactive, activeModuleId, onModuleSelect)}
         </SortableContext>
       </div>
       <div className="resume-template__main-column">
+        {interactive ? <p className="resume-template__column-label">右栏经历区</p> : null}
         <SortableContext items={right.map((item) => item.id)} strategy={verticalListSortingStrategy}>
           {renderColumnModules(right, "right", interactive, activeModuleId, onModuleSelect)}
         </SortableContext>

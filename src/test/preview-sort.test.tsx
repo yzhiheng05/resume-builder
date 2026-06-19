@@ -133,6 +133,22 @@ describe("preview sorting", () => {
     expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
     expect(screen.getByText(getPreviewHint("sidebar"))).toBeInTheDocument();
+    expect(screen.getByText("左栏信息区")).toBeInTheDocument();
+    expect(screen.getByText("右栏经历区")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /调整当前栏顺序：/ }).length).toBeGreaterThan(0);
+  });
+
+  test("does not render sidebar-only labels for classic template", () => {
+    render(
+      <PreviewPanel
+        modules={sampleState.modules}
+        moduleOrder={sampleState.moduleOrder}
+        templateId="classic"
+        templateOptions={getResumeTemplates()}
+      />
+    );
+
+    expect(screen.queryByText("左栏信息区")).not.toBeInTheDocument();
+    expect(screen.queryByText("右栏经历区")).not.toBeInTheDocument();
   });
 });
