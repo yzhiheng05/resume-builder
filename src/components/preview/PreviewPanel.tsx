@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import {
   closestCenter,
   DndContext,
@@ -25,6 +26,7 @@ export interface PreviewPanelProps {
   eyebrow?: string;
   heading?: string;
   hint?: string;
+  onSurfaceHeightChange?: (height: number) => void;
   onModuleOrderChange?: (nextOrder: string[]) => void;
   onModuleSelect?: (moduleId: string) => void;
 }
@@ -89,6 +91,7 @@ export default function PreviewPanel({
   eyebrow = "通用求职模板",
   heading = "实时预览",
   hint = "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。",
+  onSurfaceHeightChange,
   onModuleOrderChange,
   onModuleSelect
 }: PreviewPanelProps) {
@@ -102,8 +105,30 @@ export default function PreviewPanel({
       coordinateGetter: sortableKeyboardCoordinates
     })
   );
+  const surfaceRef = useRef<HTMLDivElement | null>(null);
 
   const previewModules = buildPreviewModules(modules, moduleOrder);
+
+  useEffect(() => {
+    if (!onSurfaceHeightChange || !surfaceRef.current || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const surfaceElement = surfaceRef.current;
+    const notifyHeight = () => {
+      onSurfaceHeightChange(Math.round(surfaceElement.getBoundingClientRect().height));
+    };
+    const observer = new ResizeObserver(() => {
+      notifyHeight();
+    });
+
+    notifyHeight();
+    observer.observe(surfaceElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [onSurfaceHeightChange, previewModules.length]);
 
   function handleDragEnd(event: DragEndEvent) {
     const activeId = String(event.active.id);
@@ -123,14 +148,14 @@ export default function PreviewPanel({
   return (
     <section className="preview-panel" aria-label="简历预览面板">
       <div className="preview-panel__header">
-        <div>
+        <div className="preview-panel__heading-group">
           <p className="preview-panel__eyebrow">{eyebrow}</p>
           <h1 className="preview-panel__title">{heading}</h1>
+          <p className="preview-panel__hint">{hint}</p>
         </div>
-        <p className="preview-panel__hint">{hint}</p>
       </div>
 
-      <div className="preview-surface" data-resume-preview-root="true">
+      <div className="preview-surface" data-resume-preview-root="true" ref={surfaceRef}>
         <div className="resume-paper">
           {previewModules.length === 0 ? (
             <div className="preview-empty-state">

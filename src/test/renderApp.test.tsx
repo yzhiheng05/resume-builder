@@ -110,6 +110,9 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
     expect(screen.getByText("当前身份：学生")).toBeInTheDocument();
     expect(screen.getByText("学生求职模板")).toBeInTheDocument();
+    expect(screen.getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "添加模块" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /项目经历 可重复添加/ })).not.toBeInTheDocument();
   });
 
   test("exports versioned resume data as json", () => {
@@ -178,8 +181,21 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
+    fireEvent.click(screen.getByRole("button", { name: "添加模块" }));
     fireEvent.click(screen.getByRole("button", { name: /项目经历 可重复添加/ }));
     expect(screen.getAllByDisplayValue("项目经历").length).toBeGreaterThan(1);
+  });
+
+  test("opens module library from the top entry", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    expect(screen.queryByRole("button", { name: /技能 可重复添加/ })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "添加模块" }));
+
+    expect(screen.getByRole("heading", { name: "添加更多模块" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /技能 可重复添加/ })).toBeInTheDocument();
   });
 
   test("photo upload displays in preview and can be removed", async () => {
@@ -220,6 +236,8 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "实时预览" })).toBeInTheDocument();
+    const previewPanel = screen.getByLabelText("简历预览面板");
+    expect(within(previewPanel).getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThan(0);
   });
 });

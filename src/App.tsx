@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
 import {
@@ -391,23 +391,45 @@ function ModuleEditorCard({
   );
 }
 
-function ModuleLibrary({ onAdd }: { onAdd: (kind: ModuleKind) => void }) {
+function ModuleLibrary({
+  isOpen,
+  onToggle,
+  onAdd
+}: {
+  isOpen: boolean;
+  onToggle: () => void;
+  onAdd: (kind: ModuleKind) => void;
+}) {
   const catalog = getModuleCatalog();
 
   return (
     <section className="module-library">
-      <div className="editor-heading">
-        <p className="editor-heading__eyebrow">官方模块库</p>
-        <h2>添加更多模块</h2>
+      <div className="module-library__header">
+        <div>
+          <p className="editor-heading__eyebrow">官方模块库</p>
+          <h3 className="module-library__title">添加更多模块</h3>
+        </div>
+        <button
+          type="button"
+          className="secondary-button module-library__toggle"
+          aria-expanded={isOpen}
+          onClick={onToggle}
+        >
+          {isOpen ? "收起模块库" : "添加模块"}
+        </button>
       </div>
-      <div className="module-library__grid">
-        {catalog.map((kind) => (
-          <button key={kind} type="button" className="module-library__item" onClick={() => onAdd(kind)}>
-            <span>{getModuleLabel(kind)}</span>
-            <small>{canAddMultipleModules(kind) ? "可重复添加" : "单例模块"}</small>
-          </button>
-        ))}
-      </div>
+      {isOpen ? (
+        <div className="module-library__panel">
+          <div className="module-library__grid">
+            {catalog.map((kind) => (
+              <button key={kind} type="button" className="module-library__item" onClick={() => onAdd(kind)}>
+                <span>{getModuleLabel(kind)}</span>
+                <small>{canAddMultipleModules(kind) ? "可重复添加" : "单例模块"}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
@@ -437,6 +459,8 @@ export default function App() {
   const removeListItem = useResumeStore((state) => state.removeListItem);
   const reset = useResumeStore((state) => state.reset);
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
+  const [isModuleLibraryOpen, setIsModuleLibraryOpen] = useState(false);
+  const [previewSurfaceHeight, setPreviewSurfaceHeight] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
 
   const selectedPreset = selectedIdentity ? getIdentityPreset(selectedIdentity) : null;
@@ -511,6 +535,11 @@ export default function App() {
 
   const currentIdentity = selectedIdentity ?? "general";
   const identityLabel = selectedPreset?.label ?? "通用求职者";
+  const editorPanelStyle = previewSurfaceHeight
+    ? ({
+        "--editor-panel-height": `${previewSurfaceHeight}px`
+      } as CSSProperties)
+    : undefined;
 
   return (
     <div className="app-shell">
@@ -534,38 +563,44 @@ export default function App() {
       />
 
       <main className="workspace">
-        <section className="editor-panel" data-editor-panel>
+        <section className="editor-panel" data-editor-panel style={editorPanelStyle}>
           <div className="editor-heading">
             <p className="editor-heading__eyebrow">模块化填写</p>
             <h2>简历编辑器</h2>
             <p>{selectedPreset?.focusHint ?? "左侧填写内容，右侧实时预览。"}</p>
           </div>
 
-          <div className="editor-sections">
-            {orderedModules.map((module) => (
-              <ModuleEditorCard
-                key={module.id}
-                module={module}
-                hint={selectedPreset?.moduleHints[module.kind]}
-                onUpdateTitle={(title) => updateModuleTitle(module.id, title)}
-                onToggleVisibility={() => toggleModuleVisibility(module.id)}
-                onRemove={() => removeModule(module.id)}
-                onUpdatePersonalField={(field, value) => updatePersonalField(module.id, field, value)}
-                onTogglePersonalField={(field) => togglePersonalField(module.id, field)}
-                onUpdateText={(value) => updateTextValue(module.id, value)}
-                onUpdateTimelineEntry={(index, field, value) =>
-                  updateTimelineEntry(module.id, index, { [field]: value })
-                }
-                onAddTimelineEntry={() => addTimelineEntry(module.id)}
-                onRemoveTimelineEntry={(index) => removeTimelineEntry(module.id, index)}
-                onUpdateListItem={(index, value) => updateListItem(module.id, index, value)}
-                onAddListItem={() => addListItem(module.id)}
-                onRemoveListItem={(index) => removeListItem(module.id, index)}
-              />
-            ))}
-          </div>
+          <ModuleLibrary
+            isOpen={isModuleLibraryOpen}
+            onToggle={() => setIsModuleLibraryOpen((open) => !open)}
+            onAdd={addModule}
+          />
 
-          <ModuleLibrary onAdd={addModule} />
+          <div className="editor-panel__content">
+            <div className="editor-sections">
+              {orderedModules.map((module) => (
+                <ModuleEditorCard
+                  key={module.id}
+                  module={module}
+                  hint={selectedPreset?.moduleHints[module.kind]}
+                  onUpdateTitle={(title) => updateModuleTitle(module.id, title)}
+                  onToggleVisibility={() => toggleModuleVisibility(module.id)}
+                  onRemove={() => removeModule(module.id)}
+                  onUpdatePersonalField={(field, value) => updatePersonalField(module.id, field, value)}
+                  onTogglePersonalField={(field) => togglePersonalField(module.id, field)}
+                  onUpdateText={(value) => updateTextValue(module.id, value)}
+                  onUpdateTimelineEntry={(index, field, value) =>
+                    updateTimelineEntry(module.id, index, { [field]: value })
+                  }
+                  onAddTimelineEntry={() => addTimelineEntry(module.id)}
+                  onRemoveTimelineEntry={(index) => removeTimelineEntry(module.id, index)}
+                  onUpdateListItem={(index, value) => updateListItem(module.id, index, value)}
+                  onAddListItem={() => addListItem(module.id)}
+                  onRemoveListItem={(index) => removeListItem(module.id, index)}
+                />
+              ))}
+            </div>
+          </div>
         </section>
 
         <PreviewPanel
@@ -575,6 +610,7 @@ export default function App() {
           eyebrow={getIdentityTemplateTitle(currentIdentity)}
           heading="实时预览"
           hint="在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。"
+          onSurfaceHeightChange={setPreviewSurfaceHeight}
           onModuleOrderChange={setModuleOrder}
           onModuleSelect={setActiveModuleId}
         />
