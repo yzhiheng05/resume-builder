@@ -968,7 +968,8 @@ button {
 
 .resume-print-mode .topbar,
 .resume-print-mode .editor-panel,
-.resume-print-mode [data-editor-panel] {
+.resume-print-mode [data-editor-panel],
+.resume-print-mode .footer-note {
   display: none !important;
 }
 
@@ -1078,7 +1079,8 @@ button {
   .editor-panel,
   [data-editor-panel],
   .preview-panel__header,
-  .resume-section__handle {
+  .resume-section__handle,
+  .footer-note {
     display: none !important;
   }
 
