@@ -136,6 +136,7 @@ describe("preview sorting", () => {
     expect(screen.getByText("左栏信息区")).toBeInTheDocument();
     expect(screen.getByText("右栏经历区")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /调整当前栏顺序：/ }).length).toBeGreaterThan(0);
+    expect(getMainPreviewPaper()).toHaveClass("resume-paper--template-sidebar");
   });
 
   test("does not render sidebar-only labels for classic template", () => {
@@ -150,5 +151,6 @@ describe("preview sorting", () => {
 
     expect(screen.queryByText("左栏信息区")).not.toBeInTheDocument();
     expect(screen.queryByText("右栏经历区")).not.toBeInTheDocument();
+    expect(getMainPreviewPaper()).toHaveClass("resume-paper--template-classic");
   });
 });
