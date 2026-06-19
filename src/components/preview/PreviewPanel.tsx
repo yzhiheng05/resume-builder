@@ -22,6 +22,7 @@ export interface PreviewPanelProps {
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
   activeModuleId?: string | null;
+  eyebrow?: string;
   heading?: string;
   hint?: string;
   onModuleOrderChange?: (nextOrder: string[]) => void;
@@ -85,6 +86,7 @@ export default function PreviewPanel({
   modules,
   moduleOrder,
   activeModuleId,
+  eyebrow = "通用求职模板",
   heading = "实时预览",
   hint = "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。",
   onModuleOrderChange,
@@ -122,7 +124,7 @@ export default function PreviewPanel({
     <section className="preview-panel" aria-label="简历预览面板">
       <div className="preview-panel__header">
         <div>
-          <p className="preview-panel__eyebrow">通用求职模板</p>
+          <p className="preview-panel__eyebrow">{eyebrow}</p>
           <h1 className="preview-panel__title">{heading}</h1>
         </div>
         <p className="preview-panel__hint">{hint}</p>

@@ -1,7 +1,13 @@
 import { printResume } from "../lib/print";
+import {
+  getIdentityEditorTitle,
+  getIdentitySwitchLabel,
+  RESUME_TOOL_BRAND
+} from "../data/identityPresets";
 import type { IdentityPreset } from "../types/resume";
 
 interface HeaderBarProps {
+  identity: IdentityPreset;
   identityLabel: string;
   statusMessage?: string;
   onReset: () => void;
@@ -12,6 +18,7 @@ interface HeaderBarProps {
 }
 
 export function HeaderBar({
+  identity,
   identityLabel,
   statusMessage,
   onReset,
@@ -23,8 +30,8 @@ export function HeaderBar({
   return (
     <header className="topbar">
       <div>
-        <p className="eyebrow">General Job Resume Builder</p>
-        <h1>通用求职简历编辑器</h1>
+        <p className="eyebrow">{RESUME_TOOL_BRAND}</p>
+        <h1>{getIdentityEditorTitle(identity)}</h1>
         <p className="topbar__identity">当前身份：{identityLabel}</p>
         {statusMessage ? (
           <p className="topbar__status" role="status">
@@ -34,13 +41,13 @@ export function HeaderBar({
       </div>
       <div className="topbar__actions">
         <button type="button" onClick={() => onSwitchIdentity("student")}>
-          切到学生
+          {getIdentitySwitchLabel("student")}
         </button>
         <button type="button" onClick={() => onSwitchIdentity("professional")}>
-          切到职场人
+          {getIdentitySwitchLabel("professional")}
         </button>
         <button type="button" onClick={() => onSwitchIdentity("general")}>
-          切到通用
+          {getIdentitySwitchLabel("general")}
         </button>
         <button type="button" onClick={onApplyPreset}>
           应用推荐配置

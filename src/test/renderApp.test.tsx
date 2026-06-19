@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 import App from "../App";
-import { buildPresetState } from "../data/identityPresets";
+import { buildPresetState, RESUME_TOOL_BRAND } from "../data/identityPresets";
 import {
   RESUME_BACKUP_APP_ID,
   RESUME_BACKUP_VERSION,
@@ -69,9 +69,25 @@ function getTopbarStatus() {
   return document.querySelector(".topbar__status");
 }
 
+function resetStoreToEmpty() {
+  useResumeStore.setState({
+    selectedIdentity: null,
+    modules: [],
+    moduleOrder: [],
+    hasStoredState: false
+  });
+}
+
+function seedStoredResume(identity: "student" | "professional" | "general") {
+  const state = buildPresetState(identity);
+  storage.setItem(STORAGE_KEY, JSON.stringify(state));
+  useResumeStore.getState().replaceResumeState(state);
+}
+
 describe("App", () => {
   beforeEach(() => {
     storage.clear();
+    resetStoreToEmpty();
     createObjectURL.mockClear();
     revokeObjectURL.mockClear();
     vi.restoreAllMocks();
@@ -81,20 +97,23 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "先选择你的简历起点" })).toBeInTheDocument();
+    expect(screen.getByText(RESUME_TOOL_BRAND)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /学生/ })).toBeInTheDocument();
   });
 
-  test("initializes student identity and enters editor", () => {
+  test("initializes student identity and shows student-specific titles", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: /学生/ }));
 
     expect(screen.getByRole("heading", { name: "简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
     expect(screen.getByText("当前身份：学生")).toBeInTheDocument();
+    expect(screen.getByText("学生求职模板")).toBeInTheDocument();
   });
 
   test("exports versioned resume data as json", () => {
-    storage.setItem(STORAGE_KEY, JSON.stringify(buildPresetState("general")));
+    seedStoredResume("general");
     render(<App />);
 
     const anchorClicks: HTMLAnchorElement[] = [];
@@ -113,8 +132,7 @@ describe("App", () => {
   });
 
   test("imports valid backup after confirmation", async () => {
-    const state = buildPresetState("professional");
-    storage.setItem(STORAGE_KEY, JSON.stringify(state));
+    seedStoredResume("professional");
     render(<App />);
 
     vi.spyOn(window, "confirm").mockReturnValue(true);
@@ -127,14 +145,29 @@ describe("App", () => {
     });
 
     expect(await screen.findByText("当前身份：学生")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
     expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
   });
 
-  test("switches identity safely and applies recommendation explicitly", () => {
-    storage.setItem(STORAGE_KEY, JSON.stringify(buildPresetState("general")));
+  test("uses stored identity titles when entering editor directly", () => {
+    seedStoredResume("professional");
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "切到职场人" }));
+    expect(screen.getByText("当前身份：职场人")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByText("职场求职模板")).toBeInTheDocument();
+  });
+
+  test("switches identity safely and updates identity-aware titles", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: "通用求职简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByText("通用求职模板")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "切换为职场人" }));
+    expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByText("职场求职模板")).toBeInTheDocument();
     expect(getTopbarStatus()).toHaveTextContent("身份已切换，当前内容不会自动覆盖。");
 
     fireEvent.click(screen.getByRole("button", { name: "应用推荐配置" }));
@@ -142,7 +175,7 @@ describe("App", () => {
   });
 
   test("adds repeated modules from module library", () => {
-    storage.setItem(STORAGE_KEY, JSON.stringify(buildPresetState("general")));
+    seedStoredResume("general");
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: /项目经历 可重复添加/ }));
@@ -150,8 +183,7 @@ describe("App", () => {
   });
 
   test("photo upload displays in preview and can be removed", async () => {
-    const state = buildPresetState("general");
-    storage.setItem(STORAGE_KEY, JSON.stringify(state));
+    seedStoredResume("general");
     render(<App />);
 
     const fileInput = screen.getByLabelText("上传照片", { selector: "input" });
@@ -168,7 +200,7 @@ describe("App", () => {
   });
 
   test("shows an error for unsupported import files", async () => {
-    storage.setItem(STORAGE_KEY, JSON.stringify(buildPresetState("general")));
+    seedStoredResume("general");
     render(<App />);
 
     const file = createJsonFile(
@@ -184,7 +216,7 @@ describe("App", () => {
   });
 
   test("preview order can be changed through drag-order callback path", () => {
-    storage.setItem(STORAGE_KEY, JSON.stringify(buildPresetState("student")));
+    seedStoredResume("student");
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "实时预览" })).toBeInTheDocument();

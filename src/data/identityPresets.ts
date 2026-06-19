@@ -93,12 +93,44 @@ const presetConfigs: Record<IdentityPreset, IdentityPresetConfig> = {
   }
 };
 
+export const RESUME_TOOL_BRAND = "求职简历工具";
+
+const identityEditorTitles: Record<IdentityPreset, string> = {
+  student: "学生求职简历编辑器",
+  professional: "职场求职简历编辑器",
+  general: "通用求职简历编辑器"
+};
+
+const identityTemplateTitles: Record<IdentityPreset, string> = {
+  student: "学生求职模板",
+  professional: "职场求职模板",
+  general: "通用求职模板"
+};
+
+const identitySwitchLabels: Record<IdentityPreset, string> = {
+  student: "切换为学生",
+  professional: "切换为职场人",
+  general: "切换为通用求职者"
+};
+
 export function getIdentityPreset(identity: IdentityPreset): IdentityPresetConfig {
   return presetConfigs[identity];
 }
 
 export function getIdentityPresets(): IdentityPresetConfig[] {
   return [presetConfigs.student, presetConfigs.professional, presetConfigs.general];
+}
+
+export function getIdentityEditorTitle(identity: IdentityPreset): string {
+  return identityEditorTitles[identity];
+}
+
+export function getIdentityTemplateTitle(identity: IdentityPreset): string {
+  return identityTemplateTitles[identity];
+}
+
+export function getIdentitySwitchLabel(identity: IdentityPreset): string {
+  return identitySwitchLabels[identity];
 }
 
 export function buildPresetState(identity: IdentityPreset): StoredResumeStateV2 {

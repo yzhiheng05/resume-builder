@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
 import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
-import { getIdentityPreset, getIdentityPresets } from "./data/identityPresets";
+import {
+  getIdentityPreset,
+  getIdentityPresets,
+  getIdentityTemplateTitle,
+  RESUME_TOOL_BRAND
+} from "./data/identityPresets";
 import {
   canAddMultipleModules,
   getModuleCatalog,
@@ -38,7 +43,7 @@ function IdentityEntryScreen({ onSelect }: { onSelect: (identity: IdentityPreset
   return (
     <div className="identity-screen">
       <div className="identity-screen__hero">
-        <p className="eyebrow">General Job Resume Builder</p>
+        <p className="eyebrow">{RESUME_TOOL_BRAND}</p>
         <h1>先选择你的简历起点</h1>
         <p>学生、职场人和通用求职者使用同一个编辑器内核，但会获得不同的默认模块、排序和填写提示。</p>
       </div>
@@ -504,11 +509,13 @@ export default function App() {
     );
   }
 
+  const currentIdentity = selectedIdentity ?? "general";
   const identityLabel = selectedPreset?.label ?? "通用求职者";
 
   return (
     <div className="app-shell">
       <HeaderBar
+        identity={currentIdentity}
         identityLabel={identityLabel}
         statusMessage={statusMessage}
         onReset={reset}
@@ -565,6 +572,7 @@ export default function App() {
           modules={modules}
           moduleOrder={moduleOrder}
           activeModuleId={activeModuleId}
+          eyebrow={getIdentityTemplateTitle(currentIdentity)}
           heading="实时预览"
           hint="在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。"
           onModuleOrderChange={setModuleOrder}
