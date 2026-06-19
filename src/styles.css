@@ -91,9 +91,12 @@ button {
 .header-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .topbar__actions button,
+.topbar__file-action,
 .header-actions button,
 .secondary-button,
 .ghost-button,
@@ -110,6 +113,7 @@ button {
 }
 
 .topbar__actions button,
+.topbar__file-action,
 .header-actions button {
   padding: 10px 14px;
   color: var(--accent);
@@ -117,6 +121,7 @@ button {
 }
 
 .topbar__actions button:hover,
+.topbar__file-action:hover,
 .header-actions button:hover,
 .secondary-button:hover,
 .ghost-button:hover,
@@ -124,6 +129,25 @@ button {
   border-color: var(--border-strong);
   box-shadow: var(--shadow);
   transform: translateY(-1px);
+}
+
+.topbar__status {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.topbar__file-action {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.topbar__file-action input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .workspace {

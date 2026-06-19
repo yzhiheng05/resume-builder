@@ -39,6 +39,7 @@ interface ResumeState {
   toggleSection: (id: SectionId) => void;
   reorderSections: (id: SectionId, toIndex: number) => void;
   setSectionOrder: (nextOrder: SectionId[]) => void;
+  replaceResumeState: (nextState: StoredResumeState) => void;
   reset: () => void;
 }
 
@@ -171,6 +172,11 @@ export function createResumeStore(seed: StoredResumeState = initialSeed) {
       persistState({ resume: state.resume, sectionOrder });
       return { sectionOrder };
     }),
+  replaceResumeState: (nextState) => {
+    const next = cloneStoredResumeState(nextState);
+    persistState(next);
+    set(next);
+  },
   reset: () => {
     const nextState = cloneStoredResumeState(seed);
     persistState(nextState);

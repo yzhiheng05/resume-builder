@@ -9,6 +9,7 @@ import {
   resolveInitialResumeSeed
 } from "../lib/resumeSeed";
 import { createResumeStore, useResumeStore } from "../store/useResumeStore";
+import type { StoredResumeState } from "../types/resume";
 
 function createMemoryStorage(): Storage {
   const data = new Map<string, string>();
@@ -191,6 +192,28 @@ describe("resume store", () => {
     const raw = storage.getItem(STORAGE_KEY);
     expect(raw).not.toBeNull();
     expect(raw ?? "").toContain("韩梅梅");
+  });
+
+  test("replaces resume state and persists imported data", () => {
+    const importedState: StoredResumeState = {
+      resume: {
+        ...defaultResume,
+        personal: {
+          ...defaultResume.personal,
+          name: "导入后的姓名",
+          photoDataUrl: "data:image/jpeg;base64,imported"
+        }
+      },
+      sectionOrder: ["projects", "personal", "education", "internships", "campus", "skills", "awards"]
+    };
+
+    act(() => {
+      useResumeStore.getState().replaceResumeState(importedState);
+    });
+
+    expect(useResumeStore.getState().resume.personal.name).toBe("导入后的姓名");
+    expect(useResumeStore.getState().sectionOrder[0]).toBe("projects");
+    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("data:image/jpeg;base64,imported");
   });
 
   test("personal section stays at the top by default", () => {

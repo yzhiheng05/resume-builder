@@ -3,6 +3,11 @@ import { HeaderBar } from "./components/HeaderBar";
 import PreviewPanel from "./components/preview/PreviewPanel";
 import type { ResumeSections, SectionId } from "./components/preview/sectionRenderers";
 import { fileToResizedDataUrl } from "./lib/image";
+import {
+  createResumeBackupFilename,
+  parseResumeBackup,
+  serializeResumeBackup
+} from "./lib/resumeBackup";
 import { useResumeStore } from "./store/useResumeStore";
 import type { PersonalVisibleField, ResumeData } from "./types/resume";
 import "./styles.css";
@@ -307,6 +312,7 @@ export default function App() {
   const sectionOrder = useResumeStore((state) => state.sectionOrder);
   const setSectionOrder = useResumeStore((state) => state.setSectionOrder);
   const toggleSection = useResumeStore((state) => state.toggleSection);
+  const replaceResumeState = useResumeStore((state) => state.replaceResumeState);
   const updatePersonal = useResumeStore((state) => state.updatePersonal);
   const togglePersonalField = useResumeStore((state) => state.togglePersonalField);
   const updateTimelineEntry = useResumeStore((state) => state.updateTimelineEntry);
@@ -320,6 +326,7 @@ export default function App() {
   const removeAward = useResumeStore((state) => state.removeAward);
   const reset = useResumeStore((state) => state.reset);
   const [activeSectionId, setActiveSectionId] = useState<SectionId | null>(null);
+  const [statusMessage, setStatusMessage] = useState("");
   const sectionRefs = useRef<Partial<Record<SectionId, HTMLDivElement | null>>>({});
 
   const sections = useMemo<ResumeSections>(
@@ -488,9 +495,61 @@ export default function App() {
     updatePersonal("photoDataUrl", nextPhoto);
   }
 
+  function showStatus(message: string) {
+    setStatusMessage(message);
+  }
+
+  function handleExportData() {
+    const content = serializeResumeBackup({ resume, sectionOrder });
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = createResumeBackupFilename();
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showStatus("数据已导出。");
+  }
+
+  async function handleImportData(file: File) {
+    let raw = "";
+
+    try {
+      raw = await file.text();
+    } catch {
+      showStatus("无法读取文件。");
+      return;
+    }
+
+    const parsed = parseResumeBackup(raw);
+    if (!parsed.ok) {
+      showStatus(parsed.error);
+      return;
+    }
+
+    const confirmed = window.confirm("导入会覆盖当前正在编辑的简历，确定继续吗？");
+    if (!confirmed) {
+      showStatus("导入已取消。");
+      return;
+    }
+
+    replaceResumeState(parsed.state);
+    showStatus("数据已导入。");
+  }
+
   return (
     <div className="app-shell">
-      <HeaderBar onReset={reset} />
+      <HeaderBar
+        onReset={reset}
+        onExportData={handleExportData}
+        onImportData={(file) => {
+          void handleImportData(file);
+        }}
+        statusMessage={statusMessage}
+      />
 
       <main className="workspace">
         <section className="editor-panel" data-editor-panel>

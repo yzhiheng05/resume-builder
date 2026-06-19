@@ -2,6 +2,11 @@ import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 import App from "../App";
+import {
+  RESUME_BACKUP_APP_ID,
+  RESUME_BACKUP_VERSION,
+  createResumeBackupPayload
+} from "../lib/resumeBackup";
 import { useResumeStore } from "../store/useResumeStore";
 
 vi.mock("../lib/image", () => ({
@@ -39,6 +44,17 @@ Object.defineProperty(window, "localStorage", {
   configurable: true
 });
 
+const createObjectURL = vi.fn(() => "blob:resume-backup");
+const revokeObjectURL = vi.fn();
+Object.defineProperty(URL, "createObjectURL", {
+  value: createObjectURL,
+  configurable: true
+});
+Object.defineProperty(URL, "revokeObjectURL", {
+  value: revokeObjectURL,
+  configurable: true
+});
+
 function expandSection(name: string) {
   const toggle = screen.getByRole("checkbox", { name });
   const card = toggle.closest(".section-card");
@@ -58,10 +74,25 @@ function getTextareaCountByLabel(label: RegExp) {
     .filter((node) => node.tagName.toLowerCase() === "textarea").length;
 }
 
+function createJsonFile(content: string) {
+  const file = new File([content], "resume.json", { type: "application/json" });
+  Object.defineProperty(file, "text", {
+    value: vi.fn(async () => content)
+  });
+  return file;
+}
+
+function getTopbarStatus() {
+  return document.querySelector(".topbar__status");
+}
+
 describe("App", () => {
   beforeEach(() => {
     storage.clear();
     useResumeStore.getState().reset();
+    createObjectURL.mockClear();
+    revokeObjectURL.mockClear();
+    vi.restoreAllMocks();
   });
 
   test("renders chinese editor and preview headings", () => {
@@ -109,6 +140,92 @@ describe("App", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "移除照片" }));
     expect(screen.queryByAltText("个人照片")).not.toBeInTheDocument();
+  });
+
+  test("exports versioned resume data as json", () => {
+    render(<App />);
+
+    const anchorClicks: HTMLAnchorElement[] = [];
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function clickMock(
+      this: HTMLAnchorElement
+    ) {
+      anchorClicks.push(this);
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "导出数据" }));
+
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:resume-backup");
+    expect(anchorClicks[0].download).toMatch(/^campus-resume-\d{4}-\d{2}-\d{2}\.json$/);
+    expect(getTopbarStatus()).toHaveTextContent("数据已导出。");
+  });
+
+  test("imports valid backup after confirmation", async () => {
+    render(<App />);
+
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+
+    const payload = createResumeBackupPayload({
+      resume: {
+        ...useResumeStore.getState().resume,
+        personal: {
+          ...useResumeStore.getState().resume.personal,
+          name: "导入用户",
+          photoDataUrl: "data:image/jpeg;base64,imported"
+        }
+      },
+      sectionOrder: useResumeStore.getState().sectionOrder
+    });
+    const file = createJsonFile(JSON.stringify(payload));
+
+    fireEvent.change(screen.getByLabelText("导入数据", { selector: "input" }), {
+      target: { files: [file] }
+    });
+
+    expect(await screen.findByText("导入用户")).toBeInTheDocument();
+    expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
+    expect(screen.getByAltText("个人照片")).toHaveAttribute("src", "data:image/jpeg;base64,imported");
+  });
+
+  test("does not import when confirmation is cancelled", async () => {
+    render(<App />);
+
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+
+    const payload = createResumeBackupPayload({
+      resume: {
+        ...useResumeStore.getState().resume,
+        personal: {
+          ...useResumeStore.getState().resume.personal,
+          name: "不应导入"
+        }
+      },
+      sectionOrder: useResumeStore.getState().sectionOrder
+    });
+    const file = createJsonFile(JSON.stringify(payload));
+
+    fireEvent.change(screen.getByLabelText("导入数据", { selector: "input" }), {
+      target: { files: [file] }
+    });
+
+    await screen.findByText("导入已取消。");
+    expect(getTopbarStatus()).toHaveTextContent("导入已取消。");
+    expect(screen.queryByText("不应导入")).not.toBeInTheDocument();
+  });
+
+  test("shows an error for unsupported import files", async () => {
+    render(<App />);
+
+    const file = createJsonFile(
+      JSON.stringify({ app: RESUME_BACKUP_APP_ID, version: RESUME_BACKUP_VERSION, data: {} })
+    );
+
+    fireEvent.change(screen.getByLabelText("导入数据", { selector: "input" }), {
+      target: { files: [file] }
+    });
+
+    await screen.findByText("文件缺少必要的简历数据。");
+    expect(getTopbarStatus()).toHaveTextContent("文件缺少必要的简历数据。");
   });
 
   test("education entries can be added and deleted", () => {
