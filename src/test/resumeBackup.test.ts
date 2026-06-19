@@ -20,7 +20,7 @@ describe("resume backup helpers", () => {
     expect(payload.data.modules[0].kind).toBe("personal");
   });
 
-  test("parses legacy v1 payload and migrates it to v2", () => {
+  test("parses legacy v1 payload and migrates it to v3 with template defaults", () => {
     const legacyPayload = {
       app: RESUME_BACKUP_APP_ID,
       version: 1,
@@ -71,10 +71,36 @@ describe("resume backup helpers", () => {
 
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.state.schemaVersion).toBe(2);
+      expect(result.state.schemaVersion).toBe(3);
       expect(result.state.selectedIdentity).toBe("general");
+      expect(result.state.templateId).toBe("classic");
+      expect(result.state.hasUserSelectedTemplate).toBe(false);
       expect(result.state.modules.some((module) => module.kind === "summary")).toBe(true);
       expect(result.state.modules.some((module) => module.kind === "certificate")).toBe(true);
+    }
+  });
+
+  test("parses legacy v2 payload and preserves default template migration", () => {
+    const state = buildPresetState("professional");
+    const legacyV2Payload = {
+      app: RESUME_BACKUP_APP_ID,
+      version: 2,
+      exportedAt: "2026-06-19T00:00:00.000Z",
+      data: {
+        schemaVersion: 2,
+        selectedIdentity: state.selectedIdentity,
+        modules: state.modules,
+        moduleOrder: state.moduleOrder
+      }
+    };
+
+    const result = parseResumeBackup(JSON.stringify(legacyV2Payload));
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.state.schemaVersion).toBe(3);
+      expect(result.state.templateId).toBe("classic");
+      expect(result.state.hasUserSelectedTemplate).toBe(false);
     }
   });
 

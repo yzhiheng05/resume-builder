@@ -1,5 +1,7 @@
 export type IdentityPreset = "student" | "professional" | "general";
 
+export type TemplateId = "classic" | "sidebar" | "campus";
+
 export type ModuleKind =
   | "personal"
   | "summary"
@@ -73,6 +75,17 @@ export interface ResumeModuleInstance {
 
 export interface ResumeDraftState {
   selectedIdentity: IdentityPreset | null;
+  templateId: TemplateId;
+  hasUserSelectedTemplate: boolean;
+  modules: ResumeModuleInstance[];
+  moduleOrder: string[];
+}
+
+export interface StoredResumeStateV3 {
+  schemaVersion: 3;
+  selectedIdentity: IdentityPreset;
+  templateId: TemplateId;
+  hasUserSelectedTemplate: boolean;
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
 }

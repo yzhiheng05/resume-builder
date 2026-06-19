@@ -1,7 +1,7 @@
 import { buildPresetState, normalizeModuleOrder } from "../data/identityPresets";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
-import { cloneStoredResumeStateV2, normalizeResumeDraftState } from "./resumeMigration";
-import type { ResumeDraftState, StoredResumeStateV2 } from "../types/resume";
+import { cloneStoredResumeStateV3, normalizeResumeDraftState } from "./resumeMigration";
+import type { ResumeDraftState, StoredResumeStateV3 } from "../types/resume";
 
 export const FIXTURE_QUERY_PARAM = "fixture";
 export const MULTIPAGE_PRINT_FIXTURE_ID = "multipage-print";
@@ -16,11 +16,11 @@ export interface ResolvedResumeSeed extends ResumeDraftState {
 interface ResolveResumeSeedOptions {
   isDev: boolean;
   search: string;
-  storedState: StoredResumeStateV2 | null;
+  storedState: StoredResumeStateV3 | null;
 }
 
-export function cloneStoredResumeState(state: StoredResumeStateV2): StoredResumeStateV2 {
-  return cloneStoredResumeStateV2(state);
+export function cloneStoredResumeState(state: StoredResumeStateV3): StoredResumeStateV3 {
+  return cloneStoredResumeStateV3(state);
 }
 
 export function getFixtureIdFromSearch(search: string): ResumeFixtureId | null {
@@ -30,7 +30,7 @@ export function getFixtureIdFromSearch(search: string): ResumeFixtureId | null {
   return value === MULTIPAGE_PRINT_FIXTURE_ID ? MULTIPAGE_PRINT_FIXTURE_ID : null;
 }
 
-export function getFixtureState(fixtureId: ResumeFixtureId): StoredResumeStateV2 {
+export function getFixtureState(fixtureId: ResumeFixtureId): StoredResumeStateV3 {
   if (fixtureId === MULTIPAGE_PRINT_FIXTURE_ID) {
     return multipagePrintFixture;
   }
@@ -38,20 +38,24 @@ export function getFixtureState(fixtureId: ResumeFixtureId): StoredResumeStateV2
   return buildPresetState("general");
 }
 
-export function getDefaultStoredResumeState(): StoredResumeStateV2 {
+export function getDefaultStoredResumeState(): StoredResumeStateV3 {
   return buildPresetState("general");
 }
 
-export function normalizeStoredResumeState(state: StoredResumeStateV2): StoredResumeStateV2 {
+export function normalizeStoredResumeState(state: StoredResumeStateV3): StoredResumeStateV3 {
   const normalized = normalizeResumeDraftState({
     selectedIdentity: state.selectedIdentity,
+    templateId: state.templateId,
+    hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     modules: state.modules,
     moduleOrder: normalizeModuleOrder(state.moduleOrder, state.modules)
   });
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     selectedIdentity: normalized.selectedIdentity ?? "general",
+    templateId: normalized.templateId,
+    hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
     modules: normalized.modules,
     moduleOrder: normalized.moduleOrder
   };
@@ -69,6 +73,8 @@ export function resolveInitialResumeSeed({
 
     return {
       selectedIdentity: fixtureState.selectedIdentity,
+      templateId: fixtureState.templateId,
+      hasUserSelectedTemplate: fixtureState.hasUserSelectedTemplate,
       modules: fixtureState.modules,
       moduleOrder: fixtureState.moduleOrder,
       fixtureId,
@@ -81,6 +87,8 @@ export function resolveInitialResumeSeed({
 
     return {
       selectedIdentity: normalized.selectedIdentity,
+      templateId: normalized.templateId,
+      hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
       modules: normalized.modules,
       moduleOrder: normalized.moduleOrder,
       fixtureId: null,
@@ -90,6 +98,8 @@ export function resolveInitialResumeSeed({
 
   return {
     selectedIdentity: null,
+    templateId: "classic",
+    hasUserSelectedTemplate: false,
     modules: [],
     moduleOrder: [],
     fixtureId: null,

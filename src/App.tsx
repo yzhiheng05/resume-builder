@@ -4,9 +4,9 @@ import PreviewPanel from "./components/preview/PreviewPanel";
 import {
   getIdentityPreset,
   getIdentityPresets,
-  getIdentityTemplateTitle,
   RESUME_TOOL_BRAND
 } from "./data/identityPresets";
+import { getResumeTemplate, getResumeTemplates } from "./data/resumeTemplates";
 import {
   canAddMultipleModules,
   getModuleCatalog,
@@ -437,8 +437,10 @@ function ModuleLibrary({
 export default function App() {
   const hasStoredState = useResumeStore((state) => state.hasStoredState);
   const selectedIdentity = useResumeStore((state) => state.selectedIdentity);
+  const templateId = useResumeStore((state) => state.templateId);
   const modules = useResumeStore((state) => state.modules);
   const moduleOrder = useResumeStore((state) => state.moduleOrder);
+  const setTemplate = useResumeStore((state) => state.setTemplate);
   const initializeIdentity = useResumeStore((state) => state.initializeIdentity);
   const switchIdentity = useResumeStore((state) => state.switchIdentity);
   const applyIdentityRecommendation = useResumeStore((state) => state.applyIdentityRecommendation);
@@ -464,6 +466,8 @@ export default function App() {
   const [statusMessage, setStatusMessage] = useState("");
 
   const selectedPreset = selectedIdentity ? getIdentityPreset(selectedIdentity) : null;
+  const templateOptions = useMemo(() => getResumeTemplates(), []);
+  const selectedTemplate = getResumeTemplate(templateId);
   const orderedModules = useMemo(() => {
     const moduleById = new Map(modules.map((module) => [module.id, module] as const));
     return moduleOrder
@@ -481,8 +485,10 @@ export default function App() {
     }
 
     const content = serializeResumeBackup({
-      schemaVersion: 2,
+      schemaVersion: 3,
       selectedIdentity,
+      templateId,
+      hasUserSelectedTemplate: useResumeStore.getState().hasUserSelectedTemplate,
       modules,
       moduleOrder
     });
@@ -606,11 +612,17 @@ export default function App() {
         <PreviewPanel
           modules={modules}
           moduleOrder={moduleOrder}
+          templateId={templateId}
+          templateOptions={templateOptions}
           activeModuleId={activeModuleId}
-          eyebrow={getIdentityTemplateTitle(currentIdentity)}
+          eyebrow={selectedTemplate.name}
           heading="实时预览"
           hint="在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。"
           onSurfaceHeightChange={setPreviewSurfaceHeight}
+          onTemplateChange={(nextTemplateId) => {
+            setTemplate(nextTemplateId);
+            showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
+          }}
           onModuleOrderChange={setModuleOrder}
           onModuleSelect={setActiveModuleId}
         />

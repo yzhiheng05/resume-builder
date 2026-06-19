@@ -1,8 +1,10 @@
-import type { StoredResumeStateV2 } from "../types/resume";
+import type { StoredResumeStateV3 } from "../types/resume";
 
-export const multipagePrintFixture: StoredResumeStateV2 = {
-  schemaVersion: 2,
+export const multipagePrintFixture: StoredResumeStateV3 = {
+  schemaVersion: 3,
   selectedIdentity: "student",
+  templateId: "campus",
+  hasUserSelectedTemplate: false,
   modules: [
     {
       id: "personal-1",

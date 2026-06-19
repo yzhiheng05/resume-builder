@@ -130,7 +130,7 @@ function renderListModule(module: ResumeModuleInstance): ReactNode {
   );
 }
 
-export function renderModuleContent(module: ResumeModuleInstance): ReactNode {
+export function renderSectionContent(module: ResumeModuleInstance): ReactNode {
   if (module.kind === "personal") {
     return renderPersonalModule(module);
   }
@@ -148,4 +148,8 @@ export function renderModuleContent(module: ResumeModuleInstance): ReactNode {
   }
 
   return null;
+}
+
+export function renderModuleContent(module: ResumeModuleInstance): ReactNode {
+  return renderSectionContent(module);
 }

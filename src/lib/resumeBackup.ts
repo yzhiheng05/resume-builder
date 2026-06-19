@@ -1,18 +1,18 @@
 import { migrateUnknownStoredResumeState } from "./resumeMigration";
-import type { StoredResumeStateV2 } from "../types/resume";
+import type { StoredResumeStateV3 } from "../types/resume";
 
 export const RESUME_BACKUP_APP_ID = "campus-resume-builder";
-export const RESUME_BACKUP_VERSION = 2;
+export const RESUME_BACKUP_VERSION = 3;
 
 export interface ResumeBackupPayloadV2 {
   app: typeof RESUME_BACKUP_APP_ID;
   version: typeof RESUME_BACKUP_VERSION;
   exportedAt: string;
-  data: StoredResumeStateV2;
+  data: StoredResumeStateV3;
 }
 
 export type ImportResumeBackupResult =
-  | { ok: true; state: StoredResumeStateV2 }
+  | { ok: true; state: StoredResumeStateV3 }
   | { ok: false; error: string };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -20,7 +20,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function createResumeBackupPayload(
-  state: StoredResumeStateV2,
+  state: StoredResumeStateV3,
   exportedAt = new Date().toISOString()
 ): ResumeBackupPayloadV2 {
   return {
@@ -31,7 +31,7 @@ export function createResumeBackupPayload(
   };
 }
 
-export function serializeResumeBackup(state: StoredResumeStateV2): string {
+export function serializeResumeBackup(state: StoredResumeStateV3): string {
   return JSON.stringify(createResumeBackupPayload(state), null, 2);
 }
 
@@ -52,7 +52,7 @@ export function parseResumeBackup(raw: string): ImportResumeBackupResult {
     return { ok: false, error: "文件不是当前应用支持的备份格式。" };
   }
 
-  if (payload.version !== 1 && payload.version !== RESUME_BACKUP_VERSION) {
+  if (payload.version !== 1 && payload.version !== 2 && payload.version !== RESUME_BACKUP_VERSION) {
     return { ok: false, error: "文件不是当前应用支持的备份格式。" };
   }
 

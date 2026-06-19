@@ -4,7 +4,8 @@ import type {
   ModuleKind,
   ResumeDraftState,
   ResumeModuleInstance,
-  StoredResumeStateV2
+  StoredResumeStateV3,
+  TemplateId
 } from "../types/resume";
 
 interface PresetModuleDescriptor {
@@ -95,16 +96,16 @@ const presetConfigs: Record<IdentityPreset, IdentityPresetConfig> = {
 
 export const RESUME_TOOL_BRAND = "求职简历工具";
 
+const identityDefaultTemplates: Record<IdentityPreset, TemplateId> = {
+  student: "campus",
+  professional: "classic",
+  general: "classic"
+};
+
 const identityEditorTitles: Record<IdentityPreset, string> = {
   student: "学生求职简历编辑器",
   professional: "职场求职简历编辑器",
   general: "通用求职简历编辑器"
-};
-
-const identityTemplateTitles: Record<IdentityPreset, string> = {
-  student: "学生求职模板",
-  professional: "职场求职模板",
-  general: "通用求职模板"
 };
 
 const identitySwitchLabels: Record<IdentityPreset, string> = {
@@ -125,22 +126,24 @@ export function getIdentityEditorTitle(identity: IdentityPreset): string {
   return identityEditorTitles[identity];
 }
 
-export function getIdentityTemplateTitle(identity: IdentityPreset): string {
-  return identityTemplateTitles[identity];
+export function getDefaultTemplateForIdentity(identity: IdentityPreset): TemplateId {
+  return identityDefaultTemplates[identity];
 }
 
 export function getIdentitySwitchLabel(identity: IdentityPreset): string {
   return identitySwitchLabels[identity];
 }
 
-export function buildPresetState(identity: IdentityPreset): StoredResumeStateV2 {
+export function buildPresetState(identity: IdentityPreset): StoredResumeStateV3 {
   const modules = presetConfigs[identity].recommendedModules.map((descriptor) =>
     createModuleInstance(descriptor.kind, identity, descriptor.title ? { title: descriptor.title } : undefined)
   );
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     selectedIdentity: identity,
+    templateId: getDefaultTemplateForIdentity(identity),
+    hasUserSelectedTemplate: false,
     modules,
     moduleOrder: modules.map((module) => module.id)
   };
@@ -187,6 +190,8 @@ export function applyIdentityPreset(
 
   return {
     selectedIdentity: identity,
+    templateId: state.templateId,
+    hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     modules,
     moduleOrder: [...recommendedIds, ...extraIds]
   };

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 
 import PreviewPanel, {
@@ -9,6 +9,7 @@ import PreviewPanel, {
   normalizeModuleOrder
 } from "../components/preview/PreviewPanel";
 import { buildPresetState } from "../data/identityPresets";
+import { getResumeTemplates } from "../data/resumeTemplates";
 import { isListModuleData, isPersonalModuleData, isTextModuleData } from "../lib/moduleRegistry";
 
 const sampleState = buildPresetState("student");
@@ -28,11 +29,22 @@ function extractHeadings(): string[] {
   return screen.getAllByRole("heading", { level: 2 }).map((node) => node.textContent ?? "");
 }
 
+function getMainPreviewPaper() {
+  return document.querySelector(".preview-surface .resume-paper:not(.resume-paper--thumbnail)") as HTMLElement;
+}
+
 describe("preview sorting", () => {
   test("renders modules in moduleOrder order", () => {
     const nextOrder = [sampleState.moduleOrder[3], sampleState.moduleOrder[0], sampleState.moduleOrder[1]];
 
-    render(<PreviewPanel modules={sampleState.modules} moduleOrder={nextOrder} />);
+    render(
+      <PreviewPanel
+        modules={sampleState.modules}
+        moduleOrder={nextOrder}
+        templateId="classic"
+        templateOptions={getResumeTemplates()}
+      />
+    );
 
     expect(extractHeadings().slice(0, 3)).toEqual(["项目经历", "个人信息", "职业摘要"]);
   });
@@ -53,11 +65,20 @@ describe("preview sorting", () => {
       skills.data.items = ["TypeScript", "React", "Node.js"];
     }
 
-    render(<PreviewPanel modules={sampleState.modules} moduleOrder={sampleState.moduleOrder} />);
+    render(
+      <PreviewPanel
+        modules={sampleState.modules}
+        moduleOrder={sampleState.moduleOrder}
+        templateId="classic"
+        templateOptions={getResumeTemplates()}
+      />
+    );
 
-    expect(screen.getByText("陈晨")).toBeInTheDocument();
-    expect(screen.getByText("熟悉 Web 全栈开发，关注工程效率与用户体验。")).toBeInTheDocument();
-    expect(screen.getByText("TypeScript / React / Node.js")).toBeInTheDocument();
+    const previewPaper = getMainPreviewPaper();
+
+    expect(within(previewPaper).getByText("陈晨")).toBeInTheDocument();
+    expect(within(previewPaper).getByText("熟悉 Web 全栈开发，关注工程效率与用户体验。")).toBeInTheDocument();
+    expect(within(previewPaper).getByText("TypeScript / React / Node.js")).toBeInTheDocument();
   });
 
   test("filters hidden modules but keeps the chosen order", () => {
@@ -79,5 +100,19 @@ describe("preview sorting", () => {
 
     const previewModules = buildPreviewModules(sampleState.modules, sampleState.moduleOrder);
     expect(previewModules[0]?.title).toBe("个人信息");
+  });
+
+  test("renders template selector cards", () => {
+    render(
+      <PreviewPanel
+        modules={sampleState.modules}
+        moduleOrder={sampleState.moduleOrder}
+        templateId="sidebar"
+        templateOptions={getResumeTemplates()}
+      />
+    );
+
+    expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
   });
 });

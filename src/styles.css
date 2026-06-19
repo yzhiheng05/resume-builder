@@ -639,7 +639,7 @@ button {
 .preview-panel__header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   align-items: flex-start;
 }
 
@@ -659,6 +659,116 @@ button {
   font-size: 13px;
   text-align: left;
   white-space: nowrap;
+}
+
+.template-selector {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.template-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
+.template-card--active {
+  border-color: rgba(29, 78, 216, 0.42);
+  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.14);
+  background: #ffffff;
+}
+
+.template-card__thumbnail {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(203, 213, 225, 0.78);
+  background: linear-gradient(180deg, #eff4ff, #f8fafc);
+}
+
+.template-card__thumbnail-surface {
+  padding: 8px;
+}
+
+.template-card .resume-paper--thumbnail {
+  width: 100%;
+  min-height: 0;
+  padding: 9px 8px;
+  border-radius: 10px;
+  box-shadow: none;
+  transform: scale(1);
+}
+
+.template-card .resume-template {
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.template-card .resume-section {
+  margin-bottom: 6px;
+  padding: 6px 7px 7px;
+  border-radius: 10px;
+}
+
+.template-card .resume-section__header {
+  margin-bottom: 4px;
+}
+
+.template-card .resume-section__title,
+.template-card .resume-personal__name {
+  font-size: 8px;
+}
+
+.template-card .resume-personal__title,
+.template-card .resume-personal__contacts,
+.template-card .resume-personal__summary,
+.template-card .resume-entry__title,
+.template-card .resume-entry__subtitle,
+.template-card .resume-entry__meta p,
+.template-card .resume-skill-group__title,
+.template-card .resume-skill-group__items,
+.template-card .resume-placeholder,
+.template-card .resume-bullets li {
+  font-size: 6px;
+  line-height: 1.35;
+}
+
+.template-card .resume-section__handle {
+  display: none;
+}
+
+.template-card .resume-personal__photo {
+  width: 26px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.template-card .resume-entry + .resume-entry,
+.template-card .resume-skill-group + .resume-skill-group {
+  margin-top: 6px;
+}
+
+.template-card__meta {
+  display: grid;
+  gap: 4px;
+}
+
+.template-card__meta strong {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.template-card__meta span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .preview-surface {
@@ -681,6 +791,72 @@ button {
   background: #ffffff;
   border: 1px solid rgba(148, 163, 184, 0.24);
   box-shadow: 0 24px 56px rgba(15, 23, 42, 0.12);
+}
+
+.resume-template {
+  display: block;
+}
+
+.resume-template--classic .resume-section {
+  border-radius: 12px;
+  border-color: rgba(203, 213, 225, 0.84);
+}
+
+.resume-paper--template-classic {
+  background:
+    linear-gradient(180deg, #ffffff, #ffffff 78%, #f8fbff 100%);
+}
+
+.resume-template--campus .resume-section {
+  border-radius: 18px;
+  border-color: rgba(125, 211, 252, 0.26);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(240, 253, 250, 0.96));
+}
+
+.resume-paper--template-campus {
+  background:
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.16), transparent 22%),
+    linear-gradient(180deg, #ffffff, #f0fdfa);
+}
+
+.resume-paper--template-campus .resume-section__title {
+  color: #0f766e;
+}
+
+.resume-paper--template-campus .resume-section__handle {
+  background: rgba(204, 251, 241, 0.9);
+  border-color: rgba(45, 212, 191, 0.28);
+  color: #0f766e;
+}
+
+.resume-template--sidebar {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.88fr) minmax(0, 1.65fr);
+  gap: 14px;
+}
+
+.resume-template__sidebar-column,
+.resume-template__main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resume-template--sidebar .resume-section {
+  margin-bottom: 0;
+}
+
+.resume-template--sidebar .resume-template__sidebar-column .resume-section {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.96));
+}
+
+.resume-paper--template-sidebar {
+  background:
+    linear-gradient(90deg, rgba(241, 245, 249, 0.72) 0, rgba(241, 245, 249, 0.72) 32%, #ffffff 32%, #ffffff 100%);
+}
+
+.resume-paper--template-sidebar .resume-section__title {
+  color: #0f172a;
 }
 
 .preview-empty-state {
@@ -969,6 +1145,7 @@ button {
 .resume-print-mode .topbar,
 .resume-print-mode .editor-panel,
 .resume-print-mode [data-editor-panel],
+.resume-print-mode .template-selector,
 .resume-print-mode .footer-note {
   display: none !important;
 }
@@ -1018,6 +1195,14 @@ button {
   .preview-panel__hint {
     text-align: left;
     white-space: normal;
+  }
+
+  .template-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .resume-template--sidebar {
+    grid-template-columns: 1fr;
   }
 
   .editor-panel,
@@ -1078,6 +1263,7 @@ button {
   .topbar,
   .editor-panel,
   [data-editor-panel],
+  .template-selector,
   .preview-panel__header,
   .resume-section__handle,
   .footer-note {

@@ -1,4 +1,8 @@
-import { applyIdentityPreset, normalizeModuleOrder } from "../data/identityPresets";
+import {
+  applyIdentityPreset,
+  getDefaultTemplateForIdentity,
+  normalizeModuleOrder
+} from "../data/identityPresets";
 import {
   cloneModuleData,
   createEmptyPersonalModuleData,
@@ -10,7 +14,9 @@ import type {
   LegacyStoredResumeState,
   ResumeDraftState,
   ResumeModuleInstance,
-  StoredResumeStateV2
+  StoredResumeStateV2,
+  StoredResumeStateV3,
+  TemplateId
 } from "../types/resume";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -32,11 +38,29 @@ function isModuleInstance(value: unknown): value is ResumeModuleInstance {
   );
 }
 
+function isTemplateId(value: unknown): value is TemplateId {
+  return value === "classic" || value === "sidebar" || value === "campus";
+}
+
 function isStoredResumeStateV2(value: unknown): value is StoredResumeStateV2 {
   return (
     isRecord(value) &&
     value.schemaVersion === 2 &&
     isIdentityPreset(value.selectedIdentity) &&
+    Array.isArray(value.modules) &&
+    value.modules.every(isModuleInstance) &&
+    Array.isArray(value.moduleOrder) &&
+    value.moduleOrder.every((item) => typeof item === "string")
+  );
+}
+
+function isStoredResumeStateV3(value: unknown): value is StoredResumeStateV3 {
+  return (
+    isRecord(value) &&
+    value.schemaVersion === 3 &&
+    isIdentityPreset(value.selectedIdentity) &&
+    isTemplateId(value.templateId) &&
+    typeof value.hasUserSelectedTemplate === "boolean" &&
     Array.isArray(value.modules) &&
     value.modules.every(isModuleInstance) &&
     Array.isArray(value.moduleOrder) &&
@@ -59,8 +83,8 @@ function isLegacyStoredResumeState(value: unknown): value is LegacyStoredResumeS
   );
 }
 
-export function cloneStoredResumeStateV2(state: StoredResumeStateV2): StoredResumeStateV2 {
-  return JSON.parse(JSON.stringify(state)) as StoredResumeStateV2;
+export function cloneStoredResumeStateV3(state: StoredResumeStateV3): StoredResumeStateV3 {
+  return JSON.parse(JSON.stringify(state)) as StoredResumeStateV3;
 }
 
 export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftState {
@@ -70,6 +94,8 @@ export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftS
 
   return {
     selectedIdentity: state.selectedIdentity,
+    templateId: state.templateId,
+    hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     modules: dedupedModules.map((module) => ({
       ...module,
       data: cloneModuleData(module.data)
@@ -78,7 +104,7 @@ export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftS
   };
 }
 
-export function toStoredResumeStateV2(state: ResumeDraftState): StoredResumeStateV2 | null {
+export function toStoredResumeStateV3(state: ResumeDraftState): StoredResumeStateV3 | null {
   if (!state.selectedIdentity) {
     return null;
   }
@@ -86,8 +112,10 @@ export function toStoredResumeStateV2(state: ResumeDraftState): StoredResumeStat
   const normalized = normalizeResumeDraftState(state);
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     selectedIdentity: normalized.selectedIdentity ?? state.selectedIdentity,
+    templateId: normalized.templateId,
+    hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
     modules: normalized.modules,
     moduleOrder: normalized.moduleOrder
   };
@@ -96,7 +124,7 @@ export function toStoredResumeStateV2(state: ResumeDraftState): StoredResumeStat
 export function migrateLegacyStoredResumeState(
   legacyState: LegacyStoredResumeState,
   selectedIdentity: IdentityPreset = "general"
-): StoredResumeStateV2 {
+): StoredResumeStateV3 {
   const personalVisibility = {
     ...defaultPersonalVisibility,
     ...(legacyState.resume.personalVisibility ?? {})
@@ -184,6 +212,8 @@ export function migrateLegacyStoredResumeState(
     applyIdentityPreset(
       {
         selectedIdentity,
+        templateId: getDefaultTemplateForIdentity(selectedIdentity),
+        hasUserSelectedTemplate: false,
         modules,
         moduleOrder: [personalModule.id, summaryModule.id, ...moduleOrder.filter((moduleId) => moduleId !== personalModule.id)]
       },
@@ -192,30 +222,61 @@ export function migrateLegacyStoredResumeState(
   );
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     selectedIdentity: applied.selectedIdentity ?? selectedIdentity,
+    templateId: applied.templateId,
+    hasUserSelectedTemplate: applied.hasUserSelectedTemplate,
     modules: applied.modules,
     moduleOrder: applied.moduleOrder
+  };
+}
+
+export function migrateStoredResumeStateV2(
+  value: StoredResumeStateV2
+): StoredResumeStateV3 {
+  const normalized = normalizeResumeDraftState({
+    selectedIdentity: value.selectedIdentity,
+    templateId: getDefaultTemplateForIdentity(value.selectedIdentity),
+    hasUserSelectedTemplate: false,
+    modules: value.modules,
+    moduleOrder: value.moduleOrder
+  });
+
+  return {
+    schemaVersion: 3,
+    selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+    templateId: normalized.templateId,
+    hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
+    modules: normalized.modules,
+    moduleOrder: normalized.moduleOrder
   };
 }
 
 export function migrateUnknownStoredResumeState(
   value: unknown,
   selectedIdentity: IdentityPreset = "general"
-): StoredResumeStateV2 | null {
-  if (isStoredResumeStateV2(value)) {
+): StoredResumeStateV3 | null {
+  if (isStoredResumeStateV3(value)) {
     const normalized = normalizeResumeDraftState({
       selectedIdentity: value.selectedIdentity,
+      templateId: value.templateId,
+      hasUserSelectedTemplate: value.hasUserSelectedTemplate,
       modules: value.modules,
       moduleOrder: value.moduleOrder
     });
 
     return {
-      schemaVersion: 2,
+      schemaVersion: 3,
       selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+      templateId: normalized.templateId,
+      hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
       modules: normalized.modules,
       moduleOrder: normalized.moduleOrder
     };
+  }
+
+  if (isStoredResumeStateV2(value)) {
+    return migrateStoredResumeStateV2(value);
   }
 
   if (isLegacyStoredResumeState(value)) {

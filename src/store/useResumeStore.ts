@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { applyIdentityPreset, buildPresetState, normalizeModuleOrder } from "../data/identityPresets";
+import {
+  applyIdentityPreset,
+  buildPresetState,
+  getDefaultTemplateForIdentity,
+  normalizeModuleOrder
+} from "../data/identityPresets";
 import {
   canAddMultipleModules,
   cloneModuleData,
@@ -10,7 +15,7 @@ import {
   isTextModuleData,
   isTimelineModuleData
 } from "../lib/moduleRegistry";
-import { toStoredResumeStateV2 } from "../lib/resumeMigration";
+import { toStoredResumeStateV3 } from "../lib/resumeMigration";
 import { resolveInitialResumeSeed } from "../lib/resumeSeed";
 import { loadResumeState, moveModule, saveResumeState } from "../lib/storage";
 import type {
@@ -21,13 +26,14 @@ import type {
   ResumeDraftState,
   ResumeModuleInstance,
   ResumeModuleData,
+  TemplateId,
   TextModuleData,
   TimelineEntry,
   TimelineModuleData
 } from "../types/resume";
 
 function persistState(state: ResumeDraftState) {
-  const storedState = toStoredResumeStateV2(state);
+  const storedState = toStoredResumeStateV3(state);
   if (storedState) {
     saveResumeState(storedState);
   }
@@ -46,6 +52,8 @@ function findModuleIndex(modules: ResumeModuleInstance[], moduleId: string) {
 function normalizeState(state: ResumeDraftState): ResumeDraftState {
   return {
     selectedIdentity: state.selectedIdentity,
+    templateId: state.templateId,
+    hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     modules: state.modules.map((module) => ({
       ...module,
       data: cloneModuleData(module.data)
@@ -58,6 +66,7 @@ interface ResumeState extends ResumeDraftState {
   hasStoredState: boolean;
   initializeIdentity: (identity: IdentityPreset) => void;
   switchIdentity: (identity: IdentityPreset) => void;
+  setTemplate: (templateId: TemplateId) => void;
   applyIdentityRecommendation: () => void;
   replaceResumeState: (nextState: ResumeDraftState) => void;
   updateModuleTitle: (moduleId: string, title: string) => void;
@@ -81,6 +90,8 @@ interface ResumeState extends ResumeDraftState {
 export function createResumeStore(seed: typeof initialSeed = initialSeed) {
   const initialState = normalizeState({
     selectedIdentity: seed.selectedIdentity,
+    templateId: seed.templateId,
+    hasUserSelectedTemplate: seed.hasUserSelectedTemplate,
     modules: seed.modules,
     moduleOrder: seed.moduleOrder
   });
@@ -95,8 +106,23 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
     },
     switchIdentity: (identity) =>
       set((state) => {
+        const shouldSyncTemplate = !state.hasUserSelectedTemplate;
         const nextState = normalizeState({
           selectedIdentity: identity,
+          templateId: shouldSyncTemplate ? getDefaultTemplateForIdentity(identity) : state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+          modules: state.modules,
+          moduleOrder: state.moduleOrder
+        });
+        persistState(nextState);
+        return nextState;
+      }),
+    setTemplate: (templateId) =>
+      set((state) => {
+        const nextState = normalizeState({
+          selectedIdentity: state.selectedIdentity,
+          templateId,
+          hasUserSelectedTemplate: true,
           modules: state.modules,
           moduleOrder: state.moduleOrder
         });
@@ -113,6 +139,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
           applyIdentityPreset(
             {
               selectedIdentity: state.selectedIdentity,
+              templateId: state.templateId,
+              hasUserSelectedTemplate: state.hasUserSelectedTemplate,
               modules: state.modules,
               moduleOrder: state.moduleOrder
             },
@@ -135,6 +163,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         );
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -148,6 +178,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         );
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -158,6 +190,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
       set((state) => {
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules: state.modules,
           moduleOrder: nextOrder
         });
@@ -169,6 +203,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const moduleOrder = moveModule(state.moduleOrder, moduleId, toIndex);
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules: state.modules,
           moduleOrder
         });
@@ -189,6 +225,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const modules = [...state.modules, nextModule];
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: [...state.moduleOrder, nextModule.id]
         });
@@ -205,6 +243,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const modules = state.modules.filter((module) => module.id !== moduleId);
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder.filter((id) => id !== moduleId)
         });
@@ -229,6 +269,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -256,6 +298,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -279,6 +323,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -304,6 +350,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -327,6 +375,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -350,6 +400,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -374,6 +426,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -397,6 +451,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });
@@ -420,6 +476,8 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           modules,
           moduleOrder: state.moduleOrder
         });

@@ -15,18 +15,22 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
-import PreviewSection from "./PreviewSection";
-import { renderModuleContent } from "./sectionRenderers";
-import type { ResumeModuleInstance } from "../../types/resume";
+import TemplateSelector from "./TemplateSelector";
+import ResumeTemplateRenderer from "./ResumeTemplateRenderer";
+import { getResumeTemplate, type ResumeTemplateDefinition } from "../../data/resumeTemplates";
+import type { ResumeModuleInstance, TemplateId } from "../../types/resume";
 
 export interface PreviewPanelProps {
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
+  templateId: TemplateId;
+  templateOptions: ResumeTemplateDefinition[];
   activeModuleId?: string | null;
   eyebrow?: string;
   heading?: string;
   hint?: string;
   onSurfaceHeightChange?: (height: number) => void;
+  onTemplateChange?: (templateId: TemplateId) => void;
   onModuleOrderChange?: (nextOrder: string[]) => void;
   onModuleSelect?: (moduleId: string) => void;
 }
@@ -87,11 +91,14 @@ export function buildPreviewModules(
 export default function PreviewPanel({
   modules,
   moduleOrder,
+  templateId,
+  templateOptions,
   activeModuleId,
-  eyebrow = "通用求职模板",
+  eyebrow,
   heading = "实时预览",
   hint = "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。",
   onSurfaceHeightChange,
+  onTemplateChange,
   onModuleOrderChange,
   onModuleSelect
 }: PreviewPanelProps) {
@@ -108,6 +115,7 @@ export default function PreviewPanel({
   const surfaceRef = useRef<HTMLDivElement | null>(null);
 
   const previewModules = buildPreviewModules(modules, moduleOrder);
+  const currentTemplate = getResumeTemplate(templateId);
 
   useEffect(() => {
     if (!onSurfaceHeightChange || !surfaceRef.current || typeof ResizeObserver === "undefined") {
@@ -149,14 +157,20 @@ export default function PreviewPanel({
     <section className="preview-panel" aria-label="简历预览面板">
       <div className="preview-panel__header">
         <div className="preview-panel__heading-group">
-          <p className="preview-panel__eyebrow">{eyebrow}</p>
+          <p className="preview-panel__eyebrow">{eyebrow ?? currentTemplate.name}</p>
           <h1 className="preview-panel__title">{heading}</h1>
           <p className="preview-panel__hint">{hint}</p>
         </div>
+        <TemplateSelector
+          templates={templateOptions}
+          selectedTemplateId={templateId}
+          modules={previewModules}
+          onTemplateChange={(nextTemplateId) => onTemplateChange?.(nextTemplateId)}
+        />
       </div>
 
       <div className="preview-surface" data-resume-preview-root="true" ref={surfaceRef}>
-        <div className="resume-paper">
+        <div className={`resume-paper ${currentTemplate.printClassName}`}>
           {previewModules.length === 0 ? (
             <div className="preview-empty-state">
               <h2>暂无可展示模块</h2>
@@ -168,17 +182,13 @@ export default function PreviewPanel({
                 items={previewModules.map((module) => module.id)}
                 strategy={verticalListSortingStrategy}
               >
-                {previewModules.map((previewModule) => (
-                  <PreviewSection
-                    key={previewModule.id}
-                    moduleId={previewModule.id}
-                    title={previewModule.title}
-                    isActive={activeModuleId === previewModule.id}
-                    onSelect={() => onModuleSelect?.(previewModule.id)}
-                  >
-                    {renderModuleContent(previewModule.module)}
-                  </PreviewSection>
-                ))}
+                <ResumeTemplateRenderer
+                  templateId={templateId}
+                  modules={previewModules}
+                  interactive
+                  activeModuleId={activeModuleId}
+                  onModuleSelect={onModuleSelect}
+                />
               </SortableContext>
             </DndContext>
           )}

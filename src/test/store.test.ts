@@ -57,7 +57,7 @@ describe("resume helpers", () => {
   test("loads migrated stored state", () => {
     const state = buildPresetState("general");
     storage.setItem(STORAGE_KEY, JSON.stringify(state));
-    expect(loadResumeState()?.schemaVersion).toBe(2);
+    expect(loadResumeState()?.schemaVersion).toBe(3);
   });
 
   test("resolves multipage fixture in dev mode", () => {
@@ -80,7 +80,7 @@ describe("resume helpers", () => {
 
     expect(resolved.fixtureId).toBeNull();
     expect(resolved.selectedIdentity).toBeNull();
-    expect(getDefaultStoredResumeState().schemaVersion).toBe(2);
+    expect(getDefaultStoredResumeState().schemaVersion).toBe(3);
   });
 
   test("migrates legacy state to general identity", () => {
@@ -126,6 +126,7 @@ describe("resume helpers", () => {
     });
 
     expect(migrated.selectedIdentity).toBe("general");
+    expect(migrated.templateId).toBe("classic");
     expect(migrated.modules.some((module) => module.kind === "certificate")).toBe(true);
   });
 });
@@ -154,6 +155,18 @@ describe("resume store", () => {
 
     expect(useResumeStore.getState().selectedIdentity).toBe("professional");
     expect(useResumeStore.getState().modules.map((module) => module.id)).toEqual(beforeIds);
+    expect(useResumeStore.getState().templateId).toBe("classic");
+  });
+
+  test("switching identity keeps user-selected template", () => {
+    act(() => {
+      useResumeStore.getState().setTemplate("sidebar");
+      useResumeStore.getState().switchIdentity("student");
+    });
+
+    expect(useResumeStore.getState().selectedIdentity).toBe("student");
+    expect(useResumeStore.getState().templateId).toBe("sidebar");
+    expect(useResumeStore.getState().hasUserSelectedTemplate).toBe(true);
   });
 
   test("applies identity recommendation and adds missing modules", () => {
@@ -230,7 +243,7 @@ describe("resume store", () => {
     });
 
     expect(useResumeStore.getState().selectedIdentity).toBe("professional");
-    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"schemaVersion\":2");
+    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"schemaVersion\":3");
   });
 
   test("reset restores current identity preset", () => {

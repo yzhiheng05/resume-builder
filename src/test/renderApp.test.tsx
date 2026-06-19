@@ -3,6 +3,7 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 import App from "../App";
 import { buildPresetState, RESUME_TOOL_BRAND } from "../data/identityPresets";
+import { getResumeTemplates } from "../data/resumeTemplates";
 import {
   RESUME_BACKUP_APP_ID,
   RESUME_BACKUP_VERSION,
@@ -69,9 +70,19 @@ function getTopbarStatus() {
   return document.querySelector(".topbar__status");
 }
 
+function getPreviewHeader() {
+  return document.querySelector(".preview-panel__heading-group") as HTMLElement;
+}
+
+function getMainPreviewSurface() {
+  return document.querySelector(".preview-surface .resume-paper:not(.resume-paper--thumbnail)") as HTMLElement;
+}
+
 function resetStoreToEmpty() {
   useResumeStore.setState({
     selectedIdentity: null,
+    templateId: "classic",
+    hasUserSelectedTemplate: false,
     modules: [],
     moduleOrder: [],
     hasStoredState: false
@@ -109,10 +120,11 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "简历编辑器" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
     expect(screen.getByText("当前身份：学生")).toBeInTheDocument();
-    expect(screen.getByText("学生求职模板")).toBeInTheDocument();
+    expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "添加模块" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /项目经历 可重复添加/ })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
   });
 
   test("exports versioned resume data as json", () => {
@@ -149,6 +161,7 @@ describe("App", () => {
 
     expect(await screen.findByText("当前身份：学生")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
+    expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
   });
 
@@ -158,7 +171,7 @@ describe("App", () => {
 
     expect(screen.getByText("当前身份：职场人")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
-    expect(screen.getByText("职场求职模板")).toBeInTheDocument();
+    expect(getPreviewHeader()).toHaveTextContent("经典简历");
   });
 
   test("switches identity safely and updates identity-aware titles", () => {
@@ -166,11 +179,11 @@ describe("App", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "通用求职简历编辑器" })).toBeInTheDocument();
-    expect(screen.getByText("通用求职模板")).toBeInTheDocument();
+    expect(getPreviewHeader()).toHaveTextContent("经典简历");
 
     fireEvent.click(screen.getByRole("button", { name: "切换为职场人" }));
     expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
-    expect(screen.getByText("职场求职模板")).toBeInTheDocument();
+    expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(getTopbarStatus()).toHaveTextContent("身份已切换，当前内容不会自动覆盖。");
 
     fireEvent.click(screen.getByRole("button", { name: "应用推荐配置" }));
@@ -206,13 +219,16 @@ describe("App", () => {
     const photo = new File(["photo"], "photo.png", { type: "image/png" });
     fireEvent.change(fileInput, { target: { files: [photo] } });
 
-    expect(await screen.findByAltText("个人照片")).toHaveAttribute(
+    const previewSurface = getMainPreviewSurface();
+    const previewPhoto = await within(previewSurface).findByAltText("个人照片");
+
+    expect(previewPhoto).toHaveAttribute(
       "src",
       "data:image/jpeg;base64,photo"
     );
 
     fireEvent.click(screen.getByRole("button", { name: "移除照片" }));
-    expect(screen.queryByAltText("个人照片")).not.toBeInTheDocument();
+    expect(within(previewSurface).queryByAltText("个人照片")).not.toBeInTheDocument();
   });
 
   test("shows an error for unsupported import files", async () => {
@@ -239,5 +255,25 @@ describe("App", () => {
     const previewPanel = screen.getByLabelText("简历预览面板");
     expect(within(previewPanel).getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThan(0);
+  });
+
+  test("switches template from selector and keeps selection visible", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /双栏简历/ }));
+
+    expect(getTopbarStatus()).toHaveTextContent("已切换到双栏简历。");
+    expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+  });
+
+  test("renders all template cards with realtime previews", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    const selector = screen.getByLabelText("简历模板选择器");
+    for (const template of getResumeTemplates()) {
+      expect(within(selector).getByRole("button", { name: new RegExp(template.name) })).toBeInTheDocument();
+    }
   });
 });
