@@ -51,6 +51,17 @@ function findModuleIndex(modules: ResumeModuleInstance[], moduleId: string) {
   return modules.findIndex((module) => module.id === moduleId);
 }
 
+function getNextActiveModuleId(moduleOrder: string[], removedModuleId: string) {
+  const removedIndex = moduleOrder.indexOf(removedModuleId);
+  const nextOrder = moduleOrder.filter((moduleId) => moduleId !== removedModuleId);
+
+  if (removedIndex === -1) {
+    return nextOrder[0] ?? null;
+  }
+
+  return nextOrder[removedIndex] ?? nextOrder[removedIndex - 1] ?? null;
+}
+
 function normalizeState(state: ResumeDraftState): ResumeDraftState {
   return {
     selectedIdentity: state.selectedIdentity,
@@ -67,17 +78,21 @@ function normalizeState(state: ResumeDraftState): ResumeDraftState {
 
 interface ResumeState extends ResumeDraftState {
   hasStoredState: boolean;
+  activeModuleId: string | null;
   initializeIdentity: (identity: IdentityPreset) => void;
   switchIdentity: (identity: IdentityPreset) => void;
   setTemplate: (templateId: TemplateId) => void;
   applyIdentityRecommendation: () => void;
   replaceResumeState: (nextState: ResumeDraftState) => void;
+  selectModule: (moduleId: string | null) => void;
   updateResumeStyle: (nextStyle: Partial<ResumeStyleSettings>) => void;
   updateModuleTitle: (moduleId: string, title: string) => void;
   toggleModuleVisibility: (moduleId: string) => void;
   setModuleOrder: (nextOrder: string[]) => void;
   reorderModules: (moduleId: string, toIndex: number) => void;
   addModule: (kind: ModuleKind) => void;
+  duplicateModule: (moduleId: string) => void;
+  deleteModule: (moduleId: string) => void;
   removeModule: (moduleId: string) => void;
   updatePersonalField: (moduleId: string, field: keyof Omit<PersonalModuleData, "personalVisibility">, value: string) => void;
   togglePersonalField: (moduleId: string, field: PersonalVisibleField) => void;
@@ -104,10 +119,12 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
   return create<ResumeState>((set, get) => ({
     ...initialState,
     hasStoredState: seed.hasStoredState,
+    activeModuleId: null,
+    selectModule: (moduleId) => set({ activeModuleId: moduleId }),
     initializeIdentity: (identity) => {
       const nextState = normalizeState(buildPresetState(identity));
       persistState(nextState);
-      set({ ...nextState, hasStoredState: true });
+      set({ ...nextState, hasStoredState: true, activeModuleId: nextState.moduleOrder[0] ?? null });
     },
     switchIdentity: (identity) =>
       set((state) => {
@@ -162,7 +179,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
     replaceResumeState: (nextState) => {
       const normalized = normalizeState(nextState);
       persistState(normalized);
-      set({ ...normalized, hasStoredState: true });
+      set({ ...normalized, hasStoredState: true, activeModuleId: normalized.moduleOrder[0] ?? null });
     },
     updateResumeStyle: (nextStyle) =>
       set((state) => {
@@ -245,8 +262,11 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
           return state;
         }
 
-        if (!canAddMultipleModules(kind) && state.modules.some((module) => module.kind === kind)) {
-          return state;
+        if (!canAddMultipleModules(kind)) {
+          const existingModule = state.modules.find((module) => module.kind === kind);
+          if (existingModule) {
+            return { activeModuleId: existingModule.id };
+          }
         }
 
         const nextModule = createModuleInstance(kind, state.selectedIdentity);
@@ -260,9 +280,45 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
           moduleOrder: [...state.moduleOrder, nextModule.id]
         });
         persistState(nextState);
-        return nextState;
+        return { ...nextState, activeModuleId: nextModule.id };
       }),
-    removeModule: (moduleId) =>
+    duplicateModule: (moduleId) =>
+      set((state) => {
+        if (!state.selectedIdentity) {
+          return state;
+        }
+
+        const targetIndex = findModuleIndex(state.modules, moduleId);
+        const targetModule = state.modules[targetIndex];
+
+        if (!targetModule || !canAddMultipleModules(targetModule.kind)) {
+          return state;
+        }
+
+        const copiedModule = createModuleInstance(targetModule.kind, state.selectedIdentity, {
+          title: targetModule.title,
+          visible: targetModule.visible,
+          data: cloneModuleData(targetModule.data)
+        });
+        const modules = [...state.modules];
+        modules.splice(targetIndex + 1, 0, copiedModule);
+
+        const orderIndex = state.moduleOrder.indexOf(moduleId);
+        const moduleOrder = [...state.moduleOrder];
+        moduleOrder.splice(orderIndex === -1 ? moduleOrder.length : orderIndex + 1, 0, copiedModule.id);
+
+        const nextState = normalizeState({
+          selectedIdentity: state.selectedIdentity,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+          resumeStyle: state.resumeStyle,
+          modules,
+          moduleOrder
+        });
+        persistState(nextState);
+        return { ...nextState, activeModuleId: copiedModule.id };
+      }),
+    deleteModule: (moduleId) =>
       set((state) => {
         const targetModule = state.modules.find((module) => module.id === moduleId);
         if (!targetModule || targetModule.kind === "personal") {
@@ -279,8 +335,15 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
           moduleOrder: state.moduleOrder.filter((id) => id !== moduleId)
         });
         persistState(nextState);
-        return nextState;
+        return {
+          ...nextState,
+          activeModuleId:
+            state.activeModuleId === moduleId
+              ? getNextActiveModuleId(state.moduleOrder, moduleId)
+              : state.activeModuleId
+        };
       }),
+    removeModule: (moduleId) => get().deleteModule(moduleId),
     updatePersonalField: (moduleId, field, value) =>
       set((state) => {
         const modules = state.modules.map((module) => {

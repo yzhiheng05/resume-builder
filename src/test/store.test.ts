@@ -234,6 +234,67 @@ describe("resume store", () => {
     );
   });
 
+  test("selects newly added modules and avoids duplicate personal modules", () => {
+    act(() => {
+      useResumeStore.getState().addModule("project");
+    });
+
+    const addedProject = useResumeStore.getState().modules.at(-1);
+    expect(useResumeStore.getState().activeModuleId).toBe(addedProject?.id);
+
+    const personalBefore = useResumeStore.getState().modules.filter((module) => module.kind === "personal");
+
+    act(() => {
+      useResumeStore.getState().addModule("personal");
+    });
+
+    const personalAfter = useResumeStore.getState().modules.filter((module) => module.kind === "personal");
+    expect(personalAfter).toHaveLength(personalBefore.length);
+    expect(useResumeStore.getState().activeModuleId).toBe(personalBefore[0].id);
+  });
+
+  test("duplicates modules with cloned data and new ids", () => {
+    const project = useResumeStore.getState().modules.find((module) => module.kind === "project");
+    expect(project).toBeTruthy();
+
+    act(() => {
+      useResumeStore.getState().duplicateModule(project!.id);
+    });
+
+    const projects = useResumeStore.getState().modules.filter((module) => module.kind === "project");
+    expect(projects.length).toBeGreaterThan(1);
+    expect(projects.at(-1)?.id).not.toBe(project!.id);
+    expect(useResumeStore.getState().activeModuleId).toBe(projects.at(-1)?.id);
+  });
+
+  test("deleting selected modules selects a nearby module", () => {
+    act(() => {
+      useResumeStore.getState().addModule("highlight");
+    });
+
+    const targetId = useResumeStore.getState().activeModuleId;
+    expect(targetId).toBeTruthy();
+
+    act(() => {
+      useResumeStore.getState().deleteModule(targetId!);
+    });
+
+    expect(useResumeStore.getState().modules.some((module) => module.id === targetId)).toBe(false);
+    expect(useResumeStore.getState().activeModuleId).not.toBe(targetId);
+  });
+
+  test("updates resume style without replacing modules", () => {
+    const beforeIds = useResumeStore.getState().modules.map((module) => module.id);
+
+    act(() => {
+      useResumeStore.getState().updateResumeStyle({ accentColor: "#0f766e", density: "compact" });
+    });
+
+    expect(useResumeStore.getState().modules.map((module) => module.id)).toEqual(beforeIds);
+    expect(useResumeStore.getState().resumeStyle.accentColor).toBe("#0f766e");
+    expect(useResumeStore.getState().resumeStyle.density).toBe("compact");
+  });
+
   test("updates timeline and list modules", () => {
     const experienceModule = useResumeStore.getState().modules.find((module) => module.kind === "experience");
     const skillsModule = useResumeStore.getState().modules.find((module) => module.kind === "skills");
