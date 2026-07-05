@@ -4,7 +4,8 @@ import {
   RESUME_BACKUP_APP_ID,
   RESUME_BACKUP_VERSION,
   createResumeBackupPayload,
-  parseResumeBackup
+  parseResumeBackup,
+  serializeResumeBackup
 } from "../lib/resumeBackup";
 
 describe("resume backup helpers", () => {
@@ -20,7 +21,7 @@ describe("resume backup helpers", () => {
     expect(payload.data.modules[0].kind).toBe("personal");
   });
 
-  test("parses legacy v1 payload and migrates it to v3 with template defaults", () => {
+  test("parses legacy v1 payload and migrates it to v4 with template and style defaults", () => {
     const legacyPayload = {
       app: RESUME_BACKUP_APP_ID,
       version: 1,
@@ -71,10 +72,11 @@ describe("resume backup helpers", () => {
 
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.state.schemaVersion).toBe(3);
+      expect(result.state.schemaVersion).toBe(4);
       expect(result.state.selectedIdentity).toBe("general");
       expect(result.state.templateId).toBe("classic");
       expect(result.state.hasUserSelectedTemplate).toBe(false);
+      expect(result.state.resumeStyle.accentColor).toBe("#2563eb");
       expect(result.state.modules.some((module) => module.kind === "summary")).toBe(true);
       expect(result.state.modules.some((module) => module.kind === "certificate")).toBe(true);
     }
@@ -98,9 +100,31 @@ describe("resume backup helpers", () => {
 
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.state.schemaVersion).toBe(3);
+      expect(result.state.schemaVersion).toBe(4);
       expect(result.state.templateId).toBe("classic");
       expect(result.state.hasUserSelectedTemplate).toBe(false);
+      expect(result.state.resumeStyle.density).toBe("comfortable");
+    }
+  });
+
+  test("serializes and parses style settings in v4 backups", () => {
+    const state = {
+      ...buildPresetState("general"),
+      resumeStyle: {
+        accentColor: "#0f766e",
+        density: "compact" as const,
+        sectionSpacing: "tight" as const,
+        headingStyle: "bar" as const
+      }
+    };
+
+    const parsed = parseResumeBackup(serializeResumeBackup(state));
+
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) {
+      expect(parsed.state.schemaVersion).toBe(4);
+      expect(parsed.state.resumeStyle.accentColor).toBe("#0f766e");
+      expect(parsed.state.resumeStyle.density).toBe("compact");
     }
   });
 

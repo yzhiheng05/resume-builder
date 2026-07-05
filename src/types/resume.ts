@@ -17,6 +17,17 @@ export type ModuleKind =
 
 export type ModuleShape = "personal" | "text" | "timeline" | "list";
 
+export type ResumeDensity = "compact" | "comfortable";
+export type ResumeSectionSpacing = "tight" | "normal" | "loose";
+export type ResumeHeadingStyle = "underline" | "bar" | "plain";
+
+export interface ResumeStyleSettings {
+  accentColor: string;
+  density: ResumeDensity;
+  sectionSpacing: ResumeSectionSpacing;
+  headingStyle: ResumeHeadingStyle;
+}
+
 export type PersonalVisibleField =
   | "title"
   | "phone"
@@ -77,6 +88,17 @@ export interface ResumeDraftState {
   selectedIdentity: IdentityPreset | null;
   templateId: TemplateId;
   hasUserSelectedTemplate: boolean;
+  resumeStyle: ResumeStyleSettings;
+  modules: ResumeModuleInstance[];
+  moduleOrder: string[];
+}
+
+export interface StoredResumeStateV4 {
+  schemaVersion: 4;
+  selectedIdentity: IdentityPreset;
+  templateId: TemplateId;
+  hasUserSelectedTemplate: boolean;
+  resumeStyle: ResumeStyleSettings;
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
 }

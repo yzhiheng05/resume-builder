@@ -9,6 +9,7 @@ import {
   createModuleInstance,
   defaultPersonalVisibility
 } from "./moduleRegistry";
+import { defaultResumeStyle, normalizeResumeStyle } from "./resumeStyle";
 import type {
   IdentityPreset,
   LegacyStoredResumeState,
@@ -16,6 +17,7 @@ import type {
   ResumeModuleInstance,
   StoredResumeStateV2,
   StoredResumeStateV3,
+  StoredResumeStateV4,
   TemplateId
 } from "../types/resume";
 
@@ -68,6 +70,20 @@ function isStoredResumeStateV3(value: unknown): value is StoredResumeStateV3 {
   );
 }
 
+function isStoredResumeStateV4(value: unknown): value is StoredResumeStateV4 {
+  return (
+    isRecord(value) &&
+    value.schemaVersion === 4 &&
+    isIdentityPreset(value.selectedIdentity) &&
+    isTemplateId(value.templateId) &&
+    typeof value.hasUserSelectedTemplate === "boolean" &&
+    Array.isArray(value.modules) &&
+    value.modules.every(isModuleInstance) &&
+    Array.isArray(value.moduleOrder) &&
+    value.moduleOrder.every((item) => typeof item === "string")
+  );
+}
+
 function isLegacyStoredResumeState(value: unknown): value is LegacyStoredResumeState {
   return (
     isRecord(value) &&
@@ -83,8 +99,8 @@ function isLegacyStoredResumeState(value: unknown): value is LegacyStoredResumeS
   );
 }
 
-export function cloneStoredResumeStateV3(state: StoredResumeStateV3): StoredResumeStateV3 {
-  return JSON.parse(JSON.stringify(state)) as StoredResumeStateV3;
+export function cloneStoredResumeStateV4(state: StoredResumeStateV4): StoredResumeStateV4 {
+  return JSON.parse(JSON.stringify(state)) as StoredResumeStateV4;
 }
 
 export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftState {
@@ -96,6 +112,7 @@ export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftS
     selectedIdentity: state.selectedIdentity,
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+    resumeStyle: normalizeResumeStyle(state.resumeStyle),
     modules: dedupedModules.map((module) => ({
       ...module,
       data: cloneModuleData(module.data)
@@ -104,7 +121,7 @@ export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftS
   };
 }
 
-export function toStoredResumeStateV3(state: ResumeDraftState): StoredResumeStateV3 | null {
+export function toStoredResumeStateV4(state: ResumeDraftState): StoredResumeStateV4 | null {
   if (!state.selectedIdentity) {
     return null;
   }
@@ -112,10 +129,11 @@ export function toStoredResumeStateV3(state: ResumeDraftState): StoredResumeStat
   const normalized = normalizeResumeDraftState(state);
 
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     selectedIdentity: normalized.selectedIdentity ?? state.selectedIdentity,
     templateId: normalized.templateId,
     hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
+    resumeStyle: normalized.resumeStyle,
     modules: normalized.modules,
     moduleOrder: normalized.moduleOrder
   };
@@ -124,7 +142,7 @@ export function toStoredResumeStateV3(state: ResumeDraftState): StoredResumeStat
 export function migrateLegacyStoredResumeState(
   legacyState: LegacyStoredResumeState,
   selectedIdentity: IdentityPreset = "general"
-): StoredResumeStateV3 {
+): StoredResumeStateV4 {
   const personalVisibility = {
     ...defaultPersonalVisibility,
     ...(legacyState.resume.personalVisibility ?? {})
@@ -214,6 +232,7 @@ export function migrateLegacyStoredResumeState(
         selectedIdentity,
         templateId: getDefaultTemplateForIdentity(selectedIdentity),
         hasUserSelectedTemplate: false,
+        resumeStyle: { ...defaultResumeStyle },
         modules,
         moduleOrder: [personalModule.id, summaryModule.id, ...moduleOrder.filter((moduleId) => moduleId !== personalModule.id)]
       },
@@ -222,10 +241,11 @@ export function migrateLegacyStoredResumeState(
   );
 
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     selectedIdentity: applied.selectedIdentity ?? selectedIdentity,
     templateId: applied.templateId,
     hasUserSelectedTemplate: applied.hasUserSelectedTemplate,
+    resumeStyle: applied.resumeStyle,
     modules: applied.modules,
     moduleOrder: applied.moduleOrder
   };
@@ -233,20 +253,22 @@ export function migrateLegacyStoredResumeState(
 
 export function migrateStoredResumeStateV2(
   value: StoredResumeStateV2
-): StoredResumeStateV3 {
+): StoredResumeStateV4 {
   const normalized = normalizeResumeDraftState({
     selectedIdentity: value.selectedIdentity,
     templateId: getDefaultTemplateForIdentity(value.selectedIdentity),
     hasUserSelectedTemplate: false,
+    resumeStyle: { ...defaultResumeStyle },
     modules: value.modules,
     moduleOrder: value.moduleOrder
   });
 
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
     templateId: normalized.templateId,
     hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
+    resumeStyle: normalized.resumeStyle,
     modules: normalized.modules,
     moduleOrder: normalized.moduleOrder
   };
@@ -255,21 +277,44 @@ export function migrateStoredResumeStateV2(
 export function migrateUnknownStoredResumeState(
   value: unknown,
   selectedIdentity: IdentityPreset = "general"
-): StoredResumeStateV3 | null {
-  if (isStoredResumeStateV3(value)) {
+): StoredResumeStateV4 | null {
+  if (isStoredResumeStateV4(value)) {
     const normalized = normalizeResumeDraftState({
       selectedIdentity: value.selectedIdentity,
       templateId: value.templateId,
       hasUserSelectedTemplate: value.hasUserSelectedTemplate,
+      resumeStyle: value.resumeStyle,
       modules: value.modules,
       moduleOrder: value.moduleOrder
     });
 
     return {
-      schemaVersion: 3,
+      schemaVersion: 4,
       selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
       templateId: normalized.templateId,
       hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
+      resumeStyle: normalized.resumeStyle,
+      modules: normalized.modules,
+      moduleOrder: normalized.moduleOrder
+    };
+  }
+
+  if (isStoredResumeStateV3(value)) {
+    const normalized = normalizeResumeDraftState({
+      selectedIdentity: value.selectedIdentity,
+      templateId: value.templateId,
+      hasUserSelectedTemplate: value.hasUserSelectedTemplate,
+      resumeStyle: { ...defaultResumeStyle },
+      modules: value.modules,
+      moduleOrder: value.moduleOrder
+    });
+
+    return {
+      schemaVersion: 4,
+      selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+      templateId: normalized.templateId,
+      hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
+      resumeStyle: normalized.resumeStyle,
       modules: normalized.modules,
       moduleOrder: normalized.moduleOrder
     };

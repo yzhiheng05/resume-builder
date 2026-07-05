@@ -4,9 +4,10 @@ import type {
   ModuleKind,
   ResumeDraftState,
   ResumeModuleInstance,
-  StoredResumeStateV3,
+  StoredResumeStateV4,
   TemplateId
 } from "../types/resume";
+import { defaultResumeStyle } from "../lib/resumeStyle";
 
 interface PresetModuleDescriptor {
   kind: ModuleKind;
@@ -134,16 +135,17 @@ export function getIdentitySwitchLabel(identity: IdentityPreset): string {
   return identitySwitchLabels[identity];
 }
 
-export function buildPresetState(identity: IdentityPreset): StoredResumeStateV3 {
+export function buildPresetState(identity: IdentityPreset): StoredResumeStateV4 {
   const modules = presetConfigs[identity].recommendedModules.map((descriptor) =>
     createModuleInstance(descriptor.kind, identity, descriptor.title ? { title: descriptor.title } : undefined)
   );
 
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     selectedIdentity: identity,
     templateId: getDefaultTemplateForIdentity(identity),
     hasUserSelectedTemplate: false,
+    resumeStyle: { ...defaultResumeStyle },
     modules,
     moduleOrder: modules.map((module) => module.id)
   };
@@ -192,6 +194,7 @@ export function applyIdentityPreset(
     selectedIdentity: identity,
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+    resumeStyle: state.resumeStyle,
     modules,
     moduleOrder: [...recommendedIds, ...extraIds]
   };

@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { buildPresetState } from "../data/identityPresets";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
 import { isPersonalModuleData } from "../lib/moduleRegistry";
-import { migrateLegacyStoredResumeState } from "../lib/resumeMigration";
+import { migrateLegacyStoredResumeState, migrateUnknownStoredResumeState } from "../lib/resumeMigration";
 import { loadResumeState, moveModule, STORAGE_KEY } from "../lib/storage";
 import {
   MULTIPAGE_PRINT_FIXTURE_ID,
@@ -57,7 +57,7 @@ describe("resume helpers", () => {
   test("loads migrated stored state", () => {
     const state = buildPresetState("general");
     storage.setItem(STORAGE_KEY, JSON.stringify(state));
-    expect(loadResumeState()?.schemaVersion).toBe(3);
+    expect(loadResumeState()?.schemaVersion).toBe(4);
   });
 
   test("resolves multipage fixture in dev mode", () => {
@@ -80,7 +80,7 @@ describe("resume helpers", () => {
 
     expect(resolved.fixtureId).toBeNull();
     expect(resolved.selectedIdentity).toBeNull();
-    expect(getDefaultStoredResumeState().schemaVersion).toBe(3);
+    expect(getDefaultStoredResumeState().schemaVersion).toBe(4);
   });
 
   test("migrates legacy state to general identity", () => {
@@ -127,7 +127,29 @@ describe("resume helpers", () => {
 
     expect(migrated.selectedIdentity).toBe("general");
     expect(migrated.templateId).toBe("classic");
+    expect(migrated.schemaVersion).toBe(4);
+    expect(migrated.resumeStyle.accentColor).toBe("#2563eb");
     expect(migrated.modules.some((module) => module.kind === "certificate")).toBe(true);
+  });
+
+  test("migrates v3 state to v4 with default style settings", () => {
+    const state = buildPresetState("general");
+    const migrated = migrateUnknownStoredResumeState({
+      schemaVersion: 3,
+      selectedIdentity: state.selectedIdentity,
+      templateId: state.templateId,
+      hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+      modules: state.modules,
+      moduleOrder: state.moduleOrder
+    });
+
+    expect(migrated?.schemaVersion).toBe(4);
+    expect(migrated?.resumeStyle).toEqual({
+      accentColor: "#2563eb",
+      density: "comfortable",
+      sectionSpacing: "normal",
+      headingStyle: "underline"
+    });
   });
 });
 
@@ -243,7 +265,7 @@ describe("resume store", () => {
     });
 
     expect(useResumeStore.getState().selectedIdentity).toBe("professional");
-    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"schemaVersion\":3");
+    expect(storage.getItem(STORAGE_KEY) ?? "").toContain("\"schemaVersion\":4");
   });
 
   test("reset restores current identity preset", () => {

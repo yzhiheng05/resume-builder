@@ -438,6 +438,7 @@ export default function App() {
   const hasStoredState = useResumeStore((state) => state.hasStoredState);
   const selectedIdentity = useResumeStore((state) => state.selectedIdentity);
   const templateId = useResumeStore((state) => state.templateId);
+  const resumeStyle = useResumeStore((state) => state.resumeStyle);
   const modules = useResumeStore((state) => state.modules);
   const moduleOrder = useResumeStore((state) => state.moduleOrder);
   const setTemplate = useResumeStore((state) => state.setTemplate);
@@ -485,10 +486,11 @@ export default function App() {
     }
 
     const content = serializeResumeBackup({
-      schemaVersion: 3,
+      schemaVersion: 4,
       selectedIdentity,
       templateId,
       hasUserSelectedTemplate: useResumeStore.getState().hasUserSelectedTemplate,
+      resumeStyle,
       modules,
       moduleOrder
     });

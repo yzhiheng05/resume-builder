@@ -1,5 +1,5 @@
 import { migrateUnknownStoredResumeState } from "./resumeMigration";
-import type { StoredResumeStateV3 } from "../types/resume";
+import type { StoredResumeStateV4 } from "../types/resume";
 
 export const STORAGE_KEY = "campus-resume-builder";
 
@@ -28,7 +28,7 @@ export function moveModule(order: string[], id: string, toIndex: number) {
   return next;
 }
 
-export function saveResumeState(payload: StoredResumeStateV3) {
+export function saveResumeState(payload: StoredResumeStateV4) {
   const storage = getBrowserStorage();
   if (!storage) {
     return;
@@ -37,7 +37,7 @@ export function saveResumeState(payload: StoredResumeStateV3) {
   storage.setItem(STORAGE_KEY, JSON.stringify(payload));
 }
 
-export function loadResumeState(): StoredResumeStateV3 | null {
+export function loadResumeState(): StoredResumeStateV4 | null {
   const storage = getBrowserStorage();
   if (!storage) {
     return null;
