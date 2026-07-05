@@ -3,9 +3,9 @@
 ## 1. 项目概览
 
 - 项目名称：campus-resume-builder
-- 当前阶段：MVP 已实现并完成两轮 UI / 排版优化
-- 当前目标：补齐仓库展示层文档，并继续做后续功能与打印体验迭代
-- 最近更新时间：2026-06-18
+- 当前阶段：Canva 感结构化简历编辑器已实现并完成验证
+- 当前目标：继续打磨模板缩略图、AI 润色、照片裁剪和移动端完整编辑体验
+- 最近更新时间：2026-07-05
 
 ## 2. 阅读顺序
 
@@ -19,6 +19,8 @@
 6. `/Users/yzh/AI/CodexProject/CodexWorkspace/10_Projects/campus-resume-builder/10_Requirements.md`
 7. `/Users/yzh/AI/CodexProject/CodexWorkspace/10_Projects/campus-resume-builder/20_Tech_Stack.md`
 8. `/Users/yzh/AI/CodexProject/CodexWorkspace/10_Projects/campus-resume-builder/docs/superpowers/specs/2026-06-18-campus-resume-builder-design.md`
+9. `/Users/yzh/AI/CodexProject/CodexWorkspace/10_Projects/campus-resume-builder/docs/superpowers/specs/2026-07-05-canva-style-resume-editor-design.md`
+10. `/Users/yzh/AI/CodexProject/CodexWorkspace/10_Projects/campus-resume-builder/docs/superpowers/plans/2026-07-05-canva-style-resume-editor.md`
 
 ## 3. 文档索引
 
@@ -29,15 +31,17 @@
 - `50_SOP.md`：项目特有 SOP
 - `60_Retrospective.md`：阶段复盘
 - `docs/superpowers/specs/2026-06-18-campus-resume-builder-design.md`：已确认 MVP 设计稿
+- `docs/superpowers/specs/2026-07-05-canva-style-resume-editor-design.md`：Canva 感结构化编辑器设计稿
+- `docs/superpowers/plans/2026-07-05-canva-style-resume-editor.md`：Canva 感结构化编辑器实现计划
 
 ## 4. 当前状态
 
-- 已完成：中文优先 MVP；左侧编辑、右侧实时预览；模块显隐；预览区拖拽排序；本地持久化；浏览器打印 / PDF 导出；两轮 UI / 排版优化；Git / GitHub 同步
-- 进行中：后续产品与打印体验打磨
-- 待处理：打印预览人工验收、后续功能增强
-- 已知风险：PDF 导出稳定性依赖打印样式；系统打印预览与真实 PDF 仍需继续人工验收；后续若扩展多模板或自由布局，复杂度会明显上升
+- 已完成：通用求职身份预设；模块实例模型；多模板预览；三栏式模块库 / A4 画布 / 属性面板；模块添加、选中、复制、删除、显隐、排序；轻量样式设置；本地持久化；JSON 导入 / 导出；浏览器打印 / PDF 导出
+- 进行中：后续产品体验和模板表达打磨
+- 待处理：更丰富模板缩略图、AI 润色、照片裁剪、移动端完整编辑体验
+- 已知风险：PDF 导出稳定性仍依赖浏览器打印能力；后续若扩展任意坐标自由布局，会明显增加分页、对齐和打印复杂度
 
 ## 5. 备注
 
-- 本项目当前定位为桌面端优先的校招简历编辑器 MVP。
+- 本项目当前定位为桌面端优先的通用求职简历编辑器，采用 Canva 感结构化编辑体验，但不做完整自由设计器。
 - 当前项目已经完成首版实现并推送到 GitHub：`https://github.com/yzhiheng05/resume-builder`
