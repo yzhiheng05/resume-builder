@@ -829,6 +829,7 @@ button {
 }
 
 .resume-paper {
+  --resume-accent: var(--accent);
   width: min(100%, 210mm);
   min-height: 297mm;
   padding: 18mm 16mm;
@@ -966,8 +967,8 @@ button {
 }
 
 .resume-section--active {
-  border-color: rgba(29, 78, 216, 0.28);
-  box-shadow: 0 16px 34px rgba(37, 99, 235, 0.08);
+  border-color: color-mix(in srgb, var(--resume-accent) 32%, rgba(203, 213, 225, 0.9));
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--resume-accent) 18%, transparent);
 }
 
 .resume-section--dragging {
@@ -993,6 +994,45 @@ button {
   font-size: 17px;
   line-height: 1.25;
   color: var(--text);
+}
+
+.resume-paper .resume-section__title {
+  color: var(--resume-accent);
+}
+
+.resume-heading-underline .resume-section__header {
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--resume-accent) 26%, rgba(203, 213, 225, 0.75));
+}
+
+.resume-heading-bar .resume-section__title {
+  padding-left: 9px;
+  border-left: 4px solid var(--resume-accent);
+}
+
+.resume-heading-plain .resume-section__header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.resume-density-compact {
+  font-size: 0.94em;
+}
+
+.resume-density-compact .resume-section {
+  padding: 11px 13px 12px;
+}
+
+.resume-spacing-tight .resume-section {
+  margin-bottom: 10px;
+}
+
+.resume-spacing-normal .resume-section {
+  margin-bottom: 16px;
+}
+
+.resume-spacing-loose .resume-section {
+  margin-bottom: 22px;
 }
 
 .resume-section__handle {

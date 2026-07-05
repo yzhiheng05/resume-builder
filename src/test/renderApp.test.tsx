@@ -219,6 +219,15 @@ describe("App", () => {
     expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
   });
 
+  test("applies selected style controls to the resume paper", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    fireEvent.change(screen.getByLabelText("主题色"), { target: { value: "#0f766e" } });
+
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-accent": "#0f766e" });
+  });
+
   test("photo upload displays in preview and can be removed", async () => {
     seedStoredResume("general");
     render(<App />);

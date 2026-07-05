@@ -1,11 +1,13 @@
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { renderSectionContent } from "../sectionRenderers";
 import type { OrderedPreviewModule, SidebarColumn } from "./templateUtils";
+import type { ResumeStyleSettings } from "../../../types/resume";
 import { splitSidebarModules } from "./templateUtils";
 import TemplateSection from "./TemplateSection";
 
 interface SidebarResumeTemplateProps {
   modules: OrderedPreviewModule[];
+  resumeStyle: ResumeStyleSettings;
   interactive?: boolean;
   activeModuleId?: string | null;
   onModuleSelect?: (moduleId: string) => void;
@@ -36,6 +38,7 @@ function renderColumnModules(
 
 export default function SidebarResumeTemplate({
   modules,
+  resumeStyle: _resumeStyle,
   interactive = false,
   activeModuleId,
   onModuleSelect

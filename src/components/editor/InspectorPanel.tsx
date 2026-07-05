@@ -411,17 +411,16 @@ export function InspectorPanel({
           ) : null}
         </div>
       ) : (
-        <>
-          <InspectorEmptyState />
-          <GlobalStyleInspector
-            templates={templates}
-            templateId={templateId}
-            resumeStyle={resumeStyle}
-            onTemplateChange={onTemplateChange}
-            onStyleChange={onStyleChange}
-          />
-        </>
+        <InspectorEmptyState />
       )}
+
+      <GlobalStyleInspector
+        templates={templates}
+        templateId={templateId}
+        resumeStyle={resumeStyle}
+        onTemplateChange={onTemplateChange}
+        onStyleChange={onStyleChange}
+      />
     </aside>
   );
 }

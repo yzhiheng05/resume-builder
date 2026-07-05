@@ -18,13 +18,15 @@ import {
 import TemplateSelector from "./TemplateSelector";
 import ResumeTemplateRenderer from "./ResumeTemplateRenderer";
 import { getResumeTemplate, type ResumeTemplateDefinition } from "../../data/resumeTemplates";
-import type { ResumeModuleInstance, TemplateId } from "../../types/resume";
+import { defaultResumeStyle, getResumeStyleVars } from "../../lib/resumeStyle";
+import type { ResumeModuleInstance, ResumeStyleSettings, TemplateId } from "../../types/resume";
 import { getSidebarColumnForModuleKind } from "./templates/templateUtils";
 
 export interface PreviewPanelProps {
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
   templateId: TemplateId;
+  resumeStyle?: ResumeStyleSettings;
   templateOptions: ResumeTemplateDefinition[];
   activeModuleId?: string | null;
   eyebrow?: string;
@@ -150,6 +152,7 @@ export default function PreviewPanel({
   modules,
   moduleOrder,
   templateId,
+  resumeStyle = defaultResumeStyle,
   templateOptions,
   activeModuleId,
   eyebrow,
@@ -227,12 +230,16 @@ export default function PreviewPanel({
           templates={templateOptions}
           selectedTemplateId={templateId}
           modules={previewModules}
+          resumeStyle={resumeStyle}
           onTemplateChange={(nextTemplateId) => onTemplateChange?.(nextTemplateId)}
         />
       </div>
 
       <div className="preview-surface" data-resume-preview-root="true" ref={surfaceRef}>
-        <div className={`resume-paper ${currentTemplate.printClassName}`}>
+        <div
+          className={`resume-paper ${currentTemplate.printClassName} resume-density-${resumeStyle.density} resume-spacing-${resumeStyle.sectionSpacing} resume-heading-${resumeStyle.headingStyle}`}
+          style={getResumeStyleVars(resumeStyle)}
+        >
           {previewModules.length === 0 ? (
             <div className="preview-empty-state">
               <h2>暂无可展示模块</h2>
@@ -244,6 +251,7 @@ export default function PreviewPanel({
                 <ResumeTemplateRenderer
                   templateId={templateId}
                   modules={previewModules}
+                  resumeStyle={resumeStyle}
                   interactive
                   activeModuleId={activeModuleId}
                   onModuleSelect={onModuleSelect}
@@ -256,6 +264,7 @@ export default function PreviewPanel({
                   <ResumeTemplateRenderer
                     templateId={templateId}
                     modules={previewModules}
+                    resumeStyle={resumeStyle}
                     interactive
                     activeModuleId={activeModuleId}
                     onModuleSelect={onModuleSelect}

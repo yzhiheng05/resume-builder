@@ -1,9 +1,11 @@
 import { renderSectionContent } from "../sectionRenderers";
 import type { OrderedPreviewModule } from "./templateUtils";
+import type { ResumeStyleSettings } from "../../../types/resume";
 import TemplateSection from "./TemplateSection";
 
 interface ClassicResumeTemplateProps {
   modules: OrderedPreviewModule[];
+  resumeStyle: ResumeStyleSettings;
   interactive?: boolean;
   activeModuleId?: string | null;
   onModuleSelect?: (moduleId: string) => void;
@@ -11,6 +13,7 @@ interface ClassicResumeTemplateProps {
 
 export default function ClassicResumeTemplate({
   modules,
+  resumeStyle: _resumeStyle,
   interactive = false,
   activeModuleId,
   onModuleSelect

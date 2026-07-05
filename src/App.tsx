@@ -589,6 +589,7 @@ export default function App() {
             modules={modules}
             moduleOrder={moduleOrder}
             templateId={templateId}
+            resumeStyle={resumeStyle}
             templateOptions={templateOptions}
             activeModuleId={activeModuleId}
             eyebrow={selectedTemplate.name}
