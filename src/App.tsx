@@ -1,5 +1,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { HeaderBar } from "./components/HeaderBar";
+import { InspectorPanel } from "./components/editor/InspectorPanel";
+import { ModuleLibraryPanel } from "./components/editor/ModuleLibraryPanel";
 import PreviewPanel, { getPreviewHint } from "./components/preview/PreviewPanel";
 import {
   getIdentityPreset,
@@ -439,18 +441,22 @@ export default function App() {
   const selectedIdentity = useResumeStore((state) => state.selectedIdentity);
   const templateId = useResumeStore((state) => state.templateId);
   const resumeStyle = useResumeStore((state) => state.resumeStyle);
+  const activeModuleId = useResumeStore((state) => state.activeModuleId);
   const modules = useResumeStore((state) => state.modules);
   const moduleOrder = useResumeStore((state) => state.moduleOrder);
   const setTemplate = useResumeStore((state) => state.setTemplate);
+  const selectModule = useResumeStore((state) => state.selectModule);
   const initializeIdentity = useResumeStore((state) => state.initializeIdentity);
   const switchIdentity = useResumeStore((state) => state.switchIdentity);
   const applyIdentityRecommendation = useResumeStore((state) => state.applyIdentityRecommendation);
   const replaceResumeState = useResumeStore((state) => state.replaceResumeState);
+  const updateResumeStyle = useResumeStore((state) => state.updateResumeStyle);
   const updateModuleTitle = useResumeStore((state) => state.updateModuleTitle);
   const toggleModuleVisibility = useResumeStore((state) => state.toggleModuleVisibility);
   const setModuleOrder = useResumeStore((state) => state.setModuleOrder);
   const addModule = useResumeStore((state) => state.addModule);
-  const removeModule = useResumeStore((state) => state.removeModule);
+  const duplicateModule = useResumeStore((state) => state.duplicateModule);
+  const deleteModule = useResumeStore((state) => state.deleteModule);
   const updatePersonalField = useResumeStore((state) => state.updatePersonalField);
   const togglePersonalField = useResumeStore((state) => state.togglePersonalField);
   const updateTextValue = useResumeStore((state) => state.updateTextValue);
@@ -461,14 +467,13 @@ export default function App() {
   const addListItem = useResumeStore((state) => state.addListItem);
   const removeListItem = useResumeStore((state) => state.removeListItem);
   const reset = useResumeStore((state) => state.reset);
-  const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  const [isModuleLibraryOpen, setIsModuleLibraryOpen] = useState(false);
   const [previewSurfaceHeight, setPreviewSurfaceHeight] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
 
   const selectedPreset = selectedIdentity ? getIdentityPreset(selectedIdentity) : null;
   const templateOptions = useMemo(() => getResumeTemplates(), []);
   const selectedTemplate = getResumeTemplate(templateId);
+  const activeModule = activeModuleId ? modules.find((module) => module.id === activeModuleId) ?? null : null;
   const orderedModules = useMemo(() => {
     const moduleById = new Map(modules.map((module) => [module.id, module] as const));
     return moduleOrder
@@ -570,63 +575,63 @@ export default function App() {
         }}
       />
 
-      <main className="workspace">
-        <section className="editor-panel" data-editor-panel style={editorPanelStyle}>
-          <div className="editor-heading">
-            <p className="editor-heading__eyebrow">模块化填写</p>
-            <h2>简历编辑器</h2>
-            <p>{selectedPreset?.focusHint ?? "左侧填写内容，右侧实时预览。"}</p>
+      <main className="editor-workspace">
+        <ModuleLibraryPanel modules={modules} onAddModule={addModule} />
+
+        <section className="canvas-panel" aria-label="简历画布" style={editorPanelStyle}>
+          <div className="canvas-panel__header">
+            <p className="editor-heading__eyebrow">{selectedTemplate.name}</p>
+            <h2>简历画布</h2>
+            <p>{selectedPreset?.focusHint ?? "添加模块、选中画布内容，并在右侧属性面板中编辑。"}</p>
           </div>
 
-          <ModuleLibrary
-            isOpen={isModuleLibraryOpen}
-            onToggle={() => setIsModuleLibraryOpen((open) => !open)}
-            onAdd={addModule}
+          <PreviewPanel
+            modules={modules}
+            moduleOrder={moduleOrder}
+            templateId={templateId}
+            templateOptions={templateOptions}
+            activeModuleId={activeModuleId}
+            eyebrow={selectedTemplate.name}
+            heading="实时预览"
+            hint={getPreviewHint(templateId)}
+            onSurfaceHeightChange={setPreviewSurfaceHeight}
+            onTemplateChange={(nextTemplateId) => {
+              setTemplate(nextTemplateId);
+              showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
+            }}
+            onModuleOrderChange={setModuleOrder}
+            onModuleSelect={selectModule}
           />
-
-          <div className="editor-panel__content">
-            <div className="editor-sections">
-              {orderedModules.map((module) => (
-                <ModuleEditorCard
-                  key={module.id}
-                  module={module}
-                  hint={selectedPreset?.moduleHints[module.kind]}
-                  onUpdateTitle={(title) => updateModuleTitle(module.id, title)}
-                  onToggleVisibility={() => toggleModuleVisibility(module.id)}
-                  onRemove={() => removeModule(module.id)}
-                  onUpdatePersonalField={(field, value) => updatePersonalField(module.id, field, value)}
-                  onTogglePersonalField={(field) => togglePersonalField(module.id, field)}
-                  onUpdateText={(value) => updateTextValue(module.id, value)}
-                  onUpdateTimelineEntry={(index, field, value) =>
-                    updateTimelineEntry(module.id, index, { [field]: value })
-                  }
-                  onAddTimelineEntry={() => addTimelineEntry(module.id)}
-                  onRemoveTimelineEntry={(index) => removeTimelineEntry(module.id, index)}
-                  onUpdateListItem={(index, value) => updateListItem(module.id, index, value)}
-                  onAddListItem={() => addListItem(module.id)}
-                  onRemoveListItem={(index) => removeListItem(module.id, index)}
-                />
-              ))}
-            </div>
-          </div>
         </section>
 
-        <PreviewPanel
-          modules={modules}
-          moduleOrder={moduleOrder}
+        <InspectorPanel
+          activeModule={activeModule}
+          moduleHint={activeModule ? selectedPreset?.moduleHints[activeModule.kind] : undefined}
+          templates={templateOptions}
           templateId={templateId}
-          templateOptions={templateOptions}
-          activeModuleId={activeModuleId}
-          eyebrow={selectedTemplate.name}
-          heading="实时预览"
-          hint={getPreviewHint(templateId)}
-          onSurfaceHeightChange={setPreviewSurfaceHeight}
+          resumeStyle={resumeStyle}
           onTemplateChange={(nextTemplateId) => {
             setTemplate(nextTemplateId);
             showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
           }}
-          onModuleOrderChange={setModuleOrder}
-          onModuleSelect={setActiveModuleId}
+          onStyleChange={updateResumeStyle}
+          onUpdateModuleTitle={updateModuleTitle}
+          onToggleModuleVisibility={toggleModuleVisibility}
+          onDuplicateModule={duplicateModule}
+          onDeleteModule={(moduleId) => {
+            if (window.confirm("确定删除这个模块吗？")) {
+              deleteModule(moduleId);
+            }
+          }}
+          onUpdatePersonalField={updatePersonalField}
+          onTogglePersonalField={togglePersonalField}
+          onUpdateText={updateTextValue}
+          onUpdateTimelineEntry={updateTimelineEntry}
+          onAddTimelineEntry={addTimelineEntry}
+          onRemoveTimelineEntry={removeTimelineEntry}
+          onUpdateListItem={updateListItem}
+          onAddListItem={addListItem}
+          onRemoveListItem={removeListItem}
         />
       </main>
 

@@ -117,13 +117,14 @@ describe("App", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /学生/ }));
 
-    expect(screen.getByRole("heading", { name: "简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "模块库" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "简历画布" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "属性面板" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
     expect(screen.getByText("当前身份：学生")).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "添加模块" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /项目经历 可重复添加/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /项目经历 可重复添加/ })).toBeInTheDocument();
     expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
   });
 
@@ -194,21 +195,28 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "添加模块" }));
     fireEvent.click(screen.getByRole("button", { name: /项目经历 可重复添加/ }));
-    expect(screen.getAllByDisplayValue("项目经历").length).toBeGreaterThan(1);
+    expect(screen.getAllByText("项目经历").length).toBeGreaterThan(1);
+    expect(screen.getByLabelText("模块标题")).toHaveValue("项目经历");
   });
 
-  test("opens module library from the top entry", () => {
+  test("renders module library as a persistent left panel", () => {
     seedStoredResume("general");
     render(<App />);
 
-    expect(screen.queryByRole("button", { name: /技能 可重复添加/ })).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: "添加模块" }));
-
-    expect(screen.getByRole("heading", { name: "添加更多模块" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "模块库" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /技能 可重复添加/ })).toBeInTheDocument();
+  });
+
+  test("edits selected canvas module from the inspector", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    fireEvent.click(screen.getAllByText("职业摘要")[0]);
+    const titleInput = screen.getByLabelText("模块标题");
+    fireEvent.change(titleInput, { target: { value: "个人优势" } });
+
+    expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
   });
 
   test("photo upload displays in preview and can be removed", async () => {
