@@ -33,6 +33,7 @@
 - `docs/superpowers/specs/2026-06-18-campus-resume-builder-design.md`：已确认 MVP 设计稿
 - `docs/superpowers/specs/2026-07-05-canva-style-resume-editor-design.md`：Canva 感结构化编辑器设计稿
 - `docs/superpowers/plans/2026-07-05-canva-style-resume-editor.md`：Canva 感结构化编辑器实现计划
+- `HANDOFF.md`：当前实现状态、验证结果和新会话交接提示词
 
 ## 4. 当前状态
 
