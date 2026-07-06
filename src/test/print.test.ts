@@ -71,13 +71,39 @@ describe("print helpers", () => {
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
   });
 
+  test("mobile top toolbar uses two compact command rows instead of one wrapped button pile", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("@media (max-width: 1080px)");
+    expect(css).toContain(".topbar {\n    position: static;\n    display: grid;\n    grid-template-columns: 1fr;");
+    expect(css).toContain(".topbar__controls {\n    display: grid;\n    grid-template-columns: 1fr;\n    gap: 5px;");
+    expect(css).toContain(".topbar__identity-switcher {\n    display: grid;\n    grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(css).toContain(".topbar__actions {\n    display: grid;\n    grid-template-columns: repeat(5, minmax(0, 1fr));");
+    expect(css).toContain("padding-top: 5px;\n    padding-left: 0;\n    border-top: 1px solid rgba(17, 18, 23, 0.08);\n    border-left: 0;");
+    expect(css).toContain(".topbar__primary-action {\n    margin-left: 0;");
+  });
+
   test("canvas workbench uses a lighter neutral stage", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain("--canvas-bg: #dde1de;");
-    expect(css).toContain("linear-gradient(180deg, #e3e6e3 0%, #d5dad7 100%)");
+    expect(css).toContain("rgba(255, 255, 255, 0.22) 0 1px");
+    expect(css).toContain("linear-gradient(180deg, #e5e8e5 0%, #d8ddda 100%)");
     expect(css).not.toContain("--canvas-bg: #d2d6d4;");
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
+  });
+
+  test("preview stage uses a quiet mat instead of a dense drafting grid", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".preview-surface {\n  position: relative;\n  flex: 1;");
+    expect(css).toContain("padding: 30px 28px 28px 40px;");
+    expect(css).toContain("linear-gradient(180deg, #cfd5d2 0%, #c7cfcc 100%);");
+    expect(css).toContain(".preview-surface::before,\n.preview-surface::after {\n  content: \"\";\n  position: absolute;\n  pointer-events: none;\n  opacity: 0.22;");
+    expect(css).toContain("height: 8px;");
+    expect(css).toContain("width: 6px;");
+    expect(css).not.toContain("linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px) 0 0 / 36px 36px");
+    expect(css).not.toContain("repeating-linear-gradient(90deg, rgba(33, 38, 48, 0.24) 0 1px, transparent 1px 16px)");
   });
 
   test("inspector panel matches the quiet paper-gray workbench shell", () => {
@@ -99,12 +125,24 @@ describe("print helpers", () => {
 
     expect(css).toContain(".identity-screen {\n  display: block;\n  min-height: 100vh;\n  padding: 0;\n  background: #dde1de;");
     expect(css).toContain(".identity-screen__hero {\n  display: grid;\n  align-content: center;");
-    expect(css).toContain("linear-gradient(180deg, #e3e6e3 0%, #d5dad7 100%);");
+    expect(css).toContain("linear-gradient(180deg, #e5e8e5 0%, #d8ddda 100%);");
     expect(css).toContain(".identity-screen__choices {\n  display: grid;\n  align-content: center;");
     expect(css).toContain("background: #eceee8;");
-    expect(css).toContain(".identity-card {\n  position: relative;\n  min-height: 96px;\n  padding: 13px 12px 13px 18px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
+    expect(css).toContain(".identity-card {\n  position: relative;\n  min-height: 88px;\n  padding: 12px 38px 12px 18px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.28);");
     expect(css).not.toContain("background: #101114;\n  color: #f7f8f6;");
+  });
+
+  test("identity entry uses quieter drafting marks and start-list affordances", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("linear-gradient(90deg, rgba(17, 18, 23, 0.014) 1px, transparent 1px) 0 0 / 42px 42px");
+    expect(css).toContain("linear-gradient(rgba(17, 18, 23, 0.012) 1px, transparent 1px) 0 0 / 42px 42px");
+    expect(css).toContain(".identity-card {\n  position: relative;\n  min-height: 88px;\n  padding: 12px 38px 12px 18px;");
+    expect(css).toContain("border-radius: 5px;\n  background: rgba(255, 254, 251, 0.28);");
+    expect(css).toContain(".identity-card::after {\n  content: \"\";");
+    expect(css).toContain("border-top: 1px solid rgba(63, 95, 104, 0.58);\n  border-right: 1px solid rgba(63, 95, 104, 0.58);");
+    expect(css).not.toContain("linear-gradient(90deg, rgba(17, 18, 23, 0.026) 1px, transparent 1px) 0 0 / 34px 34px");
   });
 
   test("paper templates avoid leftover hard-coded green accents", () => {
@@ -134,12 +172,14 @@ describe("print helpers", () => {
     expect(css).toContain(".resume-paper .resume-personal__contact-item + .resume-personal__contact-item::before {\n  color: #a0a9b1;");
   });
 
-  test("template selector uses a quiet text rail instead of mini preview cards", () => {
+  test("template selector uses compact preview tabs instead of a flat text rail", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".template-card {\n  grid-template-columns: minmax(0, 1fr);");
-    expect(css).toContain(".template-card__thumbnail {\n  display: none;");
-    expect(css).not.toContain(".template-card {\n  grid-template-columns: 28px minmax(0, 1fr);");
+    expect(css).toContain(".template-card {\n  grid-template-columns: 34px minmax(0, 1fr);");
+    expect(css).toContain("min-height: 42px;\n  padding: 5px 8px;");
+    expect(css).toContain(".template-card__thumbnail {\n  display: block;");
+    expect(css).toContain(".template-mini {\n  position: relative;\n  display: grid;\n  gap: 1px;\n  width: 100%;\n  height: 28px;");
+    expect(css).not.toContain(".template-card__thumbnail {\n  display: none;");
   });
 
   test("canvas template controls use a framed tool rail instead of bare divider lines", () => {
@@ -150,24 +190,34 @@ describe("print helpers", () => {
     expect(css).toContain(".template-selector {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  width: 100%;\n  gap: 4px;\n  padding: 3px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.3);");
     expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 34px;\n  top: 18px;");
-    expect(css).toContain("background: rgba(255, 254, 251, 0.72);\n  box-shadow: 0 6px 14px rgba(39, 47, 43, 0.08);");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.42);\n  box-shadow: none;");
+    expect(css).toContain("font-size: 10px;\n  font-weight: 760;");
+    expect(css).not.toContain("box-shadow: 0 6px 14px rgba(39, 47, 43, 0.08);");
     expect(css).toContain(".template-card {\n    grid-template-columns: minmax(0, 1fr);");
   });
 
-  test("editor side panels use refined tool rows instead of flat divider lists", () => {
+  test("module library uses grouped material wells instead of loose button stacks", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 5px;\n  border-top: 0;");
+    expect(css).toContain(".module-library__group {\n  display: grid;\n  gap: 6px;\n  padding: 7px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 8px;\n  background: rgba(255, 254, 251, 0.26);");
+    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 3px 4px 7px;");
+    expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 0;");
+    expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 4px;\n  border-top: 0;");
     expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 18px minmax(0, 1fr) 18px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.46);");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.34);");
     expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(63, 95, 104, 0.24);\n  background: rgba(255, 254, 251, 0.74);");
   });
 
   test("module add markers use the restrained accent instead of mint green", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.38);\n  border-radius: 50%;");
-    expect(css).toContain("color: #3f5f68;\n  font-size: 15px;");
+    expect(css).toContain(".module-library__item::before {\n  content: \"\";");
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.18);\n  border-radius: 3px;");
+    expect(css).toContain("linear-gradient(#3f5f68, #3f5f68) 4px 5px / 8px 1px no-repeat");
+    expect(css).toContain("linear-gradient(rgba(63, 95, 104, 0.34), rgba(63, 95, 104, 0.34)) 4px 9px / 6px 1px no-repeat");
+    expect(css).toContain("rgba(63, 95, 104, 0.06);");
+    expect(css).toContain("color: #3f5f68;\n  font-size: 14px;");
     expect(css).not.toContain("rgba(134, 205, 182, 0.62)");
     expect(css).not.toContain("#86cdb6");
   });
@@ -187,7 +237,12 @@ describe("print helpers", () => {
 
     expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
-    expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 10px 0;");
+    expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 8px 0;");
+    expect(css).toContain(".numeric-field {\n  display: grid;\n  grid-template-columns: minmax(74px, 1fr) 56px 20px;");
+    expect(css).toContain("min-height: 28px;\n  padding: 2px 0;");
+    expect(css).toContain(".segmented-field {\n  display: grid;\n  grid-template-columns: minmax(74px, 0.56fr) minmax(0, 1fr);");
+    expect(css).toContain("align-items: center;\n  min-height: 38px;");
+    expect(css).toContain(".numeric-field-group__header::after {\n  content: \"\";\n  flex: 1;");
   });
 
   test("inspector text fields use compact property rows instead of bare underlines", () => {
@@ -199,6 +254,16 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(63, 95, 104, 0.28);");
     expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
+  });
+
+  test("disabled inspector actions read as quiet unavailable commands instead of broken buttons", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-actions .secondary-button:disabled,\n.inspector-actions .ghost-button:disabled {\n  border-color: transparent;");
+    expect(css).toContain("background: rgba(17, 18, 23, 0.025);");
+    expect(css).toContain("color: #9aa19d;\n  opacity: 1;");
+    expect(css).toContain("box-shadow: none;\n  cursor: default;");
+    expect(css).not.toContain(".inspector-actions .secondary-button:disabled,\n.inspector-actions .ghost-button:disabled {\n  color: #a4aaa7;\n  cursor: default;");
   });
 
   test("photo editor uses a compact asset well instead of a dashed upload box", () => {
@@ -240,8 +305,9 @@ describe("print helpers", () => {
   test("secondary controls use compact rails instead of bare text and underline buttons", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 6px 7px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
+    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 3px 4px 7px;");
+    expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.08);");
+    expect(css).toContain("border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
     expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 0;\n  border-radius: 3px;");

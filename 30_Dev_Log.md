@@ -4,6 +4,124 @@
 
 ## 2026-07-06
 
+- 任务：弱化画布状态条的悬浮调试标签感
+- 操作：基于当前画布截图审查，定位右上角 `A4 / 模板 / 模块数 / 100%` 状态条仍有较强白底、边框和投影，像悬浮调试 chip；更新 CSS 回归测试后，将 `.canvas-statusbar` 背景透明度降到 0.42、移除投影、缩小字体和内边距，并同步降低分隔线强度
+- 结果：画布状态信息仍可读，但视觉上更像工作台刻度而不是弹窗标签，A4 纸张和选中模块更突出；打印隐藏规则和状态内容未改
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，32 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：`.canvas-statusbar` 背景为 `rgba(255, 254, 251, 0.42)`，边框为 `rgba(17, 18, 23, 0.07)`，无投影，字体为 `10px`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端无横向溢出，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，83 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时只做局部控件 polish，避免继续增加装饰层
+
+## 2026-07-06
+
+- 任务：收敛右侧模块操作禁用态，减少“坏掉按钮”感
+- 操作：基于当前个人信息模块的右侧属性面板审查，定位“复制模块 / 删除模块”在禁用时仍保留明显按钮边框，只是文字变灰，容易显得像未完成控件；新增 CSS 回归测试锁定 quiet unavailable command，再将 `.inspector-actions` 内禁用按钮改为透明边框、低对比浅底、固定透明度和无阴影
+- 结果：个人信息这类不可复制 / 不可删除模块的操作区不再抢眼，禁用态读起来更像安静的不可用命令；不改复制、删除、确认弹窗或模块权限逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，32 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：个人信息模块下“复制模块 / 删除模块”均为禁用态，背景约 `rgba(17, 18, 23, 0.024)`、透明边框、无阴影，桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端无横向溢出，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，83 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可以只看 hover/focus 微反馈，不再扩大按钮体系
+
+## 2026-07-06
+
+- 任务：修正左侧模块库素材标记的 checkbox 误读
+- 操作：基于当前编辑器截图继续审查，定位 `.module-library__item::before` 是一个空方块，容易被误认为未勾选 checkbox，而不是模块素材标记；将其改为 16px 小文档 glyph，用两条细线表示简历段落，同时保留右侧 `+` 作为添加动作；同步更新 CSS 回归测试，避免退回空方块 / mint green 标记
+- 结果：左侧模块库更像素材抽屉，模块项左侧标识从“可勾选控件”变成“可添加段落素材”，降低控件误读和临时感；不改模块添加、禁用、排序或选中逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，31 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：`.module-library__item::before` 为 16px 小文档 glyph，包含两条段落线；右侧 `+` 添加标识保留；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：模块项左侧不再呈现为空方块 checkbox，移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，82 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时优先看 hover/focus 反馈是否一致，不要扩大成模块库功能改造
+
+## 2026-07-06
+
+- 任务：收敛入口页的模板感，让第一屏更像编辑器起点
+- 操作：基于入口页桌面 / 移动端截图审查，定位左侧 hero 网格仍偏明显、右侧三张身份卡仍像普通白卡列表；新增 CSS 回归测试锁定 quieter drafting marks 和 start-list affordance，再将 `.identity-screen__hero` 网格透明度降低并放大间距，将纸张样机阴影收轻，同时把 `.identity-card` 压成更紧凑的起点列表行并加入右侧细微进入箭头
+- 结果：入口页保留“先选简历结构”的产品语义，但第一屏不再像浓网格背景加泛白卡片，和后续编辑器工作台的纸灰气质更统一；不改身份预设、推荐模块、模板选择或进入编辑器逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，31 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：hero 网格为 42px 低透明 drafting marks，身份卡背景为 `rgba(255, 254, 251, 0.28)`，右侧 7px 进入箭头生效；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：入口页上下布局正常，无横向溢出，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，82 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可转向更细的微交互 / hover 态，不要再做大范围视觉体系改动
+
+## 2026-07-06
+
+- 任务：收敛移动端顶部操作区的按钮堆叠感
+- 操作：基于移动端截图继续审查，定位顶部身份切换与文件操作在窄屏下只是简单换行到同一个浅色容器里，像普通按钮堆；新增 CSS 回归测试锁定 two compact command rows，再仅在 `@media (max-width: 1080px)` 下将 `.topbar__controls` 改为纵向 command deck，把身份切换设为 3 列行，文件操作设为 5 列行，并用细分隔线替代桌面的左侧分隔线
+- 结果：移动端顶部从“按钮堆”收敛为两条明确的命令行，导出仍保持主操作但不再靠 margin 单独挤出；桌面 topbar 行为未改，业务操作逻辑未改
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，30 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：桌面 topbar 保持原单行命令条；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：`.topbar` 为单列 grid，高度约 142px；`.topbar__identity-switcher` 为 3 列，`.topbar__actions` 为 5 列，文件操作行顶部细分隔线生效；移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，81 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看入口页或空状态文案区域是否仍有“临时模板”感
+
+## 2026-07-06
+
+- 任务：压缩右侧全局纸张样式面板的参数表感
+- 操作：基于移动端截图继续审查，定位“纸张样式”面板里的数字参数和字体 / 间距 / 标题样式分段控件纵向堆叠过长，像原型参数表；先更新 CSS 回归测试锁定 compact control ledger，再将 `.numeric-field` 缩短为更紧凑的三列参数行，为参数组标题加入细分隔线，并把 `.segmented-field` 改为标签与分段控件左右对齐的 2 列行
+- 结果：右侧全局样式面板更接近成熟属性检查器，移动端向下滚动时密度降低但层级仍清楚；不改样式状态、数值输入、模板切换或导出逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，29 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：`.numeric-field` 高度 28px、三列为 `213px 56px 20px`，`.segmented-field` 为左右两列属性行；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：全局样式面板高度约 569px，分段行高度约 49px，数字行高度约 28px；`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，80 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 若继续审查，可看顶部移动端操作区是否还像普通按钮堆叠，但不要再扩大为整体重排
+
+## 2026-07-06
+
+- 任务：进一步降低中间画布舞台的调试网格感
+- 操作：基于上一轮截图继续审查，定位中间 A4 舞台的密集网格和横纵标尺仍比纸张本身更抢眼，容易让界面显得像调试页；新增 CSS 回归测试锁定 quiet mat stage，再将 `.canvas-panel` 的点纹透明度降低并放大间距，将 `.preview-surface` 从 36px 网格改为低噪声垫板渐变，同时缩窄横向 / 纵向标尺并降低透明度
+- 结果：中间工作台保留 A4 设计器识别，但背景从明显网格 / 尺规退到更安静的纸灰垫板，视觉焦点更集中在简历纸面和选中模块上；不改模板、拖拽、选中、属性编辑或 PDF 导出逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，29 项测试全部通过
+  - `npm test` 通过，80 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Node REPL + 本机 Chrome 桌面截图确认：`.canvas-panel` 背景点纹透明度为 0.22、间距 24px，`.preview-surface` 为低噪声垫板渐变，横向标尺高度 8px、纵向标尺宽度 6px、伪元素透明度 0.22；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 继续审查时优先看右侧全局样式面板在移动端是否过长、过密；不要扩大到新的功能改造
+
+## 2026-07-06
+
+- 任务：继续降低编辑器左侧与模板轨的简陋感
+- 操作：基于最新桌面 / 移动端截图审查，定位左侧模块库仍像裸按钮堆叠，中间模板选择器退化为过扁的纯文字轨；先新增 CSS 回归测试锁定“分组素材 well”和“带缩略图的紧凑模板 tab”，再将 `.module-library__group` 改为浅色有框素材分组，收紧分组标题与模块添加行层级，并恢复 `.template-card__thumbnail` 的小型模板预览，让模板选择区保留纸面样式信号但不重新变成大卡片
+- 结果：左侧模块库更像编辑器素材抽屉，模板切换区从文本按钮提升为带缩略图的低矮选择条；没有改动模块添加、模板切换、右侧属性编辑或打印导出逻辑
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增断言因旧的 loose button stack / flat text rail 样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，28 项测试全部通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-library-template-polish-desktop.png`，`.module-library__group` computed 为 8px 圆角有框 well，`.template-card__thumbnail` 已显示，桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-library-template-polish-mobile.png`，模板卡纵向堆叠，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续审查，下一步可看中间画布舞台的尺规 / 网格是否需要更克制，或右侧全局样式面板是否还显得拥挤
+
+## 2026-07-06
+
 - 任务：收敛右侧提示块，移除虚线 callout 感
 - 操作：基于选中“教育经历”后的右侧截图继续审查，定位模块提示 `.editor-empty-note` 仍保留蓝色虚线 callout 的旧样式，只是被后续灰色背景部分覆盖，和当前 property row / entry well 不一致；先新增 CSS 回归测试锁定 solid note row，再将基础 `.editor-empty-note` 改为浅色 solid note，并为 inspector 内提示加一个低强度左侧标记，同时从旧共享 selector 中移除对提示块的覆盖
 - 结果：教育经历等模块提示从临时虚线提示框收敛为安静的 note row，右侧 inspector 的信息提示、字段行和条目卡片视觉语言更一致；不影响提示内容、模块编辑逻辑和移动端布局
