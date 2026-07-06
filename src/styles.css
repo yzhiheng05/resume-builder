@@ -1264,7 +1264,7 @@ button {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--resume-accent) 58%, #6b7280);
+  background: #7a858d;
 }
 
 .resume-bullets li + li {
@@ -2813,13 +2813,32 @@ body {
   min-width: 112px;
 }
 
+.resume-paper .resume-entry__meta p:first-child,
+.resume-paper .resume-award__date {
+  color: #4f5b67;
+  font-weight: 640;
+}
+
+.resume-paper .resume-entry__meta p:last-child,
+.resume-paper .resume-award__issuer {
+  color: #78838d;
+}
+
 .resume-paper .resume-bullets {
   margin-top: calc(var(--resume-paragraph-gap) + 3px);
 }
 
 .resume-paper .resume-bullets li {
+  padding-left: 12px;
   font-size: var(--resume-font-size);
   line-height: var(--resume-line-height);
+}
+
+.resume-paper .resume-bullets li::before {
+  top: 0.78em;
+  width: 3px;
+  height: 3px;
+  background: #7a858d;
 }
 
 .resume-paper .resume-bullets li + li {
@@ -2855,11 +2874,11 @@ body {
 .resume-paper--template-classic .resume-personal__title,
 .resume-paper--template-classic .resume-entry__meta p:first-child,
 .resume-paper--template-classic .resume-award__date {
-  color: #283240;
+  color: #4b5563;
 }
 
 .resume-paper--template-classic .resume-bullets li::before {
-  background: #4e5b68;
+  background: #6d7780;
 }
 
 .resume-paper--template-campus .resume-section {
@@ -3938,11 +3957,11 @@ body {
   .resume-paper--template-classic .resume-personal__title,
   .resume-paper--template-classic .resume-entry__meta p:first-child,
   .resume-paper--template-classic .resume-award__date {
-    color: #283240;
+    color: #4b5563;
   }
 
   .resume-paper--template-classic .resume-bullets li::before {
-    background: #4e5b68;
+    background: #6d7780;
   }
 
   .resume-paper--template-campus {

@@ -4,6 +4,22 @@
 
 ## 2026-07-06
 
+- 任务：收敛纸面经历区日期、地点和 bullet 层级
+- 操作：将纸面日期 / 奖项日期调整为中性灰 `#4f5b67`、字重 `640`；将地点 / 颁发方调整为更轻的 `#78838d`；将正文 bullet 从主题色混合圆点改为 3px 中性墨点 `#7a858d`，并同步经典模板打印态的日期和 bullet 灰阶；新增 CSS 回归测试，避免 bullet 再回到主题色圆点
+- 结果：经历区信息层级更像正式投递文档，日期仍清晰但不再像控件标签，bullet 噪音降低
+- 验证：
+  - 先新增断言后运行 `npm test -- src/test/print.test.ts`，确认当前 CSS 未包含目标灰阶而失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，14 项测试全部通过
+  - `npm test` 通过，64 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-body-hierarchy-desktop.png`，日期 `rgb(79, 91, 103)`、地点 `rgb(120, 131, 141)`、bullet 为 3px `rgb(122, 133, 141)`，桌面无横向溢出
+  - 本机 Chrome 移动截图：`/tmp/resume-body-hierarchy-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续打磨，可检查姓名区和联系方式的层级比例，减少首页顶部的模板痕迹
+
+## 2026-07-06
+
 - 任务：统一纸面模板残留旧绿，进一步降低生成器感
 - 操作：清理校招模板和拖拽手柄中残留的旧绿色硬编码 `#0f766e`、`#2c7a63`、`rgba(47, 111, 93, ...)`、`rgba(44, 122, 99, ...)`；将校招章节标题和手柄颜色改为跟随 `--resume-accent` / 深青灰体系；新增 CSS 回归测试，避免纸面模板再混入旧绿
 - 结果：默认校招模板标题、时间线、手柄和右侧主题色显示保持同一色彩体系，纸面不再出现两种不一致的绿色层级
