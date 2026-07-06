@@ -4,6 +4,51 @@
 
 ## 2026-07-06
 
+- 任务：细化右侧正文写作区的产品感
+- 操作：基于选中“职业摘要”的编辑器截图审查，定位右侧正文 textarea 虽已去掉横线背景，但大面积纯白框仍像低保真表单；将 `.inspector-panel label > textarea` 调整为更柔和的 writing surface，使用浅纸面渐变、低强度边框、左侧 accent 和 hover/focus 层级，同时继续禁止横线 notebook 背景；同步更新 CSS 回归测试
+- 结果：右侧正文输入区更像编辑器里的写作面板，不再像原型大文本框；不改表单结构、输入逻辑、模块选中态或打印导出
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：选中“职业摘要”时右侧正文 textarea 显示浅纸面渐变、左侧 accent 和更柔和阴影；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - Node REPL + 本机 Chrome 移动宽度检查确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看顶部状态条与模板缩略图是否还需要进一步细化
+
+## 2026-07-06
+
+- 任务：提升入口页首屏的产品感
+- 操作：基于入口页截图审查，定位右侧身份选择卡片仍偏半透明浅块，左侧纸张 mock 外框也像低保真线框托盘；将右侧选择区改为更清楚的 off-white 渐变背景和更有层级的入口列表卡，增强左侧 3px 入口标记与箭头 affordance；左侧纸张 mock 改为更轻的托盘渐变、细边框和更真实的纸张投影；同步更新入口页 CSS 回归测试
+- 结果：入口页第一屏更像成熟简历产品的起点选择，而不是临时 landing/mock；不改身份选择逻辑、文案、入口布局或编辑器数据
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：入口卡片背景为 `rgba(255, 254, 251, 0.46)`，边框为 `rgba(17, 18, 23, 0.075)`，纸张 mock 使用浅色托盘渐变和 `0 14px 32px rgba(39, 47, 43, 0.07)` 阴影；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - Node REPL + 本机 Chrome 移动截图确认：入口 hero、纸张 mock 和选择卡片纵向堆叠无裁切，移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可进入编辑器模块选中态，看画布选中高亮与右侧编辑表单是否还需要微调
+
+## 2026-07-06
+
+- 任务：进一步收敛编辑器三栏界面的简陋感
+- 操作：基于当前桌面截图审查，定位主工作台的简陋感主要来自左栏、画布、右栏都使用相近浅灰卡片材质，层级平均且像卡片堆叠；将左侧模块库改为更干净的 off-white 工具面板和紧凑列表行，中间画布降低网格纹理并弱化纸张投影，右侧 inspector 改成 header 分隔线、属性行和更轻的控件托盘；同步更新 CSS 回归测试，避免回退到大块浅灰卡片堆
+- 结果：三栏层级更清楚，A4 纸张更突出，左侧模块库和右侧属性面板更像专业编辑器工具面板；不改模块逻辑、数据结构、导出和打印隐藏规则
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：左侧模块组背景为透明、模块项普通态背景为透明，画布背景为更轻的 `#e3e7e4 -> #d2d9d6` 渐变，纸张阴影降为 `0 22px 58px rgba(20, 24, 32, 0.2)`，桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端顶部操作、模块库和画布纵向堆叠无明显重叠，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看入口页首屏与移动端画布起始位置是否还需要进一步收敛
+
+## 2026-07-06
+
 - 任务：提升入口身份卡片 meta 行的产品选择感
 - 操作：基于入口页桌面 / 移动端截图审查，定位身份卡片顶部 `09 个模块 / 校招简历` 仍是纯文字加分隔符，读起来像普通列表信息；更新现有 CSS 回归测试后，将 `.identity-card__meta span` 改为低对比 metadata chip，移除 `/` 分隔伪元素
 - 结果：入口身份卡片更像可选择的简历起点，信息层级更清楚；不改入口文案、身份选择逻辑、卡片布局或移动端堆叠
