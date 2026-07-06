@@ -2431,11 +2431,12 @@ body {
 }
 
 .template-card {
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   align-items: center;
-  min-height: 34px;
-  padding: 3px 9px;
+  justify-items: center;
+  min-height: 30px;
+  padding: 0 12px;
   border: 0;
   border-right: 1px solid rgba(32, 37, 40, 0.08);
   border-radius: 0;
@@ -2453,6 +2454,7 @@ body {
 }
 
 .template-card__thumbnail {
+  display: none;
   border-radius: 0;
   background: transparent;
 }
@@ -2611,11 +2613,19 @@ body {
 }
 
 .template-card__meta {
+  justify-items: center;
   gap: 0;
+  min-width: 0;
 }
 
 .template-card__meta strong {
   font-size: 12px;
+  font-weight: 760;
+  color: #586168;
+}
+
+.template-card--active .template-card__meta strong {
+  color: #1f2933;
 }
 
 .template-card__meta span {

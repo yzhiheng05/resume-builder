@@ -112,6 +112,14 @@ describe("print helpers", () => {
     expect(css).toContain(".resume-paper .resume-personal__contact-item + .resume-personal__contact-item::before {\n  color: #a0a9b1;");
   });
 
+  test("template selector uses a quiet text rail instead of mini preview cards", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".template-card {\n  grid-template-columns: minmax(0, 1fr);");
+    expect(css).toContain(".template-card__thumbnail {\n  display: none;");
+    expect(css).not.toContain(".template-card {\n  grid-template-columns: 28px minmax(0, 1fr);");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 
