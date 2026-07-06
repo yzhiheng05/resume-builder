@@ -4,6 +4,21 @@
 
 ## 2026-07-06
 
+- 任务：统一右侧属性面板与浅色工作台外壳
+- 操作：将 `.inspector-panel` 背景从偏白的 `#f4f3ef` 调整为与左侧模块库一致的纸灰 `#eceee8`；保留内部参数控件、分隔线和选中态不变；新增 CSS 回归测试，避免右侧重新变成孤立白色表单块
+- 结果：左侧模块库、顶部工具条、中间画布台面和右侧属性面板的明度更一致，A4 纸张仍是页面主视觉
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，11 项测试全部通过
+  - `npm test` 通过，61 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-inspector-paper-shell-desktop.png`，右侧属性面板背景为 `rgb(236, 238, 232)`，桌面无横向溢出
+  - 本机 Chrome 移动截图：`/tmp/resume-inspector-paper-shell-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续美观打磨，可从右侧控件密度或模板纸面中文排版层级继续小步优化，避免再次加入大面积装饰色块
+
+## 2026-07-06
+
 - 任务：轻量化中间画布台面背景
 - 操作：将工作台 `--canvas-bg` 从偏重冷灰调亮为更轻的中性纸灰；同步调亮 `.canvas-panel` 实际渐变和网格点透明度；新增 CSS 回归测试，避免画布台面回到旧的厚重灰底
 - 结果：左侧、顶部和中间画布的外壳明度更统一，A4 纸张仍保留清晰边界和阴影，但不再被大面积深灰台面压住

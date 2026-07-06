@@ -71,6 +71,13 @@ describe("print helpers", () => {
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
   });
 
+  test("inspector panel matches the quiet paper-gray workbench shell", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel {\n  padding: 18px;\n  background: #eceee8;");
+    expect(css).not.toContain(".inspector-panel {\n  padding: 18px;\n  background: #f4f3ef;");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 
