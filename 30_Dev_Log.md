@@ -4,6 +4,81 @@
 
 ## 2026-07-06
 
+- 任务：收敛移动端顶部工具栏的拥挤感
+- 操作：基于 390px 移动端截图审查，定位顶部工具栏虽然已经分成身份和操作两行，但 5 个操作等宽导致“导出”主操作权重偏弱，顶栏高度也占用首屏较多；在 1080px 以下响应式样式中压缩顶栏间距和 padding，将操作行改为 4 个次要操作 + 1 个更宽主操作列，并确保 `.topbar__primary-action` 移动端最小宽度不被通用按钮规则覆盖；同步更新 CSS 回归测试
+- 结果：移动端顶栏更像紧凑工具盘，导出按钮更清楚但不突兀；不改顶部操作内容、身份切换、导出逻辑或桌面顶栏样式
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，36 项测试全部通过
+  - 本机 Chrome 390px 移动截图确认：顶栏高度从约 `141.5px` 降至约 `133.5px`，操作列变为 `66px / 66px / 66px / 66px / 76px`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - 本机 Chrome 390px 最终宽度检查确认：`.topbar__primary-action` computed `minWidth` 为 `72px`，`innerWidth`、`bodyScrollWidth`、`documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，87 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看入口页移动首屏和编辑器长页面滚动节奏是否还需要微调
+
+## 2026-07-06
+
+- 任务：细化左侧模块库条目的素材感
+- 操作：基于左侧模块库截图审查，定位模块条目仍偏“清单 + 圆形加号”，`添加` 文案被视觉隐藏后信息层级不够产品化；在不改 ModuleLibraryPanel 结构和添加逻辑的前提下，将 `.module-library__item` 改为轻量素材条目，显示 `添加 / 已在纸面` 为右侧 chip，并把加号绘制整合到 chip 内侧；同步更新 CSS 回归测试
+- 结果：左侧模块库更像编辑器素材面板，添加 affordance 更明确，和中间模板托盘、右侧控制面板材质更统一；不改模块分组、文案、禁用规则或添加行为
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，36 项测试全部通过
+  - 本机 Chrome 桌面截图确认：模块条目显示浅色素材行、右侧 `添加` chip 和内嵌加号；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - 本机 Chrome 移动视口检查确认：`innerWidth`、`bodyScrollWidth`、`documentElement.scrollWidth` 均为 `390`，模块库宽度为 `390`，模块条目宽度为 `361`
+  - `npm test` 通过，87 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看移动端纵向节奏和顶部工具栏在窄屏下的拥挤感
+
+## 2026-07-06
+
+- 任务：统一删除模块确认弹窗的产品质感
+- 操作：基于实际删除“职业摘要”的确认弹窗截图审查，定位弹窗虽然已是应用内 `role="dialog"`，但仍像普通浅色 alert 卡片；在不改删除逻辑和 DOM 结构的前提下，为 `.confirm-dialog-shell` 增加更柔和的遮罩与背景光，为 `.confirm-dialog` 增加浅纸面渐变、左侧危险标记和更细的内外阴影，并为弹窗内取消 / 确认删除按钮增加 scoped 控制样式；同步新增 CSS 回归测试
+- 结果：删除确认更像当前简历编辑器内的成品确认面板，不再像默认弹窗或普通卡片；保留取消、确认删除、打印隐藏和浏览器 confirm 禁用行为
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，36 项测试全部通过
+  - 本机 Chrome 桌面截图确认：删除确认弹窗显示浅纸面渐变、左侧危险标记、分段式操作区和 36px 高 scoped 危险按钮；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - 本机 Chrome 移动视口宽度检查确认：`innerWidth`、`bodyScrollWidth`、`documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，87 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看模块库底部区域和移动端纵向节奏是否还需要进一步统一
+
+## 2026-07-06
+
+- 任务：细化右侧纸张样式数值控制区
+- 操作：基于右侧属性面板截图审查，定位“主题色 / 排版 / 留白”区域仍像普通表单输入框堆叠，单位文字和数值框比较散；将色板行改为轻量 control row，将排版与留白数值区改为带浅纸面背景的 measurement panel，并把每个数值输入和单位改成更统一的胶囊式控制；同步更新 CSS 回归测试，覆盖后置 `.inspector-panel .numeric-field input` 样式覆盖
+- 结果：右侧样式控制区和前面打磨过的模板托盘、文档控制条更一致，减少默认表单感；不改任何排版参数、输入逻辑、持久化、导入导出或打印规则
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - 本机 Chrome 桌面截图确认：色板行、排版/留白数值组显示为浅色控制面板，数值输入背景为 `rgba(255, 254, 251, 0.72)`，桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - 本机 Chrome 移动视口检查确认：`innerWidth`、`bodyScrollWidth`、`documentElement.scrollWidth` 均为 `390`，样式面板宽度为 `390`，数值面板宽度为 `353`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看模块库底部区域、右侧删除确认弹窗和移动端纵向节奏是否还需要进一步统一
+
+## 2026-07-06
+
+- 任务：继续细化中间画布顶部模板控制区
+- 操作：基于桌面编辑器截图审查，定位中间顶部存在两套浅色状态信息，模板选择器也仍像默认 tab/button 组合；将 `.canvas-panel__header` 收敛为轻量 document pill，将 `.template-selector` 和 `.template-card` 调整为更像缩略图托盘的材质与 active 压印，并把 `.canvas-statusbar` 改成半透明页面标尺样式；同步更新 CSS 回归测试
+- 结果：中间画布顶部从临时按钮组更接近成熟简历编辑器的文档控制区；不改模板切换逻辑、模块选择逻辑、导出或打印隐藏规则
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - 本机 Chrome 桌面截图确认：模板托盘显示浅纸面渐变、active 模板为左侧 accent 压印，浮动状态条为分隔式小标尺；选中“职业摘要”后画布无横向溢出，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1200`
+  - 本机 Chrome 移动视口检查确认：`innerWidth`、`bodyScrollWidth`、`documentElement.scrollWidth` 均为 `390`，模板选择器宽度为 `346`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看右侧属性面板的按钮组、数值输入行和模块删除确认弹窗是否还需要统一成更成熟的控制材质
+
+## 2026-07-06
+
 - 任务：细化右侧正文写作区的产品感
 - 操作：基于选中“职业摘要”的编辑器截图审查，定位右侧正文 textarea 虽已去掉横线背景，但大面积纯白框仍像低保真表单；将 `.inspector-panel label > textarea` 调整为更柔和的 writing surface，使用浅纸面渐变、低强度边框、左侧 accent 和 hover/focus 层级，同时继续禁止横线 notebook 背景；同步更新 CSS 回归测试
 - 结果：右侧正文输入区更像编辑器里的写作面板，不再像原型大文本框；不改表单结构、输入逻辑、模块选中态或打印导出
