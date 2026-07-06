@@ -871,13 +871,13 @@ button {
 }
 
 .resume-paper--template-campus .resume-section__title {
-  color: #0f766e;
+  color: color-mix(in srgb, var(--resume-accent) 82%, #1f2937);
 }
 
 .resume-paper--template-campus .resume-section__handle {
   background: rgba(204, 251, 241, 0.9);
   border-color: rgba(45, 212, 191, 0.28);
-  color: #0f766e;
+  color: color-mix(in srgb, var(--resume-accent) 72%, #334155);
 }
 
 .resume-template--sidebar {
@@ -2900,7 +2900,7 @@ body {
 .resume-section--active .resume-section__handle {
   background: rgba(255, 255, 255, 0.58);
   border-color: rgba(63, 95, 104, 0.18);
-  color: rgba(47, 111, 93, 0.78);
+  color: rgba(63, 95, 104, 0.78);
   opacity: 0.7;
   transform: none;
 }
@@ -3023,7 +3023,7 @@ body {
   height: 24px;
   border-color: transparent;
   background: transparent;
-  color: rgba(47, 111, 93, 0.28);
+  color: rgba(63, 95, 104, 0.28);
   opacity: 0.08;
 }
 
@@ -3032,7 +3032,7 @@ body {
 .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section--active .resume-section__handle {
   border-color: rgba(63, 95, 104, 0.14);
   background: rgba(255, 255, 255, 0.42);
-  color: rgba(47, 111, 93, 0.66);
+  color: rgba(63, 95, 104, 0.66);
   opacity: 0.62;
 }
 
@@ -3068,13 +3068,13 @@ body {
 }
 
 .resume-paper--template-campus .resume-section__title {
-  color: #2c7a63;
+  color: color-mix(in srgb, var(--resume-accent) 82%, #1f2937);
 }
 
 .resume-paper--template-campus .resume-section__handle {
   background: transparent;
   border-color: transparent;
-  color: rgba(44, 122, 99, 0.28);
+  color: rgba(63, 95, 104, 0.28);
   opacity: 0.08;
 }
 
@@ -3083,7 +3083,7 @@ body {
 .resume-paper--template-campus .resume-section--active .resume-section__handle {
   background: rgba(63, 95, 104, 0.08);
   border-color: rgba(63, 95, 104, 0.18);
-  color: rgba(47, 111, 93, 0.78);
+  color: rgba(63, 95, 104, 0.78);
   opacity: 0.7;
 }
 

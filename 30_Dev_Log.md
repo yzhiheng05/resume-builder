@@ -4,6 +4,22 @@
 
 ## 2026-07-06
 
+- 任务：统一纸面模板残留旧绿，进一步降低生成器感
+- 操作：清理校招模板和拖拽手柄中残留的旧绿色硬编码 `#0f766e`、`#2c7a63`、`rgba(47, 111, 93, ...)`、`rgba(44, 122, 99, ...)`；将校招章节标题和手柄颜色改为跟随 `--resume-accent` / 深青灰体系；新增 CSS 回归测试，避免纸面模板再混入旧绿
+- 结果：默认校招模板标题、时间线、手柄和右侧主题色显示保持同一色彩体系，纸面不再出现两种不一致的绿色层级
+- 验证：
+  - 先新增断言后运行 `npm test -- src/test/print.test.ts`，确认因 `#2c7a63` 残留失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，13 项测试全部通过
+  - `npm test` 通过，63 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-campus-accent-unified-desktop.png`，纸面 `--resume-accent` 为 `#3f5f68`，校招标题和手柄不再使用旧绿，桌面无横向溢出
+  - 本机 Chrome 移动截图：`/tmp/resume-campus-accent-unified-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续打磨纸面，可检查经历日期、地点和 bullet 的灰阶关系，让正文层级更像正式投递文档
+
+## 2026-07-06
+
 - 任务：降低默认主题色饱和度，减少纸面模板感
 - 操作：将默认 `resumeStyle.accentColor` 从偏鲜的 `#36846b` 调整为更克制的深青灰 `#3f5f68`；同步更新编辑器根变量、入口页细线、模板切换选中态、校招模板时间线、右侧属性控件 focus / active 状态和打印态色值；新增 CSS 回归测试，避免默认外壳主色回到旧绿
 - 结果：默认界面和简历纸面的绿色存在感下降，整体更接近成熟排版工具；用户手动主题色仍通过 `resumeStyle.accentColor` 正常生效

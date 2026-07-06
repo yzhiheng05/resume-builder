@@ -85,6 +85,15 @@ describe("print helpers", () => {
     expect(css).not.toContain("--accent: #36846b;");
   });
 
+  test("paper templates avoid leftover hard-coded green accents", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).not.toContain("#0f766e");
+    expect(css).not.toContain("#2c7a63");
+    expect(css).not.toContain("47, 111, 93");
+    expect(css).not.toContain("44, 122, 99");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 
