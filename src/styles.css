@@ -1785,7 +1785,7 @@ button {
   --panel: #f4f3ef;
   --panel-deep: #15171b;
   --panel-deeper: #111217;
-  --canvas-bg: #d2d6d4;
+  --canvas-bg: #dde1de;
   --border: rgba(26, 29, 35, 0.12);
   --border-strong: rgba(54, 132, 107, 0.46);
   --text: #17181c;
@@ -2345,8 +2345,8 @@ body {
   min-height: calc(100vh - 48px);
   padding: 12px 22px 24px;
   background:
-    radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.32) 0 1px, transparent 1px) 0 0 / 20px 20px,
-    linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%);
+    radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.42) 0 1px, transparent 1px) 0 0 / 20px 20px,
+    linear-gradient(180deg, #e3e6e3 0%, #d5dad7 100%);
 }
 
 .canvas-panel__header {

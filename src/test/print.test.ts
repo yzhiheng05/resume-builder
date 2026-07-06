@@ -62,6 +62,15 @@ describe("print helpers", () => {
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
   });
 
+  test("canvas workbench uses a lighter neutral stage", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("--canvas-bg: #dde1de;");
+    expect(css).toContain("linear-gradient(180deg, #e3e6e3 0%, #d5dad7 100%)");
+    expect(css).not.toContain("--canvas-bg: #d2d6d4;");
+    expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 

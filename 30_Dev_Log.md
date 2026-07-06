@@ -4,6 +4,21 @@
 
 ## 2026-07-06
 
+- 任务：轻量化中间画布台面背景
+- 操作：将工作台 `--canvas-bg` 从偏重冷灰调亮为更轻的中性纸灰；同步调亮 `.canvas-panel` 实际渐变和网格点透明度；新增 CSS 回归测试，避免画布台面回到旧的厚重灰底
+- 结果：左侧、顶部和中间画布的外壳明度更统一，A4 纸张仍保留清晰边界和阴影，但不再被大面积深灰台面压住
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，10 项测试全部通过
+  - `npm test` 通过，60 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-canvas-light-stage-desktop.png`，`--canvas-bg` 为 `#dde1de`，桌面无横向溢出
+  - 本机 Chrome 移动截图：`/tmp/resume-canvas-light-stage-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续打磨，可检查右侧属性面板的白底和画布台面之间的边界关系，避免右侧显得像孤立表单
+
+## 2026-07-06
+
 - 任务：弱化顶部黑色工具条
 - 操作：将编辑器顶部工具条从黑色 sticky bar 改为浅纸色文件工具条；同步调整品牌、身份 chip、状态、身份切换、文件操作按钮和导出按钮的颜色层级；新增 CSS 回归测试，避免 `.topbar` 再回到 `#101114` 黑底
 - 结果：编辑器外壳从“顶部黑条 + 左侧黑块”转为统一浅色工具层，A4 纸面成为更明确的主视觉；桌面和移动端均未出现横向溢出
