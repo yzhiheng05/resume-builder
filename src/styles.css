@@ -1787,12 +1787,12 @@ button {
   --panel-deeper: #111217;
   --canvas-bg: #dde1de;
   --border: rgba(26, 29, 35, 0.12);
-  --border-strong: rgba(54, 132, 107, 0.46);
+  --border-strong: rgba(63, 95, 104, 0.46);
   --text: #17181c;
   --muted: #69707d;
-  --accent: #36846b;
-  --accent-ink: #063f32;
-  --accent-soft: #e2f0eb;
+  --accent: #3f5f68;
+  --accent-ink: #173a42;
+  --accent-soft: #e3eaeb;
   --press-amber: #c58a45;
   --shadow: 0 12px 32px rgba(16, 17, 20, 0.08);
   --shadow-strong: 0 22px 70px rgba(16, 17, 20, 0.24);
@@ -1919,7 +1919,7 @@ body {
   width: 28%;
   height: 7px;
   margin-top: 16px;
-  background: #36846b;
+  background: #3f5f68;
 }
 
 .identity-screen__choices {
@@ -1941,7 +1941,7 @@ body {
 }
 
 .identity-screen__choices-header span {
-  color: #36846b;
+  color: #3f5f68;
   font-size: 12px;
   font-weight: 800;
 }
@@ -1971,7 +1971,7 @@ body {
 }
 
 .identity-card:hover {
-  border-color: rgba(54, 132, 107, 0.34);
+  border-color: rgba(63, 95, 104, 0.34);
   background: rgba(255, 254, 251, 0.58);
   box-shadow: none;
   transform: none;
@@ -1985,7 +1985,7 @@ body {
   left: 0;
   width: 2px;
   border-radius: 0;
-  background: #36846b;
+  background: #3f5f68;
   opacity: 0.28;
 }
 
@@ -2167,8 +2167,8 @@ body {
 .topbar__file-action:hover,
 .topbar__identity-switcher button:hover,
 .topbar__identity-switcher .is-active {
-  background: rgba(54, 132, 107, 0.08);
-  color: #175c49;
+  background: rgba(63, 95, 104, 0.08);
+  color: #244e58;
   transform: none;
 }
 
@@ -2294,7 +2294,7 @@ body {
 }
 
 .module-library__item:hover:not(:disabled) {
-  border-bottom-color: rgba(54, 132, 107, 0.24);
+  border-bottom-color: rgba(63, 95, 104, 0.24);
   background: rgba(255, 254, 251, 0.56);
   transform: none;
 }
@@ -2449,7 +2449,7 @@ body {
 
 .template-card--active {
   background: rgba(255, 254, 251, 0.66);
-  box-shadow: inset 0 -2px 0 #36846b;
+  box-shadow: inset 0 -2px 0 #3f5f68;
 }
 
 .template-card__thumbnail {
@@ -2503,7 +2503,7 @@ body {
 .template-mini__section span {
   width: 28%;
   height: 2px;
-  background: var(--template-mini-accent, #36846b);
+  background: var(--template-mini-accent, #3f5f68);
 }
 
 .template-mini__section i {
@@ -2563,11 +2563,11 @@ body {
   grid-row: 1 / span 5;
   align-self: stretch;
   background:
-    linear-gradient(var(--template-mini-accent, #36846b), var(--template-mini-accent, #36846b)) 5px 7px / 42% 4px no-repeat,
+    linear-gradient(var(--template-mini-accent, #3f5f68), var(--template-mini-accent, #3f5f68)) 5px 7px / 42% 4px no-repeat,
     linear-gradient(rgba(105, 112, 125, 0.22), rgba(105, 112, 125, 0.22)) 5px 17px / 64% 2px no-repeat,
     linear-gradient(rgba(105, 112, 125, 0.18), rgba(105, 112, 125, 0.18)) 5px 23px / 50% 2px no-repeat,
     #edf3ef;
-  border-right: 1px solid rgba(54, 132, 107, 0.28);
+  border-right: 1px solid rgba(63, 95, 104, 0.28);
 }
 
 .template-mini--sidebar .template-mini__name,
@@ -2592,7 +2592,7 @@ body {
   left: 5px;
   width: 2px;
   border-radius: 999px;
-  background: var(--template-mini-accent, #36846b);
+  background: var(--template-mini-accent, #3f5f68);
 }
 
 .template-mini--campus .template-mini__section {
@@ -2607,7 +2607,7 @@ body {
   width: 3px;
   height: 3px;
   border-radius: 999px;
-  background: var(--template-mini-accent, #36846b);
+  background: var(--template-mini-accent, #3f5f68);
 }
 
 .template-card__meta {
@@ -2729,7 +2729,7 @@ body {
 
 .resume-paper .resume-section--active {
   outline: 0;
-  background: linear-gradient(90deg, rgba(54, 132, 107, 0.045), transparent 38%);
+  background: linear-gradient(90deg, rgba(63, 95, 104, 0.045), transparent 38%);
   box-shadow: none;
 }
 
@@ -2741,7 +2741,7 @@ body {
   left: -7px;
   width: 3px;
   border-radius: 999px;
-  background: #36846b;
+  background: #3f5f68;
   opacity: 0.92;
 }
 
@@ -2899,7 +2899,7 @@ body {
 .resume-section:hover .resume-section__handle,
 .resume-section--active .resume-section__handle {
   background: rgba(255, 255, 255, 0.58);
-  border-color: rgba(54, 132, 107, 0.18);
+  border-color: rgba(63, 95, 104, 0.18);
   color: rgba(47, 111, 93, 0.78);
   opacity: 0.7;
   transform: none;
@@ -2914,7 +2914,7 @@ body {
 }
 
 .resume-section__handle:focus-visible {
-  outline: 2px solid #36846b;
+  outline: 2px solid #3f5f68;
   outline-offset: 2px;
   background: #17181c;
   border-color: #17181c;
@@ -2942,7 +2942,7 @@ body {
 
 .resume-paper--template-sidebar .resume-template__sidebar-column {
   padding-right: 14px;
-  border-right: 1px solid rgba(54, 132, 107, 0.22);
+  border-right: 1px solid rgba(63, 95, 104, 0.22);
 }
 
 .resume-paper--template-sidebar .resume-template__main-column {
@@ -2952,7 +2952,7 @@ body {
 .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section {
   padding-right: 0;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(54, 132, 107, 0.12);
+  border-bottom: 1px solid rgba(63, 95, 104, 0.12);
   border-radius: 0;
   background: transparent;
 }
@@ -3030,7 +3030,7 @@ body {
 .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section:hover .resume-section__handle,
 .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section:focus-within .resume-section__handle,
 .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section--active .resume-section__handle {
-  border-color: rgba(54, 132, 107, 0.14);
+  border-color: rgba(63, 95, 104, 0.14);
   background: rgba(255, 255, 255, 0.42);
   color: rgba(47, 111, 93, 0.66);
   opacity: 0.62;
@@ -3042,7 +3042,7 @@ body {
 
 .resume-paper--template-campus {
   background:
-    linear-gradient(90deg, rgba(54, 132, 107, 0.16) 0 1.5mm, transparent 1.5mm),
+    linear-gradient(90deg, rgba(63, 95, 104, 0.16) 0 1.5mm, transparent 1.5mm),
     #ffffff;
 }
 
@@ -3062,7 +3062,7 @@ body {
   left: 0;
   width: 5px;
   height: 5px;
-  border: 1px solid rgba(54, 132, 107, 0.42);
+  border: 1px solid rgba(63, 95, 104, 0.42);
   border-radius: 50%;
   background: #ffffff;
 }
@@ -3081,8 +3081,8 @@ body {
 .resume-paper--template-campus .resume-section:focus-within .resume-section__handle,
 .resume-paper--template-campus .resume-section:hover .resume-section__handle,
 .resume-paper--template-campus .resume-section--active .resume-section__handle {
-  background: rgba(54, 132, 107, 0.08);
-  border-color: rgba(54, 132, 107, 0.18);
+  background: rgba(63, 95, 104, 0.08);
+  border-color: rgba(63, 95, 104, 0.18);
   color: rgba(47, 111, 93, 0.78);
   opacity: 0.7;
 }
@@ -3124,7 +3124,7 @@ body {
   left: 0;
   width: 2px;
   border-radius: 0 4px 4px 0;
-  background: #36846b;
+  background: #3f5f68;
 }
 
 .inspector-panel label,
@@ -3143,8 +3143,8 @@ body {
 .inspector-panel input:focus,
 .inspector-panel textarea:focus,
 .inspector-panel select:focus {
-  border-color: rgba(54, 132, 107, 0.74);
-  box-shadow: 0 0 0 3px rgba(54, 132, 107, 0.12);
+  border-color: rgba(63, 95, 104, 0.74);
+  box-shadow: 0 0 0 3px rgba(63, 95, 104, 0.12);
 }
 
 .photo-editor,
@@ -3206,7 +3206,7 @@ body {
 
 .inspector-actions .secondary-button:hover,
 .inspector-actions .ghost-button:hover {
-  border-color: rgba(54, 132, 107, 0.34);
+  border-color: rgba(63, 95, 104, 0.34);
   background: rgba(255, 254, 251, 0.52);
   transform: none;
 }
@@ -3335,17 +3335,17 @@ body {
 
 .template-chip:hover,
 .segmented-control button:hover {
-  border-bottom-color: rgba(54, 132, 107, 0.46);
+  border-bottom-color: rgba(63, 95, 104, 0.46);
   background: rgba(255, 254, 251, 0.46);
   color: #17181c;
 }
 
 .template-chip--active,
 .segmented-control button.is-active {
-  border-bottom-color: #36846b;
+  border-bottom-color: #3f5f68;
   background: rgba(255, 254, 251, 0.72);
-  color: #175c49;
-  box-shadow: inset 0 -2px 0 #36846b;
+  color: #244e58;
+  box-shadow: inset 0 -2px 0 #3f5f68;
 }
 
 .color-field {
@@ -3449,8 +3449,8 @@ body {
 
 .numeric-field input:focus {
   outline: none;
-  border-color: rgba(54, 132, 107, 0.52);
-  box-shadow: 0 0 0 2px rgba(54, 132, 107, 0.1);
+  border-color: rgba(63, 95, 104, 0.52);
+  box-shadow: 0 0 0 2px rgba(63, 95, 104, 0.1);
 }
 
 .numeric-field code {
@@ -3541,9 +3541,9 @@ body {
   width: max-content;
   gap: 7px;
   padding: 3px 7px 3px 3px;
-  border: 1px solid rgba(54, 132, 107, 0.16);
+  border: 1px solid rgba(63, 95, 104, 0.16);
   border-radius: 999px;
-  background: rgba(54, 132, 107, 0.06);
+  background: rgba(63, 95, 104, 0.06);
   color: #53605c;
   font-size: 11px;
   font-weight: 700;
@@ -3577,7 +3577,7 @@ body {
 }
 
 .inspector-panel .visibility-toggle input:checked {
-  background: #36846b;
+  background: #3f5f68;
 }
 
 .inspector-panel .visibility-toggle input:checked::before {
@@ -3589,7 +3589,7 @@ body {
   align-items: center;
   padding: 10px;
   background:
-    linear-gradient(90deg, rgba(54, 132, 107, 0.06), transparent 44%),
+    linear-gradient(90deg, rgba(63, 95, 104, 0.06), transparent 44%),
     #f0f1ed;
 }
 
@@ -3640,8 +3640,8 @@ body {
 }
 
 .inspector-panel label > input:not([type]):focus {
-  border-color: #36846b;
-  background: linear-gradient(180deg, transparent 0%, rgba(54, 132, 107, 0.045) 100%);
+  border-color: #3f5f68;
+  background: linear-gradient(180deg, transparent 0%, rgba(63, 95, 104, 0.045) 100%);
   box-shadow: none;
 }
 
@@ -3657,11 +3657,11 @@ body {
 }
 
 .inspector-panel label > textarea:focus {
-  border-color: rgba(54, 132, 107, 0.46);
+  border-color: rgba(63, 95, 104, 0.46);
   background:
-    linear-gradient(rgba(54, 132, 107, 0.08) 1px, transparent 1px) 0 37px / 100% 28px,
+    linear-gradient(rgba(63, 95, 104, 0.08) 1px, transparent 1px) 0 37px / 100% 28px,
     #fffefb;
-  box-shadow: 0 0 0 2px rgba(54, 132, 107, 0.08);
+  box-shadow: 0 0 0 2px rgba(63, 95, 104, 0.08);
 }
 
 .inspector-panel .list-item,
@@ -3691,9 +3691,9 @@ body {
 }
 
 .secondary-button {
-  background: #e5f2ed;
-  border-color: rgba(54, 132, 107, 0.24);
-  color: #075c49;
+  background: #e6eeee;
+  border-color: rgba(63, 95, 104, 0.24);
+  color: #1d4d57;
 }
 
 .ghost-button {
@@ -3947,7 +3947,7 @@ body {
 
   .resume-paper--template-campus {
     background:
-      linear-gradient(90deg, rgba(54, 132, 107, 0.16) 0 1.5mm, transparent 1.5mm),
+      linear-gradient(90deg, rgba(63, 95, 104, 0.16) 0 1.5mm, transparent 1.5mm),
       #ffffff !important;
   }
 
@@ -3975,12 +3975,12 @@ body {
 
   .resume-paper--template-sidebar .resume-template__sidebar-column {
     padding-right: 12px;
-    border-right: 1px solid rgba(54, 132, 107, 0.22);
+    border-right: 1px solid rgba(63, 95, 104, 0.22);
   }
 
   .resume-paper--template-sidebar .resume-template__sidebar-column .resume-section {
     padding-bottom: 9px;
-    border-bottom: 1px solid rgba(54, 132, 107, 0.12);
+    border-bottom: 1px solid rgba(63, 95, 104, 0.12);
     border-radius: 0;
     background: transparent;
   }

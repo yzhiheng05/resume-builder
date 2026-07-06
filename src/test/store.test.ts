@@ -128,7 +128,7 @@ describe("resume helpers", () => {
     expect(migrated.selectedIdentity).toBe("general");
     expect(migrated.templateId).toBe("classic");
     expect(migrated.schemaVersion).toBe(4);
-    expect(migrated.resumeStyle.accentColor).toBe("#36846b");
+    expect(migrated.resumeStyle.accentColor).toBe("#3f5f68");
     expect(migrated.modules.some((module) => module.kind === "certificate")).toBe(true);
   });
 
@@ -145,7 +145,7 @@ describe("resume helpers", () => {
 
     expect(migrated?.schemaVersion).toBe(4);
     expect(migrated?.resumeStyle).toEqual({
-      accentColor: "#36846b",
+      accentColor: "#3f5f68",
       density: "comfortable",
       sectionSpacing: "normal",
       headingStyle: "underline",
@@ -174,7 +174,7 @@ describe("resume helpers", () => {
       moduleOrder: state.moduleOrder
     });
 
-    expect(migrated?.resumeStyle.accentColor).toBe("#36846b");
+    expect(migrated?.resumeStyle.accentColor).toBe("#3f5f68");
   });
 
   test("normalizes invalid custom layout values in v4 style settings", () => {

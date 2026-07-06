@@ -4,6 +4,22 @@
 
 ## 2026-07-06
 
+- 任务：降低默认主题色饱和度，减少纸面模板感
+- 操作：将默认 `resumeStyle.accentColor` 从偏鲜的 `#36846b` 调整为更克制的深青灰 `#3f5f68`；同步更新编辑器根变量、入口页细线、模板切换选中态、校招模板时间线、右侧属性控件 focus / active 状态和打印态色值；新增 CSS 回归测试，避免默认外壳主色回到旧绿
+- 结果：默认界面和简历纸面的绿色存在感下降，整体更接近成熟排版工具；用户手动主题色仍通过 `resumeStyle.accentColor` 正常生效
+- 验证：
+  - 先更新默认色断言后运行 `npm test -- src/test/store.test.ts src/test/resumeBackup.test.ts src/test/print.test.ts`，确认 6 项失败指向旧默认色和旧 CSS 色值
+  - 实现后 `npm test -- src/test/store.test.ts src/test/resumeBackup.test.ts src/test/print.test.ts` 通过，38 项测试全部通过
+  - `npm test` 通过，62 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-restrained-accent-desktop.png`，`--accent`、`--resume-accent` 和主题色输入均为 `#3f5f68`，桌面无横向溢出
+  - 本机 Chrome 移动截图：`/tmp/resume-restrained-accent-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续美观打磨，可优先优化纸面正文层级和经历元信息灰阶，而不是再扩大颜色系统
+
+## 2026-07-06
+
 - 任务：统一右侧属性面板与浅色工作台外壳
 - 操作：将 `.inspector-panel` 背景从偏白的 `#f4f3ef` 调整为与左侧模块库一致的纸灰 `#eceee8`；保留内部参数控件、分隔线和选中态不变；新增 CSS 回归测试，避免右侧重新变成孤立白色表单块
 - 结果：左侧模块库、顶部工具条、中间画布台面和右侧属性面板的明度更一致，A4 纸张仍是页面主视觉

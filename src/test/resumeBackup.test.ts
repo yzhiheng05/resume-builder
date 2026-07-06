@@ -76,7 +76,7 @@ describe("resume backup helpers", () => {
       expect(result.state.selectedIdentity).toBe("general");
       expect(result.state.templateId).toBe("classic");
       expect(result.state.hasUserSelectedTemplate).toBe(false);
-      expect(result.state.resumeStyle.accentColor).toBe("#36846b");
+      expect(result.state.resumeStyle.accentColor).toBe("#3f5f68");
       expect(result.state.modules.some((module) => module.kind === "summary")).toBe(true);
       expect(result.state.modules.some((module) => module.kind === "certificate")).toBe(true);
     }

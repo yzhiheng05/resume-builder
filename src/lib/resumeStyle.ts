@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import type { ResumeStyleSettings } from "../types/resume";
 
 export const defaultResumeStyle: ResumeStyleSettings = {
-  accentColor: "#36846b",
+  accentColor: "#3f5f68",
   density: "comfortable",
   sectionSpacing: "normal",
   headingStyle: "underline",

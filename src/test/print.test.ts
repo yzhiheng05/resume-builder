@@ -27,7 +27,7 @@ describe("print helpers", () => {
   test("campus template uses a narrow timeline accent instead of a broad color band", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain("rgba(54, 132, 107, 0.16) 0 1.5mm");
+    expect(css).toContain("rgba(63, 95, 104, 0.16) 0 1.5mm");
     expect(css).toContain("transparent 1.5mm");
     expect(css).not.toContain("rgba(54, 132, 107, 0.13) 0 5mm");
     expect(css).not.toContain("transparent 5mm");
@@ -76,6 +76,13 @@ describe("print helpers", () => {
 
     expect(css).toContain(".inspector-panel {\n  padding: 18px;\n  background: #eceee8;");
     expect(css).not.toContain(".inspector-panel {\n  padding: 18px;\n  background: #f4f3ef;");
+  });
+
+  test("editor chrome uses the restrained default accent instead of bright green", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("--accent: #3f5f68;");
+    expect(css).not.toContain("--accent: #36846b;");
   });
 
   test("setPrintMode toggles the print class on body", () => {
