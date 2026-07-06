@@ -2044,9 +2044,9 @@ body {
   margin: 0;
   padding: 8px 16px;
   align-items: center;
-  background: #101114;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  background: #f2f1ec;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.1);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
 .topbar__brand {
@@ -2054,7 +2054,7 @@ body {
   gap: 10px;
   align-items: center;
   min-width: 240px;
-  color: #ffffff;
+  color: #17181c;
 }
 
 .topbar__document {
@@ -2066,7 +2066,7 @@ body {
 
 .topbar__kicker {
   margin: 0;
-  color: #7d8a87;
+  color: #68716e;
   font-size: 11px;
   font-weight: 760;
 }
@@ -2080,7 +2080,7 @@ body {
 }
 
 .topbar h1 {
-  color: #ffffff;
+  color: #17181c;
   font-size: 16px;
   line-height: 1.15;
   white-space: nowrap;
@@ -2088,15 +2088,15 @@ body {
 
 .topbar__identity,
 .topbar__status {
-  color: #aab0bb;
+  color: #68716e;
 }
 
 .topbar__identity {
   margin: 0;
   padding: 2px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(17, 18, 23, 0.12);
   border-radius: 4px;
-  color: #b7bfc8;
+  color: #4f5b56;
   font-size: 11px;
   font-weight: 720;
   line-height: 1.2;
@@ -2104,7 +2104,7 @@ body {
 
 .topbar__status {
   margin: 0;
-  color: #8f98a4;
+  color: #7b837f;
   font-size: 12px;
 }
 
@@ -2122,9 +2122,9 @@ body {
   gap: 4px;
   align-items: center;
   padding: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(17, 18, 23, 0.1);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.055);
+  background: rgba(255, 254, 251, 0.48);
 }
 
 .topbar__actions {
@@ -2150,7 +2150,7 @@ body {
   padding: 6px 8px;
   border: 0;
   background: transparent;
-  color: #d7dbe3;
+  color: #4f5b56;
   font-size: 12px;
 }
 
@@ -2158,7 +2158,7 @@ body {
 .topbar__file-action {
   min-width: 0;
   padding: 5px 7px;
-  color: #9fa6b2;
+  color: #68716e;
   font-size: 12px;
   font-weight: 740;
 }
@@ -2167,8 +2167,8 @@ body {
 .topbar__file-action:hover,
 .topbar__identity-switcher button:hover,
 .topbar__identity-switcher .is-active {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
+  background: rgba(54, 132, 107, 0.08);
+  color: #175c49;
   transform: none;
 }
 
@@ -2176,14 +2176,14 @@ body {
   min-width: 44px;
   margin-left: 5px;
   padding-inline: 10px !important;
-  border: 1px solid rgba(216, 173, 98, 0.45) !important;
-  background: #d7a75e !important;
-  color: #18100a !important;
+  border: 1px solid rgba(151, 105, 43, 0.26) !important;
+  background: #dcb66f !important;
+  color: #1f1608 !important;
   font-weight: 800;
 }
 
 .topbar__primary-action:hover {
-  background: #e0b36d !important;
+  background: #e2bf7e !important;
 }
 
 .editor-workspace {

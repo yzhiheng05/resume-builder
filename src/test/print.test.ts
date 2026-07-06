@@ -54,6 +54,14 @@ describe("print helpers", () => {
     expect(css).not.toContain("background: var(--panel-deep);");
   });
 
+  test("top toolbar uses a light file bar instead of a black strip", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".topbar {\n  position: sticky;");
+    expect(css).toContain("background: #f2f1ec;");
+    expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 
