@@ -2117,7 +2117,7 @@ body {
   align-items: center;
   background: #f2f1ec;
   border-bottom: 1px solid rgba(17, 18, 23, 0.1);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.62);
+  box-shadow: 0 10px 24px rgba(39, 47, 43, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7) inset;
 }
 
 .topbar__brand {
@@ -2199,10 +2199,10 @@ body {
 }
 
 .topbar__actions {
-  gap: 2px;
-  padding: 0;
-  border-color: transparent;
-  background: transparent;
+  gap: 3px;
+  padding: 3px;
+  border-color: rgba(17, 18, 23, 0.1);
+  background: rgba(255, 254, 251, 0.5);
 }
 
 .topbar__actions button,
@@ -2318,8 +2318,8 @@ body {
 
 .module-library__group-items {
   display: grid;
-  gap: 0;
-  border-top: 1px solid rgba(17, 18, 23, 0.09);
+  gap: 5px;
+  border-top: 0;
 }
 
 .module-library__item {
@@ -2328,13 +2328,13 @@ body {
   grid-template-columns: 18px minmax(0, 1fr) 18px;
   column-gap: 9px;
   align-items: center;
-  min-height: 38px;
-  padding: 7px 2px;
-  border: 0;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.08);
-  border-radius: 0;
-  background: transparent;
+  min-height: 36px;
+  padding: 7px 8px;
+  border: 1px solid rgba(17, 18, 23, 0.09);
+  border-radius: 6px;
+  background: rgba(255, 254, 251, 0.46);
   color: #232b2f;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
 .module-library__item::before {
@@ -2365,8 +2365,11 @@ body {
 }
 
 .module-library__item:hover:not(:disabled) {
-  border-bottom-color: rgba(63, 95, 104, 0.24);
-  background: rgba(255, 254, 251, 0.56);
+  border-color: rgba(63, 95, 104, 0.24);
+  background: rgba(255, 254, 251, 0.74);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 6px 14px rgba(39, 47, 43, 0.05);
   transform: none;
 }
 
@@ -3379,13 +3382,12 @@ body {
 }
 
 .inspector-section--style {
-  gap: 0;
-  padding: 0;
-  border: 0;
-  border-top: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(17, 18, 23, 0.09);
+  border-radius: 6px;
+  background: rgba(255, 254, 251, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .inspector-section--style::before {
@@ -3393,16 +3395,21 @@ body {
 }
 
 .inspector-section--style h3 {
-  padding: 5px 0 9px;
+  padding: 0 0 9px;
   border-bottom: 1px solid rgba(17, 18, 23, 0.09);
   color: #2d342f;
   font-size: 12px;
 }
 
+.style-board,
+.numeric-field-grid,
+.segmented-field {
+  padding: 10px 0;
+}
+
 .style-board {
   display: grid;
   gap: 8px;
-  padding: 9px 0 10px;
   border-bottom: 1px solid rgba(17, 18, 23, 0.09);
 }
 
@@ -3498,7 +3505,6 @@ body {
 .numeric-field-grid {
   display: grid;
   gap: 7px;
-  padding: 10px 0;
   border-bottom: 1px solid rgba(17, 18, 23, 0.09);
 }
 
@@ -3573,7 +3579,6 @@ body {
 .segmented-field {
   display: grid;
   gap: 6px;
-  padding: 10px 0 11px;
   border-bottom: 1px solid rgba(17, 18, 23, 0.09);
 }
 

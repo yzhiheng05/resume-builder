@@ -61,6 +61,9 @@ describe("print helpers", () => {
 
     expect(css).toContain(".topbar {\n  position: sticky;");
     expect(css).toContain("background: #f2f1ec;");
+    expect(css).toContain("box-shadow: 0 10px 24px rgba(39, 47, 43, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7) inset;");
+    expect(css).toContain(".topbar__actions {\n  gap: 3px;\n  padding: 3px;");
+    expect(css).toContain("border-color: rgba(17, 18, 23, 0.1);\n  background: rgba(255, 254, 251, 0.5);");
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
   });
 
@@ -120,6 +123,23 @@ describe("print helpers", () => {
     expect(css).toContain(".template-card {\n  grid-template-columns: minmax(0, 1fr);");
     expect(css).toContain(".template-card__thumbnail {\n  display: none;");
     expect(css).not.toContain(".template-card {\n  grid-template-columns: 28px minmax(0, 1fr);");
+  });
+
+  test("editor side panels use refined tool rows instead of flat divider lists", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 5px;\n  border-top: 0;");
+    expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 18px minmax(0, 1fr) 18px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.46);");
+    expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(63, 95, 104, 0.24);\n  background: rgba(255, 254, 251, 0.74);");
+  });
+
+  test("inspector style controls sit in a quiet tool tray instead of raw form rows", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
+    expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 10px 0;");
   });
 
   test("selected resume sections use a visible but restrained paper highlight", () => {

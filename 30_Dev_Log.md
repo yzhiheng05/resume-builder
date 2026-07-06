@@ -4,6 +4,22 @@
 
 ## 2026-07-06
 
+- 任务：降低编辑器工具外壳的简陋感
+- 操作：审查当前桌面截图后，将优化范围收敛到编辑器外壳而非 A4 纸面；把左侧模块库从透明分隔线列表调整为浅底工具行，增加 1px 细边框、6px 半径、轻内高光和 hover 轻阴影；把右侧全局样式区调整为浅色工具托盘，保留紧凑属性检查器风格但补足边界和层级；把顶部操作区恢复为浅色文件工具托盘，补充细边框、轻内高光和低强度阴影；新增 CSS 回归测试锁住工具行、属性托盘和顶部工具条样式
+- 结果：两侧面板不再像裸列表 / 原始表单，顶部操作不再像裸文字按钮，整体更接近成熟编辑器的工具抽屉；A4 纸面主视觉、打印隐藏编辑器 UI 和移动端无横向溢出未回退
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增样式断言因当前平铺样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，19 项测试全部通过
+  - `npm test` 通过，70 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-topbar-tool-polish-desktop.png`，顶部操作区、左侧模块行和右侧样式区 computed 样式均为浅色工具托盘层级；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-topbar-tool-polish-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续追求更强质感，可下一步检查模板轨道和画布状态条的微层级；当前不建议大换皮或增加装饰元素
+
+## 2026-07-06
+
 - 任务：增强模块选中反馈并替换浏览器删除确认
 - 操作：将纸面模块选中态从极浅底色调整为低饱和 1px 青灰描边、2px outline offset、淡青灰渐变底和 4px 左侧标记；把删除模块从 `window.confirm` 改为应用内 `role="dialog"` 确认框，支持取消和确认删除，并在打印 / PDF 模式隐藏确认框；新增渲染测试和 CSS 回归测试，避免回退到浏览器 confirm 或过浅选中态
 - 结果：点击画布模块后选中状态更容易识别，但仍保持正式简历编辑器的克制观感；删除操作不再弹出浏览器原生确认框，整体更统一
