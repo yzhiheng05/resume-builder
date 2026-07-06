@@ -63,8 +63,11 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar {\n  position: sticky;");
     expect(css).toContain("background: #f2f1ec;");
     expect(css).toContain("box-shadow: 0 10px 24px rgba(39, 47, 43, 0.06), 0 1px 0 rgba(255, 255, 255, 0.7) inset;");
-    expect(css).toContain(".topbar__actions {\n  gap: 3px;\n  padding: 3px;");
-    expect(css).toContain("border-color: rgba(17, 18, 23, 0.1);\n  background: rgba(255, 254, 251, 0.5);");
+    expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
+    expect(css).toContain("padding: 3px;\n  border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 8px;\n  background: rgba(255, 254, 251, 0.46);");
+    expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 2px;");
+    expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;");
+    expect(css).toContain(".topbar__actions {\n  padding-left: 5px;\n  border-left: 1px solid rgba(17, 18, 23, 0.08);");
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
   });
 
@@ -185,6 +188,53 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
     expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 10px 0;");
+  });
+
+  test("inspector text fields use compact property rows instead of bare underlines", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel label:has(> input:not([type])) {\n  display: grid;\n  grid-template-columns: minmax(68px, 0.74fr) minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 42px;\n  padding: 7px 8px;\n  border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.28);");
+    expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(63, 95, 104, 0.28);");
+    expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;");
+    expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
+  });
+
+  test("photo editor uses a compact asset well instead of a dashed upload box", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".photo-editor {\n  grid-template-columns: 54px minmax(0, 1fr);\n  gap: 10px;");
+    expect(css).toContain("min-height: 74px;\n  padding: 8px;\n  border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.3);");
+    expect(css).toContain(".photo-editor__preview {\n  width: 44px;\n  height: 56px;\n  min-height: 56px;");
+    expect(css).toContain(".photo-editor__body {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain(".photo-editor .secondary-button,\n.photo-editor .ghost-button {\n  min-height: 28px;");
+    expect(css).not.toContain("border: 1px dashed rgba(167, 194, 255, 0.9);");
+  });
+
+  test("timeline and list editors use compact entry wells instead of raw stacked forms", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 8px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
+    expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 26px;");
+    expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 34px;");
+    expect(css).toContain("background: rgba(63, 95, 104, 0.07);");
+    expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 12px 0;");
+    expect(css).not.toContain("border-top: 1px solid rgba(17, 18, 23, 0.09);");
+  });
+
+  test("inspector hint notes use solid note rows instead of dashed blue callouts", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".editor-empty-note {\n  margin: 0;\n  padding: 9px 10px 9px 13px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.26);");
+    expect(css).toContain(".inspector-panel .editor-empty-note {\n  position: relative;\n  color: #68716e;");
+    expect(css).toContain(".inspector-panel .editor-empty-note::before {\n  content: \"\";");
+    expect(css).toContain("width: 2px;\n  border-radius: 999px;\n  background: rgba(63, 95, 104, 0.38);");
+    expect(css).not.toContain("border: 1px dashed rgba(191, 219, 254, 0.82);");
+    expect(css).not.toContain("linear-gradient(180deg, rgba(247, 250, 255, 0.96), rgba(239, 246, 255, 0.74));");
   });
 
   test("secondary controls use compact rails instead of bare text and underline buttons", () => {

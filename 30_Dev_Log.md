@@ -4,6 +4,86 @@
 
 ## 2026-07-06
 
+- 任务：收敛右侧提示块，移除虚线 callout 感
+- 操作：基于选中“教育经历”后的右侧截图继续审查，定位模块提示 `.editor-empty-note` 仍保留蓝色虚线 callout 的旧样式，只是被后续灰色背景部分覆盖，和当前 property row / entry well 不一致；先新增 CSS 回归测试锁定 solid note row，再将基础 `.editor-empty-note` 改为浅色 solid note，并为 inspector 内提示加一个低强度左侧标记，同时从旧共享 selector 中移除对提示块的覆盖
+- 结果：教育经历等模块提示从临时虚线提示框收敛为安静的 note row，右侧 inspector 的信息提示、字段行和条目卡片视觉语言更一致；不影响提示内容、模块编辑逻辑和移动端布局
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增提示块断言因旧 dashed blue callout 样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，28 项测试全部通过
+  - `npm test` 通过，79 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-note-row-polish-desktop.png`，`.editor-empty-note` computed 为 solid note row，带 2px 左侧标记；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-note-row-polish-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 当前右侧 inspector 的表单、照片、条目、提示块已形成一致控件语言；继续优化可转向左侧模块库与画布模板轨的整体节奏
+
+## 2026-07-06
+
+- 任务：优化经历 / 列表条目编辑区，减少原始表单块感
+- 操作：基于选中“教育经历”后的右侧属性截图继续审查，定位时间线条目虽然字段已是 property row，但整个条目仍是透明堆叠，删除 / 新增按钮都是满宽大按钮，显得像原始表单；先新增 CSS 回归测试锁定 compact entry well，再将 `.inspector-panel .list-item` 和 `.inline-row` 改为浅色 entry well，将条目删除按钮压缩为右侧小操作，将新增按钮改成 34px 高的轻量添加行
+- 结果：经历、项目、奖项等时间线条目以及列表类条目编辑器的边界和操作层级更清楚，右侧属性面板从“表单堆叠”进一步接近成熟 inspector；不影响条目新增、删除、字段编辑和移动端布局
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增条目编辑器断言因旧透明堆叠 / 满宽按钮样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，27 项测试全部通过
+  - `npm test` 通过，78 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-entry-well-polish-desktop.png`，`.list-item` computed 为浅色有框 entry well，删除按钮缩至 62x26，新增按钮 34px 高；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-entry-well-polish-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 当前右侧 inspector 的主要粗糙表单块已基本收敛；继续优化时可从左侧模块库和中间纸面空状态的整体节奏入手，而不是继续微调右侧单个控件
+
+## 2026-07-06
+
+- 任务：收敛照片上传区，减少虚线上传框的粗糙感
+- 操作：基于右侧属性面板截图继续审查，定位个人照片区域仍保留 dashed upload box 的旧上传控件语言，和普通字段 property row 不一致；先新增 CSS 回归测试锁定 compact asset well，再将 `.photo-editor` 从虚线大框改为浅色 solid asset well，收紧预览尺寸、按钮尺寸和内部间距，并同步移除基础样式里的旧 dashed border
+- 结果：照片上传区和个人信息属性行视觉语言统一，右侧属性面板不再出现突兀的虚线占位框；照片上传 / 移除逻辑未变，移动端仍保持无横向溢出
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增照片区断言因旧 dashed upload box 样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，26 项测试全部通过
+  - `npm test` 通过，77 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-photo-asset-well-desktop.png`，`.photo-editor` computed 为 74px 高 solid asset well，预览和上传按钮稳定对齐；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-photo-asset-well-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续降低简陋感，可审查时间线 / 列表条目编辑器是否仍像原始表单块；当前照片区不再继续扩展
+
+## 2026-07-06
+
+- 任务：优化右侧属性输入区，减少原始表单感
+- 操作：基于最新截图继续审查，定位右侧属性面板里的普通字段仍是“标签 + 裸下划线输入框”，和当前浅色工具 chrome、纸张样式属性板不一致；先新增 CSS 回归测试锁定 property row 形态，再将 `.inspector-panel label:has(> input:not([type]))` 改为浅色有框三列属性行，字段名、输入值和可见性开关在同一行内对齐，textarea 仍保留独立编辑区
+- 结果：个人信息、模块标题等文本字段从原始表单感收敛为属性检查器行，右侧面板更像成熟编辑器的 inspector；不影响字段编辑、显示开关、照片上传、全局样式控制和打印导出
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增属性行断言因旧下划线输入样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，25 项测试全部通过
+  - `npm test` 通过，76 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-inspector-property-rows-desktop.png`，普通输入行 computed 为 grid property row，输入本身不再有下划线；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-inspector-property-rows-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 当前右侧属性区的粗糙点主要已从输入行收敛；继续优化时可审查照片上传区和列表 / 时间线条目编辑区，而不是继续扩大普通输入行改动
+
+## 2026-07-06
+
+- 任务：收拢顶部操作区，减少多个贴片控件拼接感
+- 操作：基于最新桌面 / 移动端截图继续审查，定位顶部右侧身份切换、文件操作和导出按钮像三组独立小控件，和下方已经统一的工具 chrome 不一致；先更新 CSS 回归测试锁定统一 command rail，再将 `.topbar__controls` 改为浅色有框工具轨，取消 `.topbar__identity-switcher` 与 `.topbar__actions` 各自外框，用一道细分隔线区分文件操作，并略微收敛导出按钮颜色和间距
+- 结果：顶部工具区更像同一条文件命令栏，而不是几个按钮组临时拼在一起；桌面顶部更整洁，移动端仍能在同一浅色工具轨内自然换行；不影响身份切换、JSON 导入导出、备份恢复和 PDF 导出逻辑
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增顶部工具轨断言因旧分离控件样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，24 项测试全部通过
+  - `npm test` 通过，75 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-topbar-command-rail-desktop.png`，`.topbar__controls` 为浅色有框工具轨，身份切换和文件操作内部外框已移除；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-topbar-command-rail-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续做视觉优化，下一步可审查右侧属性面板里普通文本输入区是否仍显得过于表单化；避免再扩大顶部工具条改动
+
+## 2026-07-06
+
 - 任务：将简历结构入口页对齐浅色工作台，移除黑色 split 首屏
 - 操作：基于入口页截图审查，定位 `.identity-screen` 与 hero 区仍使用黑色背景，和当前编辑器浅灰纸面工作台割裂；先补充 CSS 回归测试锁定入口页浅色背景、hero 网格、右侧选择区和卡片样式，再将入口页背景、hero 网格、纸张预览、选择卡片统一为浅灰 / 米白工具台体系
 - 结果：进入编辑器前的首屏不再出现大块黑色区域，入口页和后续 A4 画布编辑器视觉语气一致；移动端保持上下布局，无横向溢出；编辑器逻辑、模板切换和打印导出规则未变
