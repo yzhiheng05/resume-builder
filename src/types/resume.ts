@@ -26,6 +26,11 @@ export interface ResumeStyleSettings {
   density: ResumeDensity;
   sectionSpacing: ResumeSectionSpacing;
   headingStyle: ResumeHeadingStyle;
+  fontSizePx: number;
+  lineHeight: number;
+  paragraphSpacingPx: number;
+  pageMarginXmm: number;
+  pageMarginYmm: number;
 }
 
 export type PersonalVisibleField =

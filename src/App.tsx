@@ -44,24 +44,54 @@ function IdentityEntryScreen({ onSelect }: { onSelect: (identity: IdentityPreset
 
   return (
     <div className="identity-screen">
-      <div className="identity-screen__hero">
-        <p className="eyebrow">{RESUME_TOOL_BRAND}</p>
-        <h1>先选择你的简历起点</h1>
-        <p>学生、职场人和通用求职者使用同一个编辑器内核，但会获得不同的默认模块、排序和填写提示。</p>
-      </div>
-      <div className="identity-grid">
-        {presets.map((preset) => (
-          <button
-            key={preset.id}
-            type="button"
-            className="identity-card"
-            onClick={() => onSelect(preset.id)}
-          >
-            <span className="identity-card__label">{preset.label}</span>
-            <span className="identity-card__intro">{preset.intro}</span>
-            <span className="identity-card__hint">{preset.focusHint}</span>
-          </button>
-        ))}
+      <div className="identity-screen__layout">
+        <section className="identity-screen__hero" aria-labelledby="identity-entry-title">
+          <p className="eyebrow">{RESUME_TOOL_BRAND}</p>
+          <h1 id="identity-entry-title">选择简历结构</h1>
+          <p>先定纸张骨架，进入后再调整模块、顺序和模板。</p>
+          <div className="identity-screen__paper" aria-hidden="true">
+            <div className="identity-paper__toolbar">
+              <span>A4</span>
+              <span>模块化简历</span>
+            </div>
+            <div className="identity-paper__sheet">
+              <i className="identity-paper__name" />
+              <i className="identity-paper__line identity-paper__line--wide" />
+              <i className="identity-paper__line" />
+              <b />
+              <i className="identity-paper__line identity-paper__line--wide" />
+              <i className="identity-paper__line identity-paper__line--short" />
+              <b />
+              <i className="identity-paper__line identity-paper__line--wide" />
+              <i className="identity-paper__line" />
+              <i className="identity-paper__line identity-paper__line--short" />
+            </div>
+          </div>
+        </section>
+        <section className="identity-screen__choices" aria-label="简历起点">
+          <div className="identity-screen__choices-header">
+            <span>结构</span>
+            <strong>选择起点</strong>
+          </div>
+          <div className="identity-grid">
+            {presets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className={`identity-card identity-card--${preset.id}`}
+                onClick={() => onSelect(preset.id)}
+              >
+                <span className="identity-card__meta">
+                  <span>{String(preset.recommendedModules.length).padStart(2, "0")} 个模块</span>
+                  <span>{getResumeTemplate(preset.id === "student" ? "campus" : "classic").name}</span>
+                </span>
+                <span className="identity-card__label">{preset.label}</span>
+                <span className="identity-card__intro">{preset.intro}</span>
+                <span className="identity-card__hint">{preset.focusHint}</span>
+              </button>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );
@@ -474,6 +504,7 @@ export default function App() {
   const templateOptions = useMemo(() => getResumeTemplates(), []);
   const selectedTemplate = getResumeTemplate(templateId);
   const activeModule = activeModuleId ? modules.find((module) => module.id === activeModuleId) ?? null : null;
+  const visibleModuleCount = modules.reduce((count, module) => (module.visible ? count + 1 : count), 0);
   const orderedModules = useMemo(() => {
     const moduleById = new Map(modules.map((module) => [module.id, module] as const));
     return moduleOrder
@@ -580,9 +611,11 @@ export default function App() {
 
         <section className="canvas-panel" aria-label="简历画布" style={editorPanelStyle}>
           <div className="canvas-panel__header">
-            <p className="editor-heading__eyebrow">{selectedTemplate.name}</p>
-            <h2>简历画布</h2>
-            <p>{selectedPreset?.focusHint ?? "添加模块、选中画布内容，并在右侧属性面板中编辑。"}</p>
+            <div className="canvas-panel__meta" aria-label="纸面状态">
+              <span>A4</span>
+              <strong>{selectedTemplate.name}</strong>
+              <span>{visibleModuleCount} 个模块</span>
+            </div>
           </div>
 
           <PreviewPanel
@@ -593,7 +626,7 @@ export default function App() {
             templateOptions={templateOptions}
             activeModuleId={activeModuleId}
             eyebrow={selectedTemplate.name}
-            heading="实时预览"
+            heading="纸面"
             hint={getPreviewHint(templateId)}
             onSurfaceHeightChange={setPreviewSurfaceHeight}
             onTemplateChange={(nextTemplateId) => {

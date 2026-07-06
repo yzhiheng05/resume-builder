@@ -3,7 +3,7 @@ import { getModuleLabel, isListModuleData, isPersonalModuleData, isTextModuleDat
 import type { ResumeModuleInstance } from "../../types/resume";
 
 function joinMeta(parts: Array<string | undefined>): string {
-  return parts.filter(Boolean).join(" | ");
+  return parts.filter(Boolean).join(" - ");
 }
 
 function hasText(value: string | undefined): boolean {
@@ -26,8 +26,18 @@ function renderMetaLines(lines: Array<string | undefined>): ReactNode {
   );
 }
 
-function renderPlaceholder(text: string): ReactNode {
-  return <p className="resume-placeholder">{text}</p>;
+function renderDraftInline(label: string, tone: "name" | "title" | "subtitle"): ReactNode {
+  return <span className={`resume-draft-inline resume-draft-inline--${tone}`} role="img" aria-label={label} />;
+}
+
+function renderPlaceholder(label: string, lineCount = 2): ReactNode {
+  return (
+    <div className="resume-placeholder" role="img" aria-label={label}>
+      {Array.from({ length: lineCount }, (_, index) => (
+        <span className="resume-placeholder__line" key={`${label}-${index}`} />
+      ))}
+    </div>
+  );
 }
 
 function renderPersonalModule(module: ResumeModuleInstance): ReactNode {
@@ -48,15 +58,21 @@ function renderPersonalModule(module: ResumeModuleInstance): ReactNode {
       <div className="resume-personal__layout">
         <div className="resume-personal__content">
           <div className="resume-personal__headline">
-            <h3 className="resume-personal__name">{module.data.name || "请填写姓名"}</h3>
+            <h3 className="resume-personal__name">{module.data.name || renderDraftInline("姓名", "name")}</h3>
             {module.data.personalVisibility.title && hasText(module.data.title) ? (
               <p className="resume-personal__title">{module.data.title}</p>
             ) : null}
           </div>
           {contacts.length > 0 ? (
-            <p className="resume-personal__contacts">{contacts.join(" | ")}</p>
+            <p className="resume-personal__contacts">
+              {contacts.map((contact, index) => (
+                <span className="resume-personal__contact-item" key={`${contact}-${index}`}>
+                  {contact}
+                </span>
+              ))}
+            </p>
           ) : (
-            renderPlaceholder("电话、邮箱、城市和个人链接会显示在这里")
+            renderPlaceholder("电话 / 邮箱 / 城市 / 个人链接", 1)
           )}
         </div>
         {hasText(module.data.photoDataUrl) ? (
@@ -74,7 +90,7 @@ function renderTextModule(module: ResumeModuleInstance): ReactNode {
 
   return hasText(module.data.value)
     ? <p className="resume-personal__summary">{module.data.value}</p>
-    : renderPlaceholder("请填写这部分内容");
+    : renderPlaceholder("摘要内容", 2);
 }
 
 function renderTimelineModule(module: ResumeModuleInstance): ReactNode {
@@ -83,15 +99,15 @@ function renderTimelineModule(module: ResumeModuleInstance): ReactNode {
   }
 
   if (module.data.entries.length === 0) {
-    return renderPlaceholder("请添加至少一条内容");
+    return renderPlaceholder("添加一条经历", 2);
   }
 
   return module.data.entries.map((item) => (
     <article className="resume-entry" key={item.id}>
       <div className="resume-entry__header">
         <div className="resume-entry__main">
-          <h3 className="resume-entry__title">{item.title || "标题"}</h3>
-          <p className="resume-entry__subtitle">{item.org || "组织 / 公司 / 项目名称"}</p>
+          <h3 className="resume-entry__title">{item.title || renderDraftInline("标题", "title")}</h3>
+          <p className="resume-entry__subtitle">{item.org || renderDraftInline("组织 / 公司 / 项目名称", "subtitle")}</p>
         </div>
         {renderMetaLines([joinMeta([item.start, item.end]), item.location])}
       </div>
@@ -102,7 +118,7 @@ function renderTimelineModule(module: ResumeModuleInstance): ReactNode {
           ))}
         </ul>
       ) : (
-        renderPlaceholder("请补充这条内容的动作、职责或结果")
+        renderPlaceholder("动作 / 职责 / 结果", 2)
       )}
     </article>
   ));
@@ -115,17 +131,16 @@ function renderListModule(module: ResumeModuleInstance): ReactNode {
 
   const items = module.data.items.filter(hasText);
   if (items.length === 0) {
-    return renderPlaceholder("请添加至少一条内容");
+    return renderPlaceholder("添加条目", 1);
   }
 
   return (
-    <div className="resume-skill-groups">
-      <div className="resume-skill-group">
-        <div className="resume-skill-group__header">
-          <h3 className="resume-skill-group__title">{module.title || getModuleLabel(module.kind)}</h3>
-        </div>
-        <p className="resume-skill-group__items">{items.join(" / ")}</p>
-      </div>
+    <div className={`resume-list resume-list--${module.kind}`}>
+      {items.map((item, index) => (
+        <span className="resume-list__item" key={`${module.id}-item-${index}`}>
+          {item}
+        </span>
+      ))}
     </div>
   );
 }

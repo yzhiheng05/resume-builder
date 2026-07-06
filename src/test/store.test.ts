@@ -128,7 +128,7 @@ describe("resume helpers", () => {
     expect(migrated.selectedIdentity).toBe("general");
     expect(migrated.templateId).toBe("classic");
     expect(migrated.schemaVersion).toBe(4);
-    expect(migrated.resumeStyle.accentColor).toBe("#2563eb");
+    expect(migrated.resumeStyle.accentColor).toBe("#36846b");
     expect(migrated.modules.some((module) => module.kind === "certificate")).toBe(true);
   });
 
@@ -145,10 +145,67 @@ describe("resume helpers", () => {
 
     expect(migrated?.schemaVersion).toBe(4);
     expect(migrated?.resumeStyle).toEqual({
-      accentColor: "#2563eb",
+      accentColor: "#36846b",
       density: "comfortable",
       sectionSpacing: "normal",
-      headingStyle: "underline"
+      headingStyle: "underline",
+      fontSizePx: 14,
+      lineHeight: 1.58,
+      paragraphSpacingPx: 5,
+      pageMarginXmm: 16,
+      pageMarginYmm: 18
+    });
+  });
+
+  test("normalizes the old default blue accent to the current editorial accent", () => {
+    const state = buildPresetState("general");
+    const migrated = migrateUnknownStoredResumeState({
+      schemaVersion: 4,
+      selectedIdentity: state.selectedIdentity,
+      templateId: state.templateId,
+      hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+      resumeStyle: {
+        accentColor: "#2563eb",
+        density: "comfortable",
+        sectionSpacing: "normal",
+        headingStyle: "underline"
+      },
+      modules: state.modules,
+      moduleOrder: state.moduleOrder
+    });
+
+    expect(migrated?.resumeStyle.accentColor).toBe("#36846b");
+  });
+
+  test("normalizes invalid custom layout values in v4 style settings", () => {
+    const state = buildPresetState("general");
+    const migrated = migrateUnknownStoredResumeState({
+      schemaVersion: 4,
+      selectedIdentity: state.selectedIdentity,
+      templateId: state.templateId,
+      hasUserSelectedTemplate: state.hasUserSelectedTemplate,
+      resumeStyle: {
+        accentColor: "#0f766e",
+        density: "comfortable",
+        sectionSpacing: "normal",
+        headingStyle: "underline",
+        fontSizePx: -8,
+        lineHeight: 4,
+        paragraphSpacingPx: "large",
+        pageMarginXmm: 99,
+        pageMarginYmm: 1
+      },
+      modules: state.modules,
+      moduleOrder: state.moduleOrder
+    });
+
+    expect(migrated?.resumeStyle).toMatchObject({
+      accentColor: "#0f766e",
+      fontSizePx: 14,
+      lineHeight: 1.58,
+      paragraphSpacingPx: 5,
+      pageMarginXmm: 16,
+      pageMarginYmm: 18
     });
   });
 });
@@ -287,12 +344,25 @@ describe("resume store", () => {
     const beforeIds = useResumeStore.getState().modules.map((module) => module.id);
 
     act(() => {
-      useResumeStore.getState().updateResumeStyle({ accentColor: "#0f766e", density: "compact" });
+      useResumeStore.getState().updateResumeStyle({
+        accentColor: "#0f766e",
+        density: "compact",
+        fontSizePx: 15.5,
+        lineHeight: 1.7,
+        paragraphSpacingPx: 8,
+        pageMarginXmm: 20,
+        pageMarginYmm: 22
+      });
     });
 
     expect(useResumeStore.getState().modules.map((module) => module.id)).toEqual(beforeIds);
     expect(useResumeStore.getState().resumeStyle.accentColor).toBe("#0f766e");
     expect(useResumeStore.getState().resumeStyle.density).toBe("compact");
+    expect(useResumeStore.getState().resumeStyle.fontSizePx).toBe(15.5);
+    expect(useResumeStore.getState().resumeStyle.lineHeight).toBe(1.7);
+    expect(useResumeStore.getState().resumeStyle.paragraphSpacingPx).toBe(8);
+    expect(useResumeStore.getState().resumeStyle.pageMarginXmm).toBe(20);
+    expect(useResumeStore.getState().resumeStyle.pageMarginYmm).toBe(22);
   });
 
   test("updates timeline and list modules", () => {

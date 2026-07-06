@@ -80,7 +80,9 @@ describe("preview sorting", () => {
 
     expect(within(previewPaper).getByText("陈晨")).toBeInTheDocument();
     expect(within(previewPaper).getByText("熟悉 Web 全栈开发，关注工程效率与用户体验。")).toBeInTheDocument();
-    expect(within(previewPaper).getByText("TypeScript / React / Node.js")).toBeInTheDocument();
+    expect(within(previewPaper).getByText("TypeScript")).toBeInTheDocument();
+    expect(within(previewPaper).getByText("React")).toBeInTheDocument();
+    expect(within(previewPaper).getByText("Node.js")).toBeInTheDocument();
   });
 
   test("filters hidden modules but keeps the chosen order", () => {

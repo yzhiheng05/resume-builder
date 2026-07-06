@@ -104,15 +104,15 @@ const identityDefaultTemplates: Record<IdentityPreset, TemplateId> = {
 };
 
 const identityEditorTitles: Record<IdentityPreset, string> = {
-  student: "学生求职简历编辑器",
-  professional: "职场求职简历编辑器",
-  general: "通用求职简历编辑器"
+  student: "学生简历",
+  professional: "职场简历",
+  general: "通用简历"
 };
 
 const identitySwitchLabels: Record<IdentityPreset, string> = {
-  student: "切换为学生",
-  professional: "切换为职场人",
-  general: "切换为通用求职者"
+  student: "学生",
+  professional: "职场",
+  general: "通用"
 };
 
 export function getIdentityPreset(identity: IdentityPreset): IdentityPresetConfig {

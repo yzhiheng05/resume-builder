@@ -76,7 +76,7 @@ describe("resume backup helpers", () => {
       expect(result.state.selectedIdentity).toBe("general");
       expect(result.state.templateId).toBe("classic");
       expect(result.state.hasUserSelectedTemplate).toBe(false);
-      expect(result.state.resumeStyle.accentColor).toBe("#2563eb");
+      expect(result.state.resumeStyle.accentColor).toBe("#36846b");
       expect(result.state.modules.some((module) => module.kind === "summary")).toBe(true);
       expect(result.state.modules.some((module) => module.kind === "certificate")).toBe(true);
     }
@@ -114,7 +114,12 @@ describe("resume backup helpers", () => {
         accentColor: "#0f766e",
         density: "compact" as const,
         sectionSpacing: "tight" as const,
-        headingStyle: "bar" as const
+        headingStyle: "bar" as const,
+        fontSizePx: 15.5,
+        lineHeight: 1.72,
+        paragraphSpacingPx: 8,
+        pageMarginXmm: 20,
+        pageMarginYmm: 22
       }
     };
 
@@ -125,6 +130,11 @@ describe("resume backup helpers", () => {
       expect(parsed.state.schemaVersion).toBe(4);
       expect(parsed.state.resumeStyle.accentColor).toBe("#0f766e");
       expect(parsed.state.resumeStyle.density).toBe("compact");
+      expect(parsed.state.resumeStyle.fontSizePx).toBe(15.5);
+      expect(parsed.state.resumeStyle.lineHeight).toBe(1.72);
+      expect(parsed.state.resumeStyle.paragraphSpacingPx).toBe(8);
+      expect(parsed.state.resumeStyle.pageMarginXmm).toBe(20);
+      expect(parsed.state.resumeStyle.pageMarginYmm).toBe(22);
     }
   });
 

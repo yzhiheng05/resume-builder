@@ -17,12 +17,49 @@ import type {
   TimelineEntry
 } from "../../types/resume";
 
-function InspectorEmptyState() {
+type NumericStyleKey =
+  | "fontSizePx"
+  | "lineHeight"
+  | "paragraphSpacingPx"
+  | "pageMarginXmm"
+  | "pageMarginYmm";
+
+function NumericStyleField({
+  label,
+  unit,
+  value,
+  min,
+  max,
+  step,
+  onChange
+}: {
+  label: string;
+  unit: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}) {
   return (
-    <div className="inspector-empty">
-      <h3>选择画布模块</h3>
-      <p>点击中间简历画布上的模块后，可在这里编辑标题、内容和显示状态。</p>
-    </div>
+    <label className="numeric-field">
+      <span>{label}</span>
+      <input
+        aria-label={label}
+        type="number"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(event) => {
+          const nextValue = Number(event.target.value);
+          if (Number.isFinite(nextValue)) {
+            onChange(nextValue);
+          }
+        }}
+      />
+      <code>{unit}</code>
+    </label>
   );
 }
 
@@ -233,64 +270,154 @@ function GlobalStyleInspector({
   onTemplateChange: (templateId: TemplateId) => void;
   onStyleChange: (nextStyle: Partial<ResumeStyleSettings>) => void;
 }) {
+  const selectedTemplate = templates.find((template) => template.id === templateId);
+  const densityOptions: Array<{ value: ResumeStyleSettings["density"]; label: string }> = [
+    { value: "comfortable", label: "舒展" },
+    { value: "compact", label: "紧凑" }
+  ];
+  const spacingOptions: Array<{ value: ResumeStyleSettings["sectionSpacing"]; label: string }> = [
+    { value: "tight", label: "紧凑" },
+    { value: "normal", label: "标准" },
+    { value: "loose", label: "宽松" }
+  ];
+  const headingOptions: Array<{ value: ResumeStyleSettings["headingStyle"]; label: string }> = [
+    { value: "underline", label: "下划线" },
+    { value: "bar", label: "色条" },
+    { value: "plain", label: "简洁" }
+  ];
+  const numericFields: Array<{
+    key: NumericStyleKey;
+    label: string;
+    unit: string;
+    min: number;
+    max: number;
+    step: number;
+  }> = [
+    { key: "fontSizePx", label: "字号", unit: "px", min: 10, max: 22, step: 0.5 },
+    { key: "lineHeight", label: "行距", unit: "x", min: 1.1, max: 2.2, step: 0.05 },
+    { key: "paragraphSpacingPx", label: "段落间距", unit: "px", min: 0, max: 18, step: 0.5 },
+    { key: "pageMarginXmm", label: "左右页边距", unit: "mm", min: 6, max: 30, step: 0.5 },
+    { key: "pageMarginYmm", label: "上下页边距", unit: "mm", min: 6, max: 30, step: 0.5 }
+  ];
+  const numericFieldGroups = [
+    {
+      label: "排版",
+      fields: numericFields.filter((field) =>
+        field.key === "fontSizePx" || field.key === "lineHeight" || field.key === "paragraphSpacingPx"
+      )
+    },
+    {
+      label: "留白",
+      fields: numericFields.filter((field) => field.key === "pageMarginXmm" || field.key === "pageMarginYmm")
+    }
+  ];
+  const updateNumericStyle = (key: NumericStyleKey, value: number) => {
+    onStyleChange({ [key]: value } as Partial<ResumeStyleSettings>);
+  };
+
   return (
-    <div className="inspector-section">
-      <h3>全局样式</h3>
-      <label>
-        当前模板
-        <select value={templateId} onChange={(event) => onTemplateChange(event.target.value as TemplateId)}>
+    <div className="inspector-section inspector-section--style">
+      <h3>纸张样式</h3>
+      <div className="style-board">
+        <div className="style-board__row">
+          <span>当前模板</span>
+          <strong>{selectedTemplate?.name ?? "经典简历"}</strong>
+        </div>
+        <div className="template-chip-group" role="group" aria-label="当前模板">
           {templates.map((template) => (
-            <option key={template.id} value={template.id}>
+            <button
+              key={template.id}
+              type="button"
+              className={`template-chip${template.id === templateId ? " template-chip--active" : ""}`}
+              onClick={() => onTemplateChange(template.id)}
+            >
               {template.name}
-            </option>
+            </button>
           ))}
-        </select>
-      </label>
-      <label>
-        主题色
+        </div>
+      </div>
+
+      <label className="color-field">
+        <span>主题色</span>
         <input
           aria-label="主题色"
           type="color"
           value={resumeStyle.accentColor}
           onChange={(event) => onStyleChange({ accentColor: event.target.value })}
         />
+        <span className="color-field__swatch" style={{ backgroundColor: resumeStyle.accentColor }} />
+        <code>{resumeStyle.accentColor.toUpperCase()}</code>
       </label>
-      <label>
-        字体密度
-        <select
-          value={resumeStyle.density}
-          onChange={(event) => onStyleChange({ density: event.target.value as ResumeStyleSettings["density"] })}
-        >
-          <option value="comfortable">舒展</option>
-          <option value="compact">紧凑</option>
-        </select>
-      </label>
-      <label>
-        模块间距
-        <select
-          value={resumeStyle.sectionSpacing}
-          onChange={(event) =>
-            onStyleChange({ sectionSpacing: event.target.value as ResumeStyleSettings["sectionSpacing"] })
-          }
-        >
-          <option value="tight">紧凑</option>
-          <option value="normal">标准</option>
-          <option value="loose">宽松</option>
-        </select>
-      </label>
-      <label>
-        标题样式
-        <select
-          value={resumeStyle.headingStyle}
-          onChange={(event) =>
-            onStyleChange({ headingStyle: event.target.value as ResumeStyleSettings["headingStyle"] })
-          }
-        >
-          <option value="underline">下划线</option>
-          <option value="bar">色条</option>
-          <option value="plain">简洁</option>
-        </select>
-      </label>
+
+      <div className="numeric-field-grid" aria-label="手动排版参数">
+        {numericFieldGroups.map((group) => (
+          <div key={group.label} className="numeric-field-group" role="group" aria-label={group.label}>
+            <div className="numeric-field-group__header">
+              <span>{group.label}</span>
+            </div>
+            {group.fields.map((field) => (
+              <NumericStyleField
+                key={field.key}
+                label={field.label}
+                unit={field.unit}
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                value={resumeStyle[field.key]}
+                onChange={(value) => updateNumericStyle(field.key, value)}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div className="segmented-field">
+        <span>字体密度</span>
+        <div className="segmented-control" role="group" aria-label="字体密度">
+          {densityOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={option.value === resumeStyle.density ? "is-active" : ""}
+              onClick={() => onStyleChange({ density: option.value })}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="segmented-field segmented-field--three">
+        <span>模块间距</span>
+        <div className="segmented-control" role="group" aria-label="模块间距">
+          {spacingOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={option.value === resumeStyle.sectionSpacing ? "is-active" : ""}
+              onClick={() => onStyleChange({ sectionSpacing: option.value })}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="segmented-field segmented-field--three">
+        <span>标题样式</span>
+        <div className="segmented-control" role="group" aria-label="标题样式">
+          {headingOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              className={option.value === resumeStyle.headingStyle ? "is-active" : ""}
+              onClick={() => onStyleChange({ headingStyle: option.value })}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -341,9 +468,8 @@ export function InspectorPanel({
   return (
     <aside className="inspector-panel" aria-label="属性面板">
       <div className="editor-sidebar__header">
-        <p className="editor-heading__eyebrow">属性面板</p>
-        <h2>属性面板</h2>
-        <p>{activeModule ? "编辑当前选中的简历模块。" : "未选中模块时，可调整模板和全局样式。"}</p>
+        <h2>属性</h2>
+        <span className="inspector-context">{activeModule ? activeModule.title : "纸张"}</span>
       </div>
 
       {activeModule ? (
@@ -410,9 +536,7 @@ export function InspectorPanel({
             />
           ) : null}
         </div>
-      ) : (
-        <InspectorEmptyState />
-      )}
+      ) : null}
 
       <GlobalStyleInspector
         templates={templates}

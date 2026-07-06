@@ -70,6 +70,10 @@ function getTopbarStatus() {
   return document.querySelector(".topbar__status");
 }
 
+function getTopbarIdentity() {
+  return document.querySelector(".topbar__identity");
+}
+
 function getPreviewHeader() {
   return document.querySelector(".preview-panel__heading-group") as HTMLElement;
 }
@@ -107,8 +111,10 @@ describe("App", () => {
   test("renders identity entry when no local state exists", () => {
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "先选择你的简历起点" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "选择简历结构" })).toBeInTheDocument();
     expect(screen.getByText(RESUME_TOOL_BRAND)).toBeInTheDocument();
+    expect(screen.getByText("选择起点")).toBeInTheDocument();
+    expect(screen.getByText("模块化简历")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /学生/ })).toBeInTheDocument();
   });
 
@@ -117,14 +123,14 @@ describe("App", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /学生/ }));
 
-    expect(screen.getByRole("heading", { name: "模块库" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "简历画布" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "属性面板" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
-    expect(screen.getByText("当前身份：学生")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "模块" })).toBeInTheDocument();
+    expect(screen.getByLabelText("纸面状态")).toHaveTextContent("校招简历");
+    expect(screen.getByRole("heading", { name: "属性" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "学生简历" })).toBeInTheDocument();
+    expect(getTopbarIdentity()).toHaveTextContent("学生");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
-    expect(screen.getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /项目经历 可重复添加/ })).toBeInTheDocument();
+    expect(screen.getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /项目经历 添加/ })).toBeInTheDocument();
     expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
   });
 
@@ -139,7 +145,7 @@ describe("App", () => {
       anchorClicks.push(this);
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "导出数据" }));
+    fireEvent.click(screen.getByRole("button", { name: "导出 JSON" }));
 
     expect(createObjectURL).toHaveBeenCalledTimes(1);
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:resume-backup");
@@ -156,12 +162,13 @@ describe("App", () => {
     const payload = createResumeBackupPayload(buildPresetState("student"));
     const file = createJsonFile(JSON.stringify(payload));
 
-    fireEvent.change(screen.getByLabelText("导入数据", { selector: "input" }), {
+    fireEvent.change(screen.getByLabelText("导入 JSON", { selector: "input" }), {
       target: { files: [file] }
     });
 
-    expect(await screen.findByText("当前身份：学生")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "学生求职简历编辑器" })).toBeInTheDocument();
+    await screen.findByText("学生简历");
+    expect(getTopbarIdentity()).toHaveTextContent("学生");
+    expect(screen.getByRole("heading", { name: "学生简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
   });
@@ -170,8 +177,8 @@ describe("App", () => {
     seedStoredResume("professional");
     render(<App />);
 
-    expect(screen.getByText("当前身份：职场人")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
+    expect(getTopbarIdentity()).toHaveTextContent("职场人");
+    expect(screen.getByRole("heading", { name: "职场简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
   });
 
@@ -179,15 +186,15 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "通用求职简历编辑器" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "通用简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
 
-    fireEvent.click(screen.getByRole("button", { name: "切换为职场人" }));
-    expect(screen.getByRole("heading", { name: "职场求职简历编辑器" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "职场" }));
+    expect(screen.getByRole("heading", { name: "职场简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(getTopbarStatus()).toHaveTextContent("身份已切换，当前内容不会自动覆盖。");
 
-    fireEvent.click(screen.getByRole("button", { name: "应用推荐配置" }));
+    fireEvent.click(screen.getByRole("button", { name: "推荐模块" }));
     expect(getTopbarStatus()).toHaveTextContent("已应用当前身份的推荐配置。");
   });
 
@@ -195,7 +202,7 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: /项目经历 可重复添加/ }));
+    fireEvent.click(screen.getByRole("button", { name: /项目经历 添加/ }));
     expect(screen.getAllByText("项目经历").length).toBeGreaterThan(1);
     expect(screen.getByLabelText("模块标题")).toHaveValue("项目经历");
   });
@@ -204,8 +211,20 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "模块库" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /技能 可重复添加/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "模块" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /技能 添加/ })).toBeInTheDocument();
+  });
+
+  test("renders the polished workbench chrome with grouped controls", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    expect(screen.getByRole("navigation", { name: "身份切换" })).toBeInTheDocument();
+    expect(screen.getByRole("toolbar", { name: "文件操作" })).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "画布状态" })).toHaveTextContent("经典简历");
+    expect(screen.getByText("基础内容")).toBeInTheDocument();
+    expect(screen.getByText("经历模块")).toBeInTheDocument();
+    expect(screen.getByText("补充亮点")).toBeInTheDocument();
   });
 
   test("edits selected canvas module from the inspector", () => {
@@ -224,8 +243,82 @@ describe("App", () => {
     render(<App />);
 
     fireEvent.change(screen.getByLabelText("主题色"), { target: { value: "#0f766e" } });
+    fireEvent.click(within(screen.getByRole("group", { name: "字体密度" })).getByRole("button", { name: "紧凑" }));
+    fireEvent.click(within(screen.getByRole("group", { name: "标题样式" })).getByRole("button", { name: "色条" }));
+    fireEvent.change(screen.getByLabelText("字号"), { target: { value: "15.5" } });
+    fireEvent.change(screen.getByLabelText("行距"), { target: { value: "1.7" } });
+    fireEvent.change(screen.getByLabelText("段落间距"), { target: { value: "8" } });
+    fireEvent.change(screen.getByLabelText("左右页边距"), { target: { value: "20" } });
+    fireEvent.change(screen.getByLabelText("上下页边距"), { target: { value: "22" } });
 
+    const typographyGroup = screen.getByRole("group", { name: "排版" });
+    const spacingGroup = screen.getByRole("group", { name: "留白" });
+
+    expect(within(typographyGroup).getByLabelText("字号")).toHaveValue(15.5);
+    expect(within(typographyGroup).getByLabelText("行距")).toHaveValue(1.7);
+    expect(within(typographyGroup).getByLabelText("段落间距")).toHaveValue(8);
+    expect(within(spacingGroup).getByLabelText("左右页边距")).toHaveValue(20);
+    expect(within(spacingGroup).getByLabelText("上下页边距")).toHaveValue(22);
     expect(getMainPreviewSurface()).toHaveStyle({ "--resume-accent": "#0f766e" });
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-font-size": "15.5px" });
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-line-height": "1.7" });
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-paragraph-gap": "8px" });
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-page-margin-x": "20mm" });
+    expect(getMainPreviewSurface()).toHaveStyle({ "--resume-page-margin-y": "22mm" });
+    expect(getMainPreviewSurface()).toHaveClass("resume-density-compact");
+    expect(getMainPreviewSurface()).toHaveClass("resume-heading-bar");
+    expect(within(screen.getByRole("group", { name: "当前模板" })).getByRole("button", { name: "经典简历" })).toHaveClass(
+      "template-chip--active"
+    );
+    expect(screen.getByText("#0F766E")).toBeInTheDocument();
+  });
+
+  test("renders empty resume content as draft skeletons instead of visible form prompts", () => {
+    seedStoredResume("student");
+    render(<App />);
+
+    const previewSurface = getMainPreviewSurface();
+
+    expect(within(previewSurface).queryByText("姓名")).not.toBeInTheDocument();
+    expect(within(previewSurface).queryByText("动作 / 职责 / 结果")).not.toBeInTheDocument();
+    expect(within(previewSurface).queryByText("组织 / 公司 / 项目名称")).not.toBeInTheDocument();
+    expect(within(previewSurface).getByLabelText("姓名")).toBeInTheDocument();
+    expect(within(previewSurface).getAllByLabelText("动作 / 职责 / 结果").length).toBeGreaterThan(0);
+    expect(previewSurface.querySelectorAll(".resume-placeholder__line").length).toBeGreaterThan(0);
+  });
+
+  test("renders personal contacts as separate paper items", () => {
+    const state = buildPresetState("general");
+    const personalModule = state.modules.find((module) => module.kind === "personal");
+    if (!personalModule || !("personalVisibility" in personalModule.data)) {
+      throw new Error("Expected preset to include a personal module");
+    }
+
+    personalModule.data = {
+      ...personalModule.data,
+      name: "林知夏",
+      phone: "139-1111-2222",
+      email: "linzhixia@example.com",
+      city: "上海",
+      github: "github.com/linzhixia",
+      personalVisibility: {
+        ...personalModule.data.personalVisibility,
+        phone: true,
+        email: true,
+        city: true,
+        github: true
+      }
+    };
+    useResumeStore.getState().replaceResumeState(state);
+
+    render(<App />);
+
+    const previewSurface = getMainPreviewSurface();
+    const contacts = previewSurface.querySelector(".resume-personal__contacts");
+
+    expect(contacts?.querySelectorAll(".resume-personal__contact-item")).toHaveLength(4);
+    expect(contacts).toHaveTextContent("linzhixia@example.com");
+    expect(contacts).not.toHaveTextContent("139-1111-2222 · linzhixia@example.com");
   });
 
   test("photo upload displays in preview and can be removed", async () => {
@@ -256,7 +349,7 @@ describe("App", () => {
       JSON.stringify({ app: RESUME_BACKUP_APP_ID, version: RESUME_BACKUP_VERSION, data: {} })
     );
 
-    fireEvent.change(screen.getByLabelText("导入数据", { selector: "input" }), {
+    fireEvent.change(screen.getByLabelText("导入 JSON", { selector: "input" }), {
       target: { files: [file] }
     });
 
@@ -268,9 +361,9 @@ describe("App", () => {
     seedStoredResume("student");
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "实时预览" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "纸面" })).toBeInTheDocument();
     const previewPanel = screen.getByLabelText("简历预览面板");
-    expect(within(previewPanel).getByText("在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。")).toBeInTheDocument();
+    expect(within(previewPanel).getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThan(0);
   });
 
@@ -278,20 +371,25 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: /双栏简历/ }));
+    const selector = screen.getByLabelText("简历模板选择器");
+    fireEvent.click(within(selector).getByRole("button", { name: /双栏简历/ }));
 
     expect(getTopbarStatus()).toHaveTextContent("已切换到双栏简历。");
-    expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
-    expect(screen.getByText("可在当前栏内拖动调整顺序，左右分栏由模板固定，打印时会自动隐藏编辑区。")).toBeInTheDocument();
+    expect(within(selector).getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+    expect(screen.getByText("同栏内拖动排序，导出时只保留纸张内容。")).toBeInTheDocument();
   });
 
-  test("renders all template cards with realtime previews", () => {
+  test("renders all template cards with designed mini previews", () => {
     seedStoredResume("general");
     render(<App />);
 
     const selector = screen.getByLabelText("简历模板选择器");
     for (const template of getResumeTemplates()) {
       expect(within(selector).getByRole("button", { name: new RegExp(template.name) })).toBeInTheDocument();
+      expect(selector.querySelector(`.template-mini--${template.id}`)).toBeInTheDocument();
     }
+    expect((selector.querySelector(".template-mini--classic") as HTMLElement).style.getPropertyValue("--template-mini-accent")).toBe(
+      "#4e5b68"
+    );
   });
 });

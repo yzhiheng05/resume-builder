@@ -1,7 +1,52 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, test, vi } from "vitest";
 import { beginPrintSession, PRINT_MODE_CLASS, printResume, setPrintMode } from "../lib/print";
 
 describe("print helpers", () => {
+  test("print styles hide canvas-only chrome", () => {
+    const printCss = readFileSync("src/styles.css", "utf8");
+
+    expect(printCss).toContain(".resume-print-mode .canvas-statusbar");
+    expect(printCss).toContain(".canvas-statusbar");
+    expect(printCss).toContain(".resume-print-mode .template-mini");
+    expect(printCss).toContain(".template-mini");
+    expect(printCss).toContain(".resume-print-mode .resume-paper--template-classic .resume-section--active::before");
+    expect(printCss).toContain(".resume-paper--template-sidebar .resume-section--active::before");
+    expect(printCss).toContain(".resume-print-mode .preview-surface::before");
+    expect(printCss).toContain(".preview-surface::before");
+    expect(printCss).toContain("margin: 0;");
+    expect(printCss).toContain("--resume-page-margin-x");
+    expect(printCss).toContain("--resume-page-margin-y");
+    expect(printCss).toContain("width: 210mm");
+    expect(printCss).toContain("margin: 0");
+    expect(printCss).toContain("min-height: 297mm");
+    expect(printCss).toContain("padding: var(--resume-page-margin-y) var(--resume-page-margin-x)");
+    expect(printCss).toContain("background: #ffffff !important");
+  });
+
+  test("campus template uses a narrow timeline accent instead of a broad color band", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("rgba(54, 132, 107, 0.16) 0 1.5mm");
+    expect(css).toContain("transparent 1.5mm");
+    expect(css).not.toContain("rgba(54, 132, 107, 0.13) 0 5mm");
+    expect(css).not.toContain("transparent 5mm");
+  });
+
+  test("sidebar template uses a light information panel instead of a heavy side block", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("rgba(247, 248, 244, 0.62) 0 36%");
+    expect(css).not.toContain("rgba(241, 244, 239, 0.92) 0 36%");
+  });
+
+  test("mobile canvas preview clips scaled paper overflow", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("@media (max-width: 720px)");
+    expect(css).toContain(".preview-surface {\n    overflow-x: clip;");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 

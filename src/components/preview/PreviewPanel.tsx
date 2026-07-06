@@ -119,10 +119,10 @@ export function moveSidebarModuleOrder(
 
 export function getPreviewHint(templateId: TemplateId): string {
   if (templateId === "sidebar") {
-    return "可在当前栏内拖动调整顺序，左右分栏由模板固定，打印时会自动隐藏编辑区。";
+    return "同栏内拖动排序，导出时只保留纸张内容。";
   }
 
-  return "在预览区拖动模块即可调整顺序，打印时会自动隐藏编辑区。";
+  return "拖动段落调整顺序，导出时只保留纸张内容。";
 }
 
 export function getVisibleModuleOrder(moduleOrder: string[], modules: ResumeModuleInstance[]): string[] {
@@ -273,6 +273,12 @@ export default function PreviewPanel({
               )}
             </DndContext>
           )}
+        </div>
+        <div className="canvas-statusbar" role="status" aria-label="画布状态">
+          <span>A4</span>
+          <span>{currentTemplate.name}</span>
+          <span>{previewModules.length} 个模块</span>
+          <span>100%</span>
         </div>
       </div>
     </section>
