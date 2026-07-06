@@ -2757,19 +2757,28 @@ body {
 }
 
 .resume-paper .resume-personal__name {
-  font-size: calc(var(--resume-font-size) + 12px);
+  color: #1f2933;
+  font-size: calc(var(--resume-font-size) + 10px);
+  font-weight: 760;
   line-height: 1.08;
   letter-spacing: 0;
 }
 
 .resume-paper .resume-personal__title {
+  color: #4f5b67;
   font-size: calc(var(--resume-font-size) - 1px);
+  font-weight: 640;
   line-height: var(--resume-line-height);
 }
 
 .resume-paper .resume-personal__contacts {
-  font-size: calc(var(--resume-font-size) - 1.5px);
+  color: #6d7882;
+  font-size: calc(var(--resume-font-size) - 2px);
   line-height: var(--resume-line-height);
+}
+
+.resume-paper .resume-personal__contact-item + .resume-personal__contact-item::before {
+  color: #a0a9b1;
 }
 
 .resume-paper .resume-personal__summary {
