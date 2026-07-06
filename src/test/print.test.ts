@@ -47,6 +47,13 @@ describe("print helpers", () => {
     expect(css).toContain(".preview-surface {\n    overflow-x: clip;");
   });
 
+  test("module library uses a light workbench panel instead of a black block", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".editor-sidebar--library {\n  background: #eceee8;");
+    expect(css).not.toContain("background: var(--panel-deep);");
+  });
+
   test("setPrintMode toggles the print class on body", () => {
     document.body.classList.remove(PRINT_MODE_CLASS);
 
