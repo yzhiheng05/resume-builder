@@ -4,6 +4,87 @@
 
 ## 2026-07-06
 
+- 任务：将简历结构入口页对齐浅色工作台，移除黑色 split 首屏
+- 操作：基于入口页截图审查，定位 `.identity-screen` 与 hero 区仍使用黑色背景，和当前编辑器浅灰纸面工作台割裂；先补充 CSS 回归测试锁定入口页浅色背景、hero 网格、右侧选择区和卡片样式，再将入口页背景、hero 网格、纸张预览、选择卡片统一为浅灰 / 米白工具台体系
+- 结果：进入编辑器前的首屏不再出现大块黑色区域，入口页和后续 A4 画布编辑器视觉语气一致；移动端保持上下布局，无横向溢出；编辑器逻辑、模板切换和打印导出规则未变
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增入口页断言因旧黑色 split 样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，24 项测试全部通过
+  - `npm test` 通过，75 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-identity-light-workbench-desktop.png`，入口页背景为 `rgb(221, 225, 222)`，右侧选择区为 `rgb(236, 238, 232)`，卡片为浅色有框行；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-identity-light-workbench-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续改善“AI 味”，优先从整体信息密度、文字语气和真实使用流程入手，避免继续增加装饰性视觉元素
+
+## 2026-07-06
+
+- 任务：统一模块添加标记颜色，减少突兀控件感
+- 操作：基于最新外壳截图继续审查，定位左侧模块按钮的薄荷绿圆点和加号与当前默认青灰主色不一致；将 `.module-library__item::before` 边框从亮薄荷绿调整为 `rgba(63, 95, 104, 0.38)`，将加号颜色从 `#86cdb6` 调整为默认主色 `#3f5f68`；新增 CSS 回归测试避免亮绿色标记回归
+- 结果：左侧模块库添加 affordance 与全局主色、选中态、分段控件和纸面强调色保持一致，减少临时控件和色彩拼贴感；不影响模块添加逻辑、纸面内容和打印导出
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增断言因旧薄荷绿色值失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，23 项测试全部通过
+  - `npm test` 通过，74 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-module-marker-accent-desktop.png`，模块添加圆点边框为 `rgba(63, 95, 104, 0.38)`，加号为 `rgb(63, 95, 104)`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-module-marker-accent-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 当前外壳色彩体系已基本统一；继续优化时应优先整体截图审查，而不是再单点调色
+
+## 2026-07-06
+
+- 任务：统一二级工具控件层级，减少裸文字和下划线控件感
+- 操作：基于最新截图继续审查，定位左侧模块分组标题仍是裸文字、右侧模板 / 密度 / 间距 / 标题样式控件仍像几条下划线；将 `.module-library__group-header` 改为浅色 5px 圆角分区标题，将 `.template-chip-group` 与 `.segmented-control` 改为同一套小型浅色 segmented rail，active 状态保留低强度底色与 2px 底部标记；新增 CSS 回归测试避免回退到裸文字和下划线按钮
+- 结果：左侧模块库、右侧属性面板内部控件与顶部 / 侧栏 header 的浅色工具 chrome 更一致，界面不再显得由多套临时控件拼接；不影响 A4 纸面、数据逻辑和打印内容
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增二级控件断言因当前裸文字 / 下划线样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，22 项测试全部通过
+  - `npm test` 通过，73 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-secondary-control-rails-desktop.png`，模块分组标题、模板 chip 组和分段控件 computed 样式均为浅色有框 rail；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-secondary-control-rails-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 当前外壳主要粗糙点已逐步收敛；若继续，应优先做一次整体截图审查，避免无限微调同一类控件
+
+## 2026-07-06
+
+- 任务：收紧左右侧栏标题区，减少大标题 demo 感
+- 操作：基于最新桌面截图继续审查，定位左侧“模块”大标题和右侧“属性”下划线标题仍偏像页面标题 / 原始表单；将 `.editor-sidebar__header` 统一为浅色 6px 圆角工具 header，收紧标题字号到 18px，降低 eyebrow 和说明文案层级；右侧属性标题同步改为同一浅色 header，并保留当前上下文 chip；新增 CSS 回归测试避免侧栏标题回到大号裸标题
+- 结果：左右工具区标题和中间画布工具层形成一致的浅色工具 chrome，整体更像排版编辑器而不是临时拼接页面；A4 纸面、模块操作和打印隐藏规则未变
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增侧栏标题断言因当前大标题样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，21 项测试全部通过
+  - `npm test` 通过，72 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-side-header-polish-desktop.png`，左侧标题区为 grid 浅色工具 header，右侧标题区为 flex 浅色工具 header，标题字号均为 18px；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-side-header-polish-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续优化，可审查模块分组标题与右侧属性分组标题的细节一致性；当前先避免继续扩大视觉改造范围
+
+## 2026-07-06
+
+- 任务：精修中间画布工具层，减少临时拼装感
+- 操作：基于当前桌面截图审查，定位中间画布顶部 A4 状态、模板轨道和缩放状态像裸文本 / 裸分隔线；将 `.canvas-panel__header` 改为浅色有框工具条，将模板切换轨道改为 6px 圆角浅色分段控件，将画布状态条调整为右上角浅色 chip，并修正移动端模板卡仍回到旧缩略图网格的问题；同步补充 `resume-print-mode` 下画布标题隐藏规则和 CSS 回归测试
+- 结果：中间画布从“几条线 + 三块文字”收敛为更完整的编辑器工具层，A4 纸张仍是主视觉；打印 / PDF 隐藏编辑器 UI、移动端无横向溢出未回退
+- 验证：
+  - 先运行 `npm test -- src/test/print.test.ts`，确认新增样式断言因当前裸分隔线样式失败
+  - 实现后 `npm test -- src/test/print.test.ts` 通过，20 项测试全部通过
+  - `npm test` 通过，71 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 桌面截图：`/tmp/resume-canvas-tool-rail-desktop.png`，画布标题条、模板轨道和状态 chip computed 样式均为浅色有框工具层；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - 本机 Chrome 移动截图：`/tmp/resume-canvas-tool-rail-mobile.png`，`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`，移动端模板卡 grid 为单列
+  - 本机 Chrome `resume-print-mode` 检查：`.canvas-panel__header`、`.template-selector`、`.canvas-statusbar` 均为 `display: none`
+- 后续：
+  - 若继续优化，可检查左侧模块库标题区和右侧属性面板标题区是否还偏粗糙；不建议继续增加装饰，只做控件层级和间距统一
+
+## 2026-07-06
+
 - 任务：降低编辑器工具外壳的简陋感
 - 操作：审查当前桌面截图后，将优化范围收敛到编辑器外壳而非 A4 纸面；把左侧模块库从透明分隔线列表调整为浅底工具行，增加 1px 细边框、6px 半径、轻内高光和 hover 轻阴影；把右侧全局样式区调整为浅色工具托盘，保留紧凑属性检查器风格但补足边界和层级；把顶部操作区恢复为浅色文件工具托盘，补充细边框、轻内高光和低强度阴影；新增 CSS 回归测试锁住工具行、属性托盘和顶部工具条样式
 - 结果：两侧面板不再像裸列表 / 原始表单，顶部操作不再像裸文字按钮，整体更接近成熟编辑器的工具抽屉；A4 纸面主视觉、打印隐藏编辑器 UI 和移动端无横向溢出未回退

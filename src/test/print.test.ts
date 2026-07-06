@@ -7,6 +7,7 @@ describe("print helpers", () => {
     const printCss = readFileSync("src/styles.css", "utf8");
 
     expect(printCss).toContain(".resume-print-mode .canvas-statusbar");
+    expect(printCss).toContain(".resume-print-mode .canvas-panel__header");
     expect(printCss).toContain(".canvas-statusbar");
     expect(printCss).toContain(".resume-print-mode .confirm-dialog-shell");
     expect(printCss).toContain(".confirm-dialog-shell");
@@ -90,6 +91,19 @@ describe("print helpers", () => {
     expect(css).not.toContain("--accent: #36846b;");
   });
 
+  test("identity entry screen uses the same light workbench instead of a black landing split", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".identity-screen {\n  display: block;\n  min-height: 100vh;\n  padding: 0;\n  background: #dde1de;");
+    expect(css).toContain(".identity-screen__hero {\n  display: grid;\n  align-content: center;");
+    expect(css).toContain("linear-gradient(180deg, #e3e6e3 0%, #d5dad7 100%);");
+    expect(css).toContain(".identity-screen__choices {\n  display: grid;\n  align-content: center;");
+    expect(css).toContain("background: #eceee8;");
+    expect(css).toContain(".identity-card {\n  position: relative;\n  min-height: 96px;\n  padding: 13px 12px 13px 18px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
+    expect(css).not.toContain("background: #101114;\n  color: #f7f8f6;");
+  });
+
   test("paper templates avoid leftover hard-coded green accents", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
@@ -125,6 +139,18 @@ describe("print helpers", () => {
     expect(css).not.toContain(".template-card {\n  grid-template-columns: 28px minmax(0, 1fr);");
   });
 
+  test("canvas template controls use a framed tool rail instead of bare divider lines", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".canvas-panel__header {\n  display: flex;\n  justify-content: space-between;");
+    expect(css).toContain("padding: 7px 10px;\n  border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
+    expect(css).toContain(".template-selector {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  width: 100%;\n  gap: 4px;\n  padding: 3px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.3);");
+    expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 34px;\n  top: 18px;");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.72);\n  box-shadow: 0 6px 14px rgba(39, 47, 43, 0.08);");
+    expect(css).toContain(".template-card {\n    grid-template-columns: minmax(0, 1fr);");
+  });
+
   test("editor side panels use refined tool rows instead of flat divider lists", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
@@ -134,12 +160,43 @@ describe("print helpers", () => {
     expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(63, 95, 104, 0.24);\n  background: rgba(255, 254, 251, 0.74);");
   });
 
+  test("module add markers use the restrained accent instead of mint green", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.38);\n  border-radius: 50%;");
+    expect(css).toContain("color: #3f5f68;\n  font-size: 15px;");
+    expect(css).not.toContain("rgba(134, 205, 182, 0.62)");
+    expect(css).not.toContain("#86cdb6");
+  });
+
+  test("side panel headers use compact tool headers instead of large page titles", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".editor-sidebar__header {\n  display: grid;\n  gap: 4px;\n  margin: 0 0 14px;");
+    expect(css).toContain("padding: 10px;\n  border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.32);");
+    expect(css).toContain(".editor-sidebar__header h2 {\n  color: #17181c;\n  font-size: 18px;");
+    expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
+    expect(css).toContain("padding: 10px;\n  border: 1px solid rgba(17, 18, 23, 0.08);");
+  });
+
   test("inspector style controls sit in a quiet tool tray instead of raw form rows", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.34);");
     expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 10px 0;");
+  });
+
+  test("secondary controls use compact rails instead of bare text and underline buttons", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 6px 7px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
+    expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
+    expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 0;\n  border-radius: 3px;");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.78);");
+    expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.12);");
   });
 
   test("selected resume sections use a visible but restrained paper highlight", () => {
