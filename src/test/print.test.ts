@@ -68,7 +68,25 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 2px;");
     expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;");
     expect(css).toContain(".topbar__actions {\n  padding-left: 5px;\n  border-left: 1px solid rgba(17, 18, 23, 0.08);");
+    expect(css).toContain(".topbar__primary-action {\n  min-width: 44px;");
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.32) !important;\n  background: #3f5f68 !important;");
+    expect(css).toContain("color: #fffefb !important;\n  font-weight: 800 !important;");
+    expect(css).toContain(".topbar__primary-action:hover {\n  background: #496d77 !important;");
+    expect(css).toContain(".topbar__actions button:hover,\n.topbar__file-action:hover {\n  box-shadow: none;");
+    expect(css).toContain("transform: none;");
+    expect(css).not.toContain("background: #d9b16a !important;");
+    expect(css).not.toContain("background: #e2bf7e !important;");
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
+  });
+
+  test("top identity switcher uses a clear current marker instead of plain hover fill", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".topbar__identity-switcher button:hover {\n  background: rgba(63, 95, 104, 0.08);");
+    expect(css).toContain(".topbar__identity-switcher .is-active {\n  background: rgba(255, 254, 251, 0.78);");
+    expect(css).toContain("color: #244e58;\n  font-weight: 800;");
+    expect(css).toContain("box-shadow:\n    inset 3px 0 0 #3f5f68,");
+    expect(css).not.toContain(".topbar__identity-switcher button:hover,\n.topbar__identity-switcher .is-active {\n  background: rgba(63, 95, 104, 0.08);");
   });
 
   test("mobile top toolbar uses two compact command rows instead of one wrapped button pile", () => {
@@ -142,6 +160,10 @@ describe("print helpers", () => {
     expect(css).toContain("border-radius: 5px;\n  background: rgba(255, 254, 251, 0.28);");
     expect(css).toContain(".identity-card::after {\n  content: \"\";");
     expect(css).toContain("border-top: 1px solid rgba(63, 95, 104, 0.58);\n  border-right: 1px solid rgba(63, 95, 104, 0.58);");
+    expect(css).toContain(".identity-card__meta span {\n  padding: 2px 6px;");
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.12);\n  border-radius: 999px;");
+    expect(css).toContain("background: rgba(63, 95, 104, 0.055);");
+    expect(css).not.toContain(".identity-card__meta span + span::before {\n  content: \"/\";");
     expect(css).not.toContain("linear-gradient(90deg, rgba(17, 18, 23, 0.026) 1px, transparent 1px) 0 0 / 34px 34px");
   });
 
@@ -175,11 +197,27 @@ describe("print helpers", () => {
   test("template selector uses compact preview tabs instead of a flat text rail", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".template-card {\n  grid-template-columns: 34px minmax(0, 1fr);");
+    expect(css).toContain(".template-card {\n  position: relative;\n  grid-template-columns: 34px minmax(0, 1fr);");
     expect(css).toContain("min-height: 42px;\n  padding: 5px 8px;");
     expect(css).toContain(".template-card__thumbnail {\n  display: block;");
     expect(css).toContain(".template-mini {\n  position: relative;\n  display: grid;\n  gap: 1px;\n  width: 100%;\n  height: 28px;");
     expect(css).not.toContain(".template-card__thumbnail {\n  display: none;");
+  });
+
+  test("template choices have a restrained but legible active state", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".template-card {\n  position: relative;\n  grid-template-columns: 34px minmax(0, 1fr);");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.18);");
+    expect(css).toContain(".template-card::before {\n  content: \"\";");
+    expect(css).toContain("background: #3f5f68;\n  opacity: 0;");
+    expect(css).toContain(".template-card--active {\n  border: 1px solid rgba(63, 95, 104, 0.2);\n  background: rgba(255, 254, 251, 0.76);");
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.2);");
+    expect(css).toContain(".template-card--active::before {\n  opacity: 1;");
+    expect(css).toContain(".template-card--active .template-card__thumbnail {\n  border-color: rgba(63, 95, 104, 0.28);");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.76);");
+    expect(css).toContain("box-shadow:\n    inset 3px 0 0 #3f5f68,");
+    expect(css).not.toContain("inset 0 -2px 0 #3f5f68");
   });
 
   test("canvas template controls use a framed tool rail instead of bare divider lines", () => {
@@ -217,7 +255,13 @@ describe("print helpers", () => {
     expect(css).toContain("linear-gradient(#3f5f68, #3f5f68) 4px 5px / 8px 1px no-repeat");
     expect(css).toContain("linear-gradient(rgba(63, 95, 104, 0.34), rgba(63, 95, 104, 0.34)) 4px 9px / 6px 1px no-repeat");
     expect(css).toContain("rgba(63, 95, 104, 0.06);");
-    expect(css).toContain("color: #3f5f68;\n  font-size: 14px;");
+    expect(css).toContain(".module-library__item::after {\n  content: \"\";");
+    expect(css).toContain("border: 1px solid rgba(63, 95, 104, 0.18);\n  border-radius: 50%;");
+    expect(css).toContain("linear-gradient(#3f5f68, #3f5f68) center / 8px 1px no-repeat");
+    expect(css).toContain("linear-gradient(#3f5f68, #3f5f68) center / 1px 8px no-repeat");
+    expect(css).toContain(".module-library__item:hover:not(:disabled)::after,\n.module-library__item:focus-visible:not(:disabled)::after {\n  opacity: 1;");
+    expect(css).toContain("rgba(63, 95, 104, 0.09);");
+    expect(css).not.toContain("content: \"+\";");
     expect(css).not.toContain("rgba(134, 205, 182, 0.62)");
     expect(css).not.toContain("#86cdb6");
   });
@@ -256,6 +300,18 @@ describe("print helpers", () => {
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
   });
 
+  test("inspector textareas use quiet writing wells instead of lined notebook boxes", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel label > textarea {\n  min-height: 76px;\n  padding: 9px 10px 9px 12px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-left: 3px solid rgba(63, 95, 104, 0.18);");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.5);");
+    expect(css).toContain(".inspector-panel label > textarea:focus {\n  border-color: rgba(63, 95, 104, 0.34);");
+    expect(css).toContain("border-left-color: #3f5f68;\n  background: #fffefb;");
+    expect(css).toContain("box-shadow:\n    0 0 0 2px rgba(63, 95, 104, 0.07),");
+    expect(css).not.toContain("0 37px / 100% 28px");
+  });
+
   test("disabled inspector actions read as quiet unavailable commands instead of broken buttons", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
@@ -284,6 +340,10 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 8px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
     expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 26px;");
+    expect(css).toContain("border-color: rgba(132, 68, 62, 0.14);");
+    expect(css).toContain("background: rgba(132, 68, 62, 0.035);");
+    expect(css).toContain(".inspector-panel .list-item .ghost-button:hover,\n.inspector-panel .inline-row .ghost-button:hover {\n  border-color: rgba(132, 68, 62, 0.22);");
+    expect(css).toContain("box-shadow: none;\n  transform: none;");
     expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 34px;");
     expect(css).toContain("background: rgba(63, 95, 104, 0.07);");
     expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 12px 0;");
@@ -311,7 +371,7 @@ describe("print helpers", () => {
     expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.24);");
     expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 0;\n  border-radius: 3px;");
-    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.78);");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.76);");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.12);");
   });
 

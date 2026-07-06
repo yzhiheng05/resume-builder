@@ -2093,19 +2093,13 @@ body {
 }
 
 .identity-card__meta span {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  padding: 2px 6px;
+  border: 1px solid rgba(63, 95, 104, 0.12);
+  border-radius: 999px;
+  background: rgba(63, 95, 104, 0.055);
   color: #66716d;
   font-size: 11px;
   font-weight: 800;
-}
-
-.identity-card__meta span + span::before {
-  content: "/";
-  margin-right: 6px;
-  color: rgba(102, 113, 109, 0.55);
 }
 
 .identity-card__label {
@@ -2260,10 +2254,25 @@ body {
 
 .topbar__actions button:hover,
 .topbar__file-action:hover,
-.topbar__identity-switcher button:hover,
-.topbar__identity-switcher .is-active {
+.topbar__identity-switcher button:hover {
   background: rgba(63, 95, 104, 0.08);
   color: #244e58;
+  transform: none;
+}
+
+.topbar__actions button:hover,
+.topbar__file-action:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.topbar__identity-switcher .is-active {
+  background: rgba(255, 254, 251, 0.78);
+  color: #244e58;
+  font-weight: 800;
+  box-shadow:
+    inset 3px 0 0 #3f5f68,
+    0 2px 6px rgba(39, 47, 43, 0.04);
   transform: none;
 }
 
@@ -2271,14 +2280,14 @@ body {
   min-width: 44px;
   margin-left: 3px;
   padding-inline: 11px !important;
-  border: 1px solid rgba(151, 105, 43, 0.22) !important;
-  background: #d9b16a !important;
-  color: #1f1608 !important;
-  font-weight: 800;
+  border: 1px solid rgba(63, 95, 104, 0.32) !important;
+  background: #3f5f68 !important;
+  color: #fffefb !important;
+  font-weight: 800 !important;
 }
 
 .topbar__primary-action:hover {
-  background: #e2bf7e !important;
+  background: #496d77 !important;
 }
 
 .editor-workspace {
@@ -2420,17 +2429,19 @@ body {
 }
 
 .module-library__item::after {
-  content: "+";
+  content: "";
   grid-column: 3;
   display: grid;
   place-items: center;
   width: 18px;
   height: 18px;
   justify-self: center;
-  color: #3f5f68;
-  font-size: 14px;
-  font-weight: 760;
-  line-height: 1;
+  border: 1px solid rgba(63, 95, 104, 0.18);
+  border-radius: 50%;
+  background:
+    linear-gradient(#3f5f68, #3f5f68) center / 8px 1px no-repeat,
+    linear-gradient(#3f5f68, #3f5f68) center / 1px 8px no-repeat,
+    rgba(63, 95, 104, 0.04);
   opacity: 0.76;
   transform: none;
   transition:
@@ -2450,7 +2461,10 @@ body {
 .module-library__item:hover:not(:disabled)::after,
 .module-library__item:focus-visible:not(:disabled)::after {
   opacity: 1;
-  background: rgba(63, 95, 104, 0.09);
+  background:
+    linear-gradient(#3f5f68, #3f5f68) center / 8px 1px no-repeat,
+    linear-gradient(#3f5f68, #3f5f68) center / 1px 8px no-repeat,
+    rgba(63, 95, 104, 0.09);
 }
 
 .module-library__item small {
@@ -2584,15 +2598,17 @@ body {
 }
 
 .template-card {
+  position: relative;
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   justify-items: stretch;
   min-height: 42px;
   padding: 5px 8px;
-  border: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
   border-radius: 4px;
-  background: transparent;
+  background: rgba(255, 254, 251, 0.18);
   box-shadow: none;
 }
 
@@ -2600,11 +2616,33 @@ body {
   border-right: 0;
 }
 
+.template-card::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: 4px;
+  width: 2px;
+  border-radius: 999px;
+  background: #3f5f68;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.template-card:hover:not(.template-card--active) {
+  background: rgba(255, 254, 251, 0.42);
+}
+
 .template-card--active {
-  background: rgba(255, 254, 251, 0.78);
+  border: 1px solid rgba(63, 95, 104, 0.2);
+  background: rgba(255, 254, 251, 0.76);
   box-shadow:
-    inset 0 -2px 0 #3f5f68,
+    0 0 0 1px rgba(255, 255, 255, 0.48),
     0 4px 10px rgba(39, 47, 43, 0.04);
+}
+
+.template-card--active::before {
+  opacity: 1;
 }
 
 .template-card__thumbnail {
@@ -2614,6 +2652,13 @@ body {
   border-radius: 3px;
   background: #fffefb;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+}
+
+.template-card--active .template-card__thumbnail {
+  border-color: rgba(63, 95, 104, 0.28);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.68),
+    0 2px 5px rgba(39, 47, 43, 0.05);
 }
 
 .template-card__thumbnail-surface {
@@ -3570,10 +3615,10 @@ body {
 
 .template-chip--active,
 .segmented-control button.is-active {
-  background: rgba(255, 254, 251, 0.78);
+  background: rgba(255, 254, 251, 0.76);
   color: #244e58;
   box-shadow:
-    inset 0 -2px 0 #3f5f68,
+    inset 3px 0 0 #3f5f68,
     0 3px 8px rgba(39, 47, 43, 0.04);
 }
 
@@ -3937,21 +3982,21 @@ body {
 
 .inspector-panel label > textarea {
   min-height: 76px;
-  padding: 9px 10px;
-  border: 1px solid rgba(17, 18, 23, 0.1);
+  padding: 9px 10px 9px 12px;
+  border: 1px solid rgba(17, 18, 23, 0.09);
+  border-left: 3px solid rgba(63, 95, 104, 0.18);
   border-radius: 4px;
-  background:
-    linear-gradient(rgba(17, 18, 23, 0.055) 1px, transparent 1px) 0 37px / 100% 28px,
-    rgba(255, 254, 251, 0.68);
-  box-shadow: none;
+  background: rgba(255, 254, 251, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .inspector-panel label > textarea:focus {
-  border-color: rgba(63, 95, 104, 0.46);
-  background:
-    linear-gradient(rgba(63, 95, 104, 0.08) 1px, transparent 1px) 0 37px / 100% 28px,
-    #fffefb;
-  box-shadow: 0 0 0 2px rgba(63, 95, 104, 0.08);
+  border-color: rgba(63, 95, 104, 0.34);
+  border-left-color: #3f5f68;
+  background: #fffefb;
+  box-shadow:
+    0 0 0 2px rgba(63, 95, 104, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.56);
 }
 
 .inspector-panel .list-item,
@@ -3984,10 +4029,20 @@ body {
   justify-self: end;
   min-height: 26px;
   padding: 0 8px;
+  border-color: rgba(132, 68, 62, 0.14);
   border-radius: 4px;
-  background: transparent;
+  background: rgba(132, 68, 62, 0.035);
   color: #6e5d58;
   font-size: 11px;
+}
+
+.inspector-panel .list-item .ghost-button:hover,
+.inspector-panel .inline-row .ghost-button:hover {
+  border-color: rgba(132, 68, 62, 0.22);
+  background: rgba(132, 68, 62, 0.06);
+  color: #6f3833;
+  box-shadow: none;
+  transform: none;
 }
 
 .inspector-form > .secondary-button {

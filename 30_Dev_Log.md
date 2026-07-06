@@ -4,6 +4,126 @@
 
 ## 2026-07-06
 
+- 任务：提升入口身份卡片 meta 行的产品选择感
+- 操作：基于入口页桌面 / 移动端截图审查，定位身份卡片顶部 `09 个模块 / 校招简历` 仍是纯文字加分隔符，读起来像普通列表信息；更新现有 CSS 回归测试后，将 `.identity-card__meta span` 改为低对比 metadata chip，移除 `/` 分隔伪元素
+- 结果：入口身份卡片更像可选择的简历起点，信息层级更清楚；不改入口文案、身份选择逻辑、卡片布局或移动端堆叠
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：meta chip padding 为 `2px 6px`，圆角为 `999px`，背景为 `rgba(63, 95, 104, 0.055)`，分隔伪元素 content 为 `none`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看入口纸张 mock 或移动端首屏留白是否还需要轻微收敛
+
+## 2026-07-06
+
+- 任务：收敛顶部文件操作按钮的通用浮起 hover
+- 操作：基于顶部工具栏截图和 computed 样式审查，定位“清空”等顶部文件操作 hover 时仍继承全局按钮的大阴影，和工具条内的扁平命令语言不一致；更新 CSS 回归测试后，为 `.topbar__actions button:hover` 与 `.topbar__file-action:hover` 增加 scoped 覆盖，保留淡青灰 hover 背景但移除阴影与位移
+- 结果：顶部文件操作更像工具栏命令而不是浮起卡片按钮；不改导出主按钮、身份切换 active、文件操作逻辑或移动端两行布局
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：“清空”hover 背景为 `rgba(63, 95, 104, 0.08)`，文字为 `rgb(36, 78, 88)`，`boxShadow` 与 `transform` 均为 `none`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看入口页或移动端长页面是否还有明显临时控件感
+
+## 2026-07-06
+
+- 任务：收敛右侧条目删除按钮的通用按钮 hover 感
+- 操作：基于选中“教育经历”的右侧条目编辑截图审查，定位条目内“删除条目”按钮 hover 时继承全局 `.ghost-button:hover` 的大阴影和位移，显得像普通悬浮按钮而不是 inspector 内的小型危险命令；更新现有 CSS 回归测试后，为 `.inspector-panel .list-item/.inline-row .ghost-button` 增加 scoped 低强度 danger command 样式，并覆盖 hover 的阴影与位移
+- 结果：条目删除仍有清晰危险语义，但在右侧属性面板里更安静，不再像临时浮起按钮；不改删除逻辑、条目结构或全局 ghost 按钮
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：删除按钮 hover 背景为 `rgba(132, 68, 62, 0.06)`，边框为 `rgba(132, 68, 62, 0.22)`，文字为 `rgb(111, 56, 51)`，`boxShadow` 与 `transform` 均为 `none`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看顶部文件操作、空状态或移动端工具栏是否还有默认按钮感
+
+## 2026-07-06
+
+- 任务：把左侧模块添加标记从文本加号收敛为工具 glyph
+- 操作：基于当前模块库 hover 截图审查，定位模块项右侧 `+` 仍是直接文本字符，虽然已有浅底但仍像临时按钮；更新现有 CSS 回归测试后，将 `.module-library__item::after` 从 `content: "+"` 改为空内容伪元素，用两条 CSS 线绘制 18px 圆形 add glyph，并修复 hover / focus 背景覆盖导致线条消失的问题
+- 结果：左侧模块项右侧添加 affordance 更像编辑器素材抽屉里的工具符号，而不是手写字符；模块添加、禁用态、分组布局和移动端布局未改
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：模块项 hover 后 `::after content` 为 `""`，宽高为 `18px`，圆角为 `50%`，背景包含两条 `linear-gradient(...)` 加号线条，桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看右侧条目删除按钮和顶部文件操作是否还有需要统一的微反馈
+
+## 2026-07-06
+
+- 任务：统一顶部身份切换的当前状态语言
+- 操作：基于当前顶部工具栏截图审查，定位身份切换的 active 状态和普通 hover 共用同一层淡青灰填充，当前身份不够像明确选中态；新增 CSS 回归测试后，将 `.topbar__identity-switcher .is-active` 改为与模板 chip 一致的左侧 inset accent、浅底和更高字重，同时保留普通 hover 的低强度青灰填充
+- 结果：顶部身份切换和右侧模板 / 分段控件使用一致的“左侧当前标记”语言，减少扁平按钮组的原型感；不改身份切换逻辑、移动端两行 topbar 布局或文件操作 hover
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，35 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：active 身份背景为 `rgba(255, 254, 251, 0.78)`，文字为 `rgb(36, 78, 88)`，实际 `fontWeight` 为 `800`，box-shadow 包含 `3px 0px 0px` 左侧 inset 标记；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 active 身份同样包含左侧 inset 标记，移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，86 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看左侧模块库和右侧条目删除按钮的微反馈是否还需要更统一
+
+## 2026-07-06
+
+- 任务：收敛顶部导出主按钮的旧网页按钮感
+- 操作：基于当前桌面截图审查，定位顶部“导出”仍是偏金色实心按钮，是当前纸灰 / 青灰工作台里最突兀的高饱和控件，容易显得像旧版网页 CTA；新增 CSS 回归测试后，将 `.topbar__primary-action` 从金色改为深青灰主操作按钮，hover 稍提亮，并修正 `font-weight` 被通用 topbar 按钮规则覆盖的问题
+- 结果：导出仍保留主操作识别，但视觉上回到当前编辑器的青灰工具体系，不再像独立贴上的营销按钮；不改导出逻辑、按钮位置或移动端 topbar 布局
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，34 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：导出按钮背景为 `rgb(63, 95, 104)`，边框为 `rgba(63, 95, 104, 0.32)`，文字为 `rgb(255, 254, 251)`，实际 `fontWeight` 为 `800`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端导出按钮背景为 `rgb(63, 95, 104)`，移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，85 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看顶部文件操作和身份切换按钮是否需要更细的 hover / active 统一
+
+## 2026-07-06
+
+- 任务：收敛右侧正文输入框的笔记纸 / 原型框感
+- 操作：基于当前选中“职业摘要”的桌面截图审查，定位右侧正文 textarea 是大块空白框加横线背景，像临时笔记纸或原型输入框，和现在的属性面板 writing control 不一致；新增 CSS 回归测试后，将 `.inspector-panel label > textarea` 改为浅色 writing well，移除横线背景，使用 3px 左侧弱 accent 表示可编辑文本区，focus 时提升左侧 accent 和柔和外圈
+- 结果：正文编辑区仍保持足够可写面积和清晰 focus，但不再以整块横线背景抢视觉；右侧属性面板更像成熟编辑器 inspector，不影响普通 input property row、模块编辑或打印导出逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，34 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：textarea `backgroundImage` 为 `none`，focus 左侧边框为 `3px` 且颜色 `rgb(63, 95, 104)`，背景为 `rgb(255, 254, 251)`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，85 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看右侧列表条目卡片和左侧模块项 hover 是否还需要进一步统一微反馈
+
+## 2026-07-06
+
+- 任务：增强模板选择器的当前状态识别，减少扁平按钮感
+- 操作：基于当前桌面截图审查，定位中间模板预览 tab 和右侧“纸张样式”模板 chip 的普通态与选中态背景接近，当前模板主要靠文字 / 底线区分，容易显得像原型按钮；新增 CSS 回归测试后，将 `.template-card` 普通态降噪，为 active 模板增加 2px 左侧细 accent、低强度边框和缩略图边框变化，并将右侧 `.template-chip--active` 从底部粗线改为左侧 inset 标记
+- 结果：当前模板状态更清楚，但没有变成高饱和强提示；模板选择条仍保持低矮工具轨形态，不影响模板切换、纸面渲染或打印隐藏逻辑
+- 验证：
+  - `npm test -- src/test/print.test.ts` 通过，33 项测试全部通过
+  - Node REPL + 本机 Chrome 桌面截图确认：active 模板背景为 `rgba(255, 254, 251, 0.76)`，边框为 `rgba(63, 95, 104, 0.2)`，左侧标记宽度 `2px` 且 `opacity: 1`；普通模板背景为 `rgba(255, 254, 251, 0.18)`；桌面 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `1440`
+  - Node REPL + 本机 Chrome 移动截图确认：active 模板左侧标记生效，移动端 `bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+  - `npm test` 通过，84 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+- 后续：
+  - 继续审查时可看左侧模块库 hover / focus 和右侧属性字段焦点态是否还存在默认控件感
+
+## 2026-07-06
+
 - 任务：弱化画布状态条的悬浮调试标签感
 - 操作：基于当前画布截图审查，定位右上角 `A4 / 模板 / 模块数 / 100%` 状态条仍有较强白底、边框和投影，像悬浮调试 chip；更新 CSS 回归测试后，将 `.canvas-statusbar` 背景透明度降到 0.42、移除投影、缩小字体和内边距，并同步降低分隔线强度
 - 结果：画布状态信息仍可读，但视觉上更像工作台刻度而不是弹窗标签，A4 纸张和选中模块更突出；打印隐藏规则和状态内容未改
