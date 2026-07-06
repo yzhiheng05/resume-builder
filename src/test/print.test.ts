@@ -8,6 +8,8 @@ describe("print helpers", () => {
 
     expect(printCss).toContain(".resume-print-mode .canvas-statusbar");
     expect(printCss).toContain(".canvas-statusbar");
+    expect(printCss).toContain(".resume-print-mode .confirm-dialog-shell");
+    expect(printCss).toContain(".confirm-dialog-shell");
     expect(printCss).toContain(".resume-print-mode .template-mini");
     expect(printCss).toContain(".template-mini");
     expect(printCss).toContain(".resume-print-mode .resume-paper--template-classic .resume-section--active::before");
@@ -118,6 +120,15 @@ describe("print helpers", () => {
     expect(css).toContain(".template-card {\n  grid-template-columns: minmax(0, 1fr);");
     expect(css).toContain(".template-card__thumbnail {\n  display: none;");
     expect(css).not.toContain(".template-card {\n  grid-template-columns: 28px minmax(0, 1fr);");
+  });
+
+  test("selected resume sections use a visible but restrained paper highlight", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.34);");
+    expect(css).toContain("background: linear-gradient(90deg, rgba(63, 95, 104, 0.085), rgba(63, 95, 104, 0.025) 44%, transparent 78%);");
+    expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: \"\";");
+    expect(css).toContain("width: 4px;");
   });
 
   test("setPrintMode toggles the print class on body", () => {

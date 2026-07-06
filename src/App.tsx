@@ -499,11 +499,15 @@ export default function App() {
   const reset = useResumeStore((state) => state.reset);
   const [previewSurfaceHeight, setPreviewSurfaceHeight] = useState<number | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [pendingDeleteModuleId, setPendingDeleteModuleId] = useState<string | null>(null);
 
   const selectedPreset = selectedIdentity ? getIdentityPreset(selectedIdentity) : null;
   const templateOptions = useMemo(() => getResumeTemplates(), []);
   const selectedTemplate = getResumeTemplate(templateId);
   const activeModule = activeModuleId ? modules.find((module) => module.id === activeModuleId) ?? null : null;
+  const pendingDeleteModule = pendingDeleteModuleId
+    ? modules.find((module) => module.id === pendingDeleteModuleId) ?? null
+    : null;
   const visibleModuleCount = modules.reduce((count, module) => (module.visible ? count + 1 : count), 0);
   const orderedModules = useMemo(() => {
     const moduleById = new Map(modules.map((module) => [module.id, module] as const));
@@ -652,11 +656,7 @@ export default function App() {
           onUpdateModuleTitle={updateModuleTitle}
           onToggleModuleVisibility={toggleModuleVisibility}
           onDuplicateModule={duplicateModule}
-          onDeleteModule={(moduleId) => {
-            if (window.confirm("确定删除这个模块吗？")) {
-              deleteModule(moduleId);
-            }
-          }}
+          onDeleteModule={setPendingDeleteModuleId}
           onUpdatePersonalField={updatePersonalField}
           onTogglePersonalField={togglePersonalField}
           onUpdateText={updateTextValue}
@@ -668,6 +668,41 @@ export default function App() {
           onRemoveListItem={removeListItem}
         />
       </main>
+
+      {pendingDeleteModule ? (
+        <div className="confirm-dialog-shell" role="presentation">
+          <section
+            className="confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-module-dialog-title"
+          >
+            <div className="confirm-dialog__body">
+              <p className="confirm-dialog__eyebrow">确认操作</p>
+              <h2 id="delete-module-dialog-title">删除模块</h2>
+              <p>
+                确认删除「{pendingDeleteModule.title}」吗？该模块里的内容会从当前简历中移除。
+              </p>
+            </div>
+            <div className="confirm-dialog__actions">
+              <button type="button" className="ghost-button" onClick={() => setPendingDeleteModuleId(null)}>
+                取消
+              </button>
+              <button
+                type="button"
+                className="danger-button"
+                onClick={() => {
+                  deleteModule(pendingDeleteModule.id);
+                  setPendingDeleteModuleId(null);
+                  showStatus("模块已删除。");
+                }}
+              >
+                确认删除
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       <footer className="footer-note">当前版本为桌面端优先，内容会自动保存在当前浏览器。</footer>
     </div>

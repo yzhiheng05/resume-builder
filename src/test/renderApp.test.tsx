@@ -238,6 +238,31 @@ describe("App", () => {
     expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
   });
 
+  test("confirms module deletion with an in-app dialog instead of browser confirm", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockImplementation(() => {
+      throw new Error("browser confirm should not be used for module deletion");
+    });
+    const previewSurface = getMainPreviewSurface();
+    fireEvent.click(within(previewSurface).getByRole("heading", { name: "职业摘要" }));
+    fireEvent.click(screen.getByRole("button", { name: "删除模块" }));
+
+    const dialog = screen.getByRole("dialog", { name: "删除模块" });
+    expect(confirmSpy).not.toHaveBeenCalled();
+    expect(dialog).toHaveTextContent("职业摘要");
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "取消" }));
+    expect(screen.queryByRole("dialog", { name: "删除模块" })).not.toBeInTheDocument();
+    expect(within(previewSurface).getByRole("heading", { name: "职业摘要" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "删除模块" }));
+    fireEvent.click(within(screen.getByRole("dialog", { name: "删除模块" })).getByRole("button", { name: "确认删除" }));
+
+    expect(within(previewSurface).queryByRole("heading", { name: "职业摘要" })).not.toBeInTheDocument();
+  });
+
   test("applies selected style controls to the resume paper", () => {
     seedStoredResume("general");
     render(<App />);

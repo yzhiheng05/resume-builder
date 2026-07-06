@@ -4,6 +4,23 @@
 
 ## 2026-07-06
 
+- 任务：增强模块选中反馈并替换浏览器删除确认
+- 操作：将纸面模块选中态从极浅底色调整为低饱和 1px 青灰描边、2px outline offset、淡青灰渐变底和 4px 左侧标记；把删除模块从 `window.confirm` 改为应用内 `role="dialog"` 确认框，支持取消和确认删除，并在打印 / PDF 模式隐藏确认框；新增渲染测试和 CSS 回归测试，避免回退到浏览器 confirm 或过浅选中态
+- 结果：点击画布模块后选中状态更容易识别，但仍保持正式简历编辑器的克制观感；删除操作不再弹出浏览器原生确认框，整体更统一
+- 验证：
+  - 先运行 `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts`，确认新测试因 `window.confirm` 和缺少目标选中态 CSS 失败
+  - 实现后 `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，36 项测试全部通过
+  - `npm test` 通过，68 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - 本机 Chrome 截图：`/tmp/resume-selected-module-visible.png`，选中模块 computed outline 为 `rgba(63, 95, 104, 0.34) solid 1px`，背景为低饱和青灰渐变
+  - 本机 Chrome 截图：`/tmp/resume-delete-dialog.png`，删除操作显示应用内确认框，取消后模块仍保留
+  - 本机 Chrome 移动检查：`bodyScrollWidth` 与 `documentElement.scrollWidth` 均为 `390`
+- 后续：
+  - 若继续完善删除体验，可考虑 Esc 关闭、点击遮罩关闭和确认后焦点回到相邻模块；当前先保持最小实现，避免把确认框做成复杂弹窗系统
+
+## 2026-07-06
+
 - 任务：收敛中心模板选择轨道
 - 操作：将画布上方模板选择从带 mini preview 的卡片轨道进一步收成纯文本轨道；隐藏 `.template-card__thumbnail`，将 `.template-card` 改为单列居中文本布局，保留轻背景、分隔线和选中态文字层级；新增 CSS 回归测试，避免模板选择器回到 28px 缩略图卡片形态
 - 结果：中心画布顶部减少组件展示感，A4 纸面更突出；桌面和移动端均未出现横向溢出
