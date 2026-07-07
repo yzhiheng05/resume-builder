@@ -4,6 +4,18 @@
 
 ## 2026-07-07
 
+- 任务：继续压缩右侧属性面板的模块基础信息区，修复短内容时的纵向留白问题
+- 操作：将模块动作、模块标题、显示状态和提示文案收进 `inspector-module-card`；模块标题与显示状态改为两行紧凑属性行；右侧 inspector 增加 `align-content: start`，避免 grid 内容被拉出异常大间距；同步补充渲染测试和 CSS 回归测试
+- 结果：右侧模块基础区更像 Magic Resume 的轻量属性面板，标题输入与显隐开关更集中；短内容模块的右侧顶部不再出现明显断层；不改模块数据、持久化、JSON 导入导出或 PDF 打印逻辑
+- 验证：
+  - `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，59 项测试全部通过
+  - `npm test` 通过，92 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Playwright + 本机 Chrome 渲染检查：桌面 1360px 与移动 390px 均无横向溢出；右侧 inspector `align-content` 为 `start`；模块基础区渲染 1 个 `inspector-module-card` 和 2 个 `inspector-module-row`；模块标题编辑与显示开关仍可用
+
+## 2026-07-07
+
 - 任务：继续贴近 Magic Resume 的简洁白色工作台，收紧顶部栏、左侧模块区和画布选中态
 - 操作：将全局工作台背景统一为更浅的 `#eef0ee`；顶部文件栏压缩到 44px 并弱化文件名输入框边界；左右 rail 的 sticky 起点同步为 44px；左侧当前纸面和添加模块列表进一步减小行高、边框和阴影；“添加模块”加号改为右侧垂直居中；画布背景降噪，纸张阴影更克制；模块选中态从渐变块和“正在编辑”文字标签改为 1px 细边、低透明背景和两个角点；同步更新 CSS 回归测试
 - 结果：界面更接近 Magic Resume 的白色 rail + 中性画布 + 黑色主操作风格；选中模块比之前清楚但不刺眼；不改模块数据结构、编辑逻辑、排序、持久化、JSON 导入导出或 PDF 打印规则

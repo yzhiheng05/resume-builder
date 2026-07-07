@@ -3613,6 +3613,7 @@ body {
 
 .inspector-panel {
   padding: 18px;
+  align-content: start;
   background: #ffffff;
   border-left: 1px solid rgba(18, 18, 18, 0.1);
 }
@@ -3708,8 +3709,16 @@ body {
 
 .inspector-actions {
   gap: 7px;
-  padding: 0 0 12px;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.08);
+  padding: 0 0 8px;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.065);
+}
+
+.inspector-module-card {
+  display: grid;
+  gap: 0;
+  padding: 2px 0 4px;
+  border-top: 1px solid rgba(17, 18, 23, 0.06);
+  border-bottom: 1px solid rgba(17, 18, 23, 0.06);
 }
 
 .inspector-subsection-title {
@@ -3735,13 +3744,13 @@ body {
 
 .inspector-actions .secondary-button,
 .inspector-actions .ghost-button {
-  min-height: 30px;
-  padding: 0 9px;
+  min-height: 28px;
+  padding: 0 8px;
   border-color: rgba(17, 18, 23, 0.12);
   border-radius: 4px;
   background: transparent;
   color: #4d5753;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 760;
   box-shadow: none;
 }
@@ -4401,6 +4410,68 @@ body {
   min-width: 0;
   color: #5d6762;
   overflow-wrap: anywhere;
+}
+
+.inspector-panel .inspector-module-row,
+.inspector-panel .inspector-module-row:has(> input:not([type])) {
+  display: grid;
+  grid-template-columns: minmax(72px, 0.55fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 36px;
+  padding: 5px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.055);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #5a625f;
+  font-size: 11px;
+  font-weight: 780;
+}
+
+.inspector-panel .inspector-module-row:last-child {
+  border-bottom: 0;
+}
+
+.inspector-panel .inspector-module-row:focus-within,
+.inspector-panel .inspector-module-row:has(> input:not([type])):focus-within {
+  border-color: rgba(17, 18, 23, 0.14);
+  background: rgba(17, 18, 23, 0.018);
+  box-shadow: inset 2px 0 0 rgba(17, 18, 23, 0.18);
+}
+
+.inspector-panel .inspector-module-row > span:first-child {
+  color: #68706d;
+  overflow-wrap: anywhere;
+}
+
+.inspector-panel .inspector-module-row > input:not([type]) {
+  width: 100%;
+  min-height: 28px;
+  padding: 2px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #17181c;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.inspector-panel .inspector-module-row > input:not([type]):focus {
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.inspector-panel .inspector-module-row--switch {
+  grid-template-columns: minmax(72px, 0.55fr) auto;
+}
+
+.inspector-panel .inspector-module-row--switch .visibility-toggle {
+  justify-self: end;
+  padding: 2px 6px 2px 3px;
 }
 
 .inspector-panel label:has(> textarea) {

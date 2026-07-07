@@ -277,37 +277,43 @@ export function InspectorPanel({
           <div className="inspector-subsection-title">
             <span>模块</span>
           </div>
-          {shouldShowModuleActions ? (
-            <div className="inspector-actions">
-              {canDuplicateActiveModule ? (
-                <button type="button" className="secondary-button" onClick={() => onDuplicateModule(activeModule.id)}>
-                  复制模块
-                </button>
-              ) : null}
-              {canDeleteActiveModule ? (
-                <button type="button" className="ghost-button" onClick={() => onDeleteModule(activeModule.id)}>
-                  删除模块
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-          <label>
-            模块标题
-            <input
-              aria-label="模块标题"
-              value={activeModule.title}
-              onChange={(event) => onUpdateModuleTitle(activeModule.id, event.target.value)}
-            />
-          </label>
-          <label className="visibility-toggle">
-            <input
-              type="checkbox"
-              checked={activeModule.visible}
-              onChange={() => onToggleModuleVisibility(activeModule.id)}
-            />
-            <span>显示到简历</span>
-          </label>
-          {moduleHint ? <p className="editor-empty-note">{moduleHint}</p> : null}
+          <div className="inspector-module-card">
+            {shouldShowModuleActions ? (
+              <div className="inspector-actions">
+                {canDuplicateActiveModule ? (
+                  <button type="button" className="secondary-button" onClick={() => onDuplicateModule(activeModule.id)}>
+                    复制模块
+                  </button>
+                ) : null}
+                {canDeleteActiveModule ? (
+                  <button type="button" className="ghost-button" onClick={() => onDeleteModule(activeModule.id)}>
+                    删除模块
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+            <label className="inspector-module-row">
+              <span>模块标题</span>
+              <input
+                aria-label="模块标题"
+                value={activeModule.title}
+                onChange={(event) => onUpdateModuleTitle(activeModule.id, event.target.value)}
+              />
+            </label>
+            <label className="inspector-module-row inspector-module-row--switch">
+              <span>显示状态</span>
+              <span className="visibility-toggle">
+                <input
+                  aria-label="显示到简历"
+                  type="checkbox"
+                  checked={activeModule.visible}
+                  onChange={() => onToggleModuleVisibility(activeModule.id)}
+                />
+                <span>显示到简历</span>
+              </span>
+            </label>
+            {moduleHint ? <p className="editor-empty-note">{moduleHint}</p> : null}
+          </div>
           {activeModule.kind === "personal" ? (
             <PersonalInspector
               module={activeModule}

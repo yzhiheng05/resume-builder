@@ -154,7 +154,7 @@ describe("print helpers", () => {
   test("inspector panel matches the white workbench shell", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel {\n  padding: 18px;\n  background: #ffffff;");
+    expect(css).toContain(".inspector-panel {\n  padding: 18px;\n  align-content: start;\n  background: #ffffff;");
     expect(css).toContain("border-left: 1px solid rgba(18, 18, 18, 0.1);");
     expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
     expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
@@ -377,6 +377,13 @@ describe("print helpers", () => {
   test("inspector text fields use compact property rows instead of bare underlines", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
+    expect(css).toContain(".inspector-module-card {\n  display: grid;\n  gap: 0;");
+    expect(css).toContain("padding: 2px 0 4px;\n  border-top: 1px solid rgba(17, 18, 23, 0.06);");
+    expect(css).toContain(".inspector-panel .inspector-module-row,\n.inspector-panel .inspector-module-row:has(> input:not([type])) {\n  display: grid;");
+    expect(css).toContain("grid-template-columns: minmax(72px, 0.55fr) minmax(0, 1fr);");
+    expect(css).toContain("min-height: 36px;\n  padding: 5px 0;");
+    expect(css).toContain(".inspector-panel .inspector-module-row--switch {\n  grid-template-columns: minmax(72px, 0.55fr) auto;");
+    expect(css).toContain(".inspector-panel .inspector-module-row--switch .visibility-toggle {\n  justify-self: end;");
     expect(css).toContain(".inspector-panel label:has(> input:not([type])) {\n  display: grid;\n  grid-template-columns: minmax(72px, 0.6fr) minmax(0, 1fr);");
     expect(css).toContain("gap: 4px 10px;\n  align-items: center;\n  min-height: 42px;\n  padding: 8px 0;");
     expect(css).toContain("background: transparent;");

@@ -276,6 +276,8 @@ describe("App", () => {
 
     expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
     expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(inspectorPanel.querySelector(".inspector-module-card")).toBeInTheDocument();
+    expect(inspectorPanel.querySelectorAll(".inspector-module-row").length).toBe(2);
     expect(within(inspectorPanel).getByText("内容")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "复制模块" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "删除模块" })).toBeInTheDocument();
