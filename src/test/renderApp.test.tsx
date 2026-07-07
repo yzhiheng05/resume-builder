@@ -259,6 +259,8 @@ describe("App", () => {
 
     expect(screen.getByRole("navigation", { name: "身份切换" })).toBeInTheDocument();
     expect(screen.getByRole("toolbar", { name: "文件操作" })).toBeInTheDocument();
+    expect(getTopbarStatus()).toHaveTextContent("本地草稿");
+    expect(screen.getByRole("button", { name: "推荐模块" })).toHaveTextContent("推荐");
     expect(screen.getByRole("status", { name: "画布状态" })).toHaveTextContent("经典简历");
     expect(screen.getByText("基础内容")).toBeInTheDocument();
     expect(screen.getByText("经历模块")).toBeInTheDocument();

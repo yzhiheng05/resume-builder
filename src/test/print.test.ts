@@ -67,7 +67,8 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".topbar {\n  position: sticky;");
-    expect(css).toContain("padding: 6px 16px;\n  align-items: center;\n  background: #ffffff;");
+    expect(css).toContain("min-height: 44px;\n  padding: 5px 14px;");
+    expect(css).toContain("align-items: center;\n  background: #ffffff;");
     expect(css).toContain("border-bottom: 1px solid rgba(18, 18, 18, 0.075);\n  box-shadow: none;");
     expect(css).toContain(".topbar__kicker::after {\n  content: \"/\";");
     expect(css).toContain(".topbar h1 {\n  color: #17181c;\n  min-height: 24px;");
@@ -75,9 +76,12 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar h1:hover,\n.topbar h1:focus {\n  border-color: rgba(17, 18, 23, 0.1);");
     expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
     expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
-    expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 2px;");
-    expect(css).toContain("padding: 1px;\n  border: 1px solid rgba(18, 18, 18, 0.075);\n  border-radius: 5px;\n  background: #fbfbfa;");
-    expect(css).toContain(".topbar__actions {\n  border-radius: 6px;");
+    expect(css).toContain(".topbar__status {\n  display: inline-flex;\n  gap: 5px;");
+    expect(css).toContain(".topbar__status--idle {\n  color: #89918d;");
+    expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 1px;");
+    expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.065);\n  border-radius: 5px;\n  background: #f8f8f7;");
+    expect(css).toContain(".topbar__actions {\n  position: relative;\n  margin-left: 2px;");
+    expect(css).toContain(".topbar__actions::before {\n  content: \"\";");
     expect(css).toContain(".topbar__primary-action {\n  min-width: 48px;");
     expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
     expect(css).toContain("color: #ffffff !important;\n  font-weight: 800 !important;");
@@ -95,7 +99,7 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar__actions button:hover,\n.topbar__file-action:hover,\n.topbar__identity-switcher button:hover {\n  background: rgba(18, 18, 18, 0.055);");
     expect(css).toContain(".topbar__identity-switcher .is-active {\n  background: #ffffff;");
     expect(css).toContain("color: #17181c;\n  font-weight: 800;");
-    expect(css).toContain("box-shadow:\n    inset 3px 0 0 #111111,");
+    expect(css).toContain("box-shadow: 0 1px 3px rgba(18, 18, 18, 0.06);");
     expect(css).not.toContain(".topbar__identity-switcher button:hover,\n.topbar__identity-switcher .is-active {\n  background: rgba(63, 95, 104, 0.08);");
   });
 

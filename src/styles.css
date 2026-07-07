@@ -2212,7 +2212,8 @@ body {
   top: 0;
   z-index: 20;
   margin: 0;
-  padding: 6px 16px;
+  min-height: 44px;
+  padding: 5px 14px;
   align-items: center;
   background: #ffffff;
   border-bottom: 1px solid rgba(18, 18, 18, 0.075);
@@ -2222,7 +2223,7 @@ body {
 .topbar__brand {
   display: flex;
   flex: 1;
-  gap: 7px;
+  gap: 8px;
   align-items: center;
   min-width: 0;
   color: #17181c;
@@ -2289,9 +2290,10 @@ body {
 .topbar__identity {
   margin: 0;
   padding: 2px 6px;
-  border: 1px solid rgba(17, 18, 23, 0.08);
+  border: 1px solid rgba(17, 18, 23, 0.065);
   border-radius: 4px;
-  color: #4f5b56;
+  background: rgba(17, 18, 23, 0.018);
+  color: #5f6965;
   font-size: 10px;
   font-weight: 720;
   line-height: 1.2;
@@ -2299,15 +2301,44 @@ body {
 }
 
 .topbar__status {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
   margin: 0;
-  color: #7b837f;
-  font-size: 12px;
+  min-width: 0;
+  max-width: 220px;
+  overflow: hidden;
+  color: #66716c;
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__status::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #111111;
+  opacity: 0.58;
+}
+
+.topbar__status--idle {
+  color: #89918d;
+}
+
+.topbar__status--idle::before {
+  background: rgba(17, 18, 23, 0.22);
+  opacity: 1;
 }
 
 .topbar__controls {
   display: inline-flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
   min-width: 0;
   padding: 0;
@@ -2320,16 +2351,29 @@ body {
 .topbar__identity-switcher,
 .topbar__actions {
   display: inline-flex;
-  gap: 2px;
+  gap: 1px;
   align-items: center;
-  padding: 1px;
-  border: 1px solid rgba(18, 18, 18, 0.075);
+  padding: 2px;
+  border: 1px solid rgba(18, 18, 18, 0.065);
   border-radius: 5px;
-  background: #fbfbfa;
+  background: #f8f8f7;
 }
 
 .topbar__actions {
+  position: relative;
+  margin-left: 2px;
   border-radius: 6px;
+  background: #ffffff;
+}
+
+.topbar__actions::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: -6px;
+  width: 1px;
+  background: rgba(17, 18, 23, 0.08);
 }
 
 .topbar__actions button,
@@ -2346,7 +2390,7 @@ body {
 .topbar__file-action,
 .topbar__identity-switcher button {
   min-height: 24px;
-  padding: 4px 7px;
+  padding: 4px 8px;
   border: 0;
   background: transparent;
   color: #4f5b56;
@@ -2356,7 +2400,7 @@ body {
 .topbar__actions button,
 .topbar__file-action {
   min-width: 0;
-  padding: 4px 7px;
+  padding: 4px 8px;
   color: #68716e;
   font-size: 11px;
   font-weight: 740;
@@ -2380,9 +2424,7 @@ body {
   background: #ffffff;
   color: #17181c;
   font-weight: 800;
-  box-shadow:
-    inset 3px 0 0 #111111,
-    0 1px 3px rgba(18, 18, 18, 0.06);
+  box-shadow: 0 1px 3px rgba(18, 18, 18, 0.06);
   transform: none;
 }
 

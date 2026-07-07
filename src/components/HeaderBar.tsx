@@ -35,11 +35,9 @@ export function HeaderBar({
           <h1>{getIdentityEditorTitle(identity)}</h1>
         </div>
         <p className="topbar__identity">{identityLabel}</p>
-        {statusMessage ? (
-          <p className="topbar__status" role="status">
-            {statusMessage}
-          </p>
-        ) : null}
+        <p className={`topbar__status ${statusMessage ? "" : "topbar__status--idle"}`} role="status">
+          {statusMessage || "本地草稿"}
+        </p>
       </div>
       <div className="topbar__controls">
         <nav className="topbar__identity-switcher" aria-label="身份切换">
@@ -55,7 +53,7 @@ export function HeaderBar({
         </nav>
         <div className="topbar__actions" role="toolbar" aria-label="文件操作">
           <button type="button" aria-label="推荐模块" onClick={onApplyPreset}>
-            模块
+            推荐
           </button>
           <button type="button" onClick={onReset}>
             清空
