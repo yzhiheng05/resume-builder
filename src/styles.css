@@ -2446,7 +2446,7 @@ body {
   grid-template-columns: minmax(248px, 288px) minmax(620px, 1fr) minmax(300px, 352px);
   gap: 0;
   min-height: calc(100vh - 44px);
-  background: #eef0ee;
+  background: #f4f5f3;
 }
 
 .editor-sidebar,
@@ -2807,7 +2807,7 @@ body {
   flex-direction: column;
   min-height: calc(100vh - 44px);
   padding: 14px 20px 22px;
-  background: #eef0ee;
+  background: #f4f5f3;
 }
 
 .canvas-panel__header {
@@ -2885,8 +2885,8 @@ body {
   width: 100%;
   gap: 3px;
   padding: 4px;
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  border-radius: 8px;
+  border: 1px solid rgba(18, 18, 18, 0.07);
+  border-radius: 7px;
   background: #ffffff;
   box-shadow: none;
 }
@@ -2911,33 +2911,22 @@ body {
 }
 
 .template-card::before {
-  content: "";
-  position: absolute;
-  top: 9px;
-  bottom: 9px;
-  left: 6px;
-  width: 3px;
-  border-radius: 999px;
-  background: #3f5f68;
-  opacity: 0;
-  transition: opacity 120ms ease;
+  content: none;
 }
 
 .template-card:hover:not(.template-card--active) {
-  border-color: rgba(18, 18, 18, 0.1);
-  background: rgba(18, 18, 18, 0.035);
+  border-color: rgba(18, 18, 18, 0.09);
+  background: rgba(18, 18, 18, 0.028);
 }
 
 .template-card--active {
-  border: 1px solid rgba(18, 18, 18, 0.16);
-  background: #ffffff;
-  box-shadow:
-    inset 3px 0 0 #111111,
-    0 2px 8px rgba(18, 18, 18, 0.06);
+  border: 1px solid rgba(18, 18, 18, 0.14);
+  background: rgba(18, 18, 18, 0.035);
+  box-shadow: none;
 }
 
 .template-card--active::before {
-  opacity: 1;
+  content: none;
 }
 
 .template-card__thumbnail {
@@ -3145,8 +3134,8 @@ body {
   padding: 20px 28px 30px;
   border: 0;
   border-radius: 0;
-  background: #eef0ee;
-  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.045);
+  background: #f4f5f3;
+  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.04);
 }
 
 .preview-surface::before,
@@ -3960,14 +3949,10 @@ body {
 .segmented-control {
   gap: 3px;
   padding: 3px;
-  border: 1px solid rgba(17, 18, 23, 0.075);
+  border: 1px solid rgba(17, 18, 23, 0.07);
   border-radius: 7px;
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.54), rgba(244, 246, 241, 0.3)),
-    rgba(255, 254, 251, 0.34);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.52),
-    0 2px 6px rgba(39, 47, 43, 0.025);
+  background: #f7f8f6;
+  box-shadow: none;
 }
 
 .template-chip,
@@ -3986,14 +3971,14 @@ body {
 
 .template-chip:hover,
 .segmented-control button:hover {
-  background: rgba(255, 254, 251, 0.46);
+  background: rgba(17, 18, 23, 0.035);
   color: #17181c;
 }
 
 .template-chip--active,
 .segmented-control button.is-active {
-  border-color: rgba(17, 18, 23, 0.1);
-  background: rgba(255, 254, 251, 0.86);
+  border-color: rgba(17, 18, 23, 0.12);
+  background: #ffffff;
   color: #17181c;
   box-shadow: none;
 }
@@ -4008,7 +3993,7 @@ body {
   padding: 6px 8px;
   border: 1px solid rgba(17, 18, 23, 0.075);
   border-radius: 5px;
-  background: rgba(255, 254, 251, 0.32);
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -4029,9 +4014,7 @@ body {
   height: 18px;
   border: 1px solid rgba(17, 18, 23, 0.12);
   border-radius: 4px;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.58),
-    0 1px 3px rgba(39, 47, 43, 0.045);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.58);
 }
 
 .color-preset-row {
@@ -4057,9 +4040,7 @@ body {
 
 .color-preset-row button.is-active {
   border-color: #111111;
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 255, 255, 0.64),
-    0 0 0 1px #111111;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.68);
 }
 
 .numeric-field-grid {
@@ -4107,7 +4088,7 @@ body {
   padding: 2px 7px;
   border: 1px solid rgba(17, 18, 23, 0.085);
   border-radius: 5px;
-  background: rgba(255, 254, 251, 0.72);
+  background: #ffffff;
   color: #17181c;
   font-size: 11px;
   font-weight: 720;
@@ -4117,9 +4098,7 @@ body {
 .numeric-field input:focus {
   outline: none;
   border-color: rgba(17, 18, 23, 0.38);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.68),
-    0 0 0 2px rgba(17, 18, 23, 0.07);
+  box-shadow: 0 0 0 2px rgba(17, 18, 23, 0.055);
 }
 
 .numeric-field code {
@@ -4211,7 +4190,7 @@ body {
   height: 24px;
   padding: 2px 7px;
   border-color: rgba(17, 18, 23, 0.085);
-  background: rgba(255, 254, 251, 0.72);
+  background: #ffffff;
   font-size: 11px;
 }
 
@@ -4447,8 +4426,8 @@ body {
 
 .inspector-panel label:has(> input:not([type])):focus-within {
   border-color: rgba(17, 18, 23, 0.18);
-  background: linear-gradient(90deg, rgba(17, 18, 23, 0.028), transparent 48%);
-  box-shadow: inset 3px 0 0 rgba(17, 18, 23, 0.28);
+  background: rgba(17, 18, 23, 0.018);
+  box-shadow: none;
 }
 
 .inspector-panel label:has(> input:not([type])) > span:first-child {
@@ -4483,7 +4462,7 @@ body {
 .inspector-panel .inspector-module-row:has(> input:not([type])):focus-within {
   border-color: rgba(17, 18, 23, 0.14);
   background: rgba(17, 18, 23, 0.018);
-  box-shadow: inset 2px 0 0 rgba(17, 18, 23, 0.18);
+  box-shadow: none;
 }
 
 .inspector-panel .inspector-module-row > span:first-child {
@@ -4549,33 +4528,22 @@ body {
 
 .inspector-panel label > textarea {
   min-height: 76px;
-  padding: 10px 11px 10px 13px;
+  padding: 10px 11px;
   border: 1px solid rgba(17, 18, 23, 0.075);
-  border-left: 3px solid rgba(17, 18, 23, 0.12);
   border-radius: 6px;
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.78), rgba(250, 250, 246, 0.5)),
-    rgba(255, 254, 251, 0.56);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.56),
-    0 1px 3px rgba(39, 47, 43, 0.025);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .inspector-panel label > textarea:hover {
   border-color: rgba(17, 18, 23, 0.14);
-  border-left-color: rgba(17, 18, 23, 0.22);
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.9), rgba(250, 250, 246, 0.58)),
-    rgba(255, 254, 251, 0.68);
+  background: #ffffff;
 }
 
 .inspector-panel label > textarea:focus {
   border-color: rgba(17, 18, 23, 0.22);
-  border-left-color: #111111;
   background: #fffefb;
-  box-shadow:
-    0 0 0 2px rgba(17, 18, 23, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.64);
+  box-shadow: 0 0 0 2px rgba(17, 18, 23, 0.055);
 }
 
 .inspector-panel .list-item,
@@ -4671,7 +4639,7 @@ body {
 .inspector-panel .list-item > label:has(> input:not([type])):focus-within {
   border-color: rgba(17, 18, 23, 0.16);
   background: rgba(17, 18, 23, 0.02);
-  box-shadow: inset 2px 0 0 rgba(17, 18, 23, 0.2);
+  box-shadow: none;
 }
 
 .inspector-panel .inspector-entry-header__action:hover {

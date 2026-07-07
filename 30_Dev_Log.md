@@ -4,6 +4,18 @@
 
 ## 2026-07-07
 
+- 任务：继续把工作台控件视觉压向 Magic Resume 的简洁白灰工具面板
+- 操作：将中心工作台和预览垫底色从较深灰调整为更浅白灰；移除模板卡片 active 的黑色左条和投影；把模板 chip、分段控件、颜色选择、数值输入、右侧文本域和输入焦点态统一为细边框、白底、无强阴影样式；同步更新 CSS 回归测试
+- 结果：左侧排版控件、模板选择和右侧属性编辑不再出现明显黑条、玻璃感渐变或强卡片阴影，整体更接近 Magic Resume 的安静工具台；不改模块操作、样式数据、持久化、JSON 导入导出或 PDF 打印逻辑
+- 验证：
+  - `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，61 项测试全部通过
+  - `npm test` 通过，94 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Chrome 浏览器检查：桌面 1440px 与移动 390px 下页面横向溢出均为 0；`.template-chip--active` 和 `.segmented-control button.is-active` 的 `box-shadow` 均为 `none`；工作台 / 预览垫底色为 `rgb(244, 245, 243)`
+
+## 2026-07-07
+
 - 任务：继续弱化左侧纸张样式控件的模板化选中装饰，贴近 Magic Resume 的轻工具控件
 - 操作：将 `.template-chip` 和 `.segmented-control button` 从无边框按钮改为透明细边框按钮；当前态从黑色竖条 + 阴影改为浅底、细边框、无阴影；同步更新 CSS 回归测试
 - 结果：模板、字体密度、模块间距、标题样式等分段控件更安静，不再出现黑色竖条装饰；不改样式设置数据、预览应用、持久化或导出逻辑

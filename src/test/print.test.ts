@@ -137,9 +137,9 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".editor-workspace {\n  grid-template-columns: minmax(248px, 288px) minmax(620px, 1fr) minmax(300px, 352px);");
-    expect(css).toContain("background: #eef0ee;");
+    expect(css).toContain("background: #f4f5f3;");
     expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 44px);");
-    expect(css).toContain("padding: 14px 20px 22px;\n  background: #eef0ee;");
+    expect(css).toContain("padding: 14px 20px 22px;\n  background: #f4f5f3;");
     expect(css).not.toContain("--canvas-bg: #d2d6d4;");
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
   });
@@ -149,7 +149,7 @@ describe("print helpers", () => {
 
     expect(css).toContain(".preview-surface {\n  position: relative;\n  flex: 1;");
     expect(css).toContain("padding: 20px 28px 30px;");
-    expect(css).toContain("background: #eef0ee;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.045);");
+    expect(css).toContain("background: #f4f5f3;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.04);");
     expect(css).toContain(".preview-surface::before,\n.preview-surface::after {\n  content: none;\n  display: none;");
     expect(css).not.toContain("linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px) 0 0 / 36px 36px");
     expect(css).not.toContain("repeating-linear-gradient(90deg, rgba(33, 38, 48, 0.24) 0 1px, transparent 1px 16px)");
@@ -261,14 +261,14 @@ describe("print helpers", () => {
 
     expect(css).toContain(".template-card {\n  position: relative;\n  grid-template-columns: 38px minmax(0, 1fr);");
     expect(css).toContain("background: transparent;");
-    expect(css).toContain(".template-card::before {\n  content: \"\";");
-    expect(css).toContain("background: #3f5f68;\n  opacity: 0;");
-    expect(css).toContain(".template-card--active {\n  border: 1px solid rgba(18, 18, 18, 0.16);");
-    expect(css).toContain("background: #ffffff;\n  box-shadow:\n    inset 3px 0 0 #111111,");
-    expect(css).toContain(".template-card--active::before {\n  opacity: 1;");
+    expect(css).toContain(".template-card::before {\n  content: none;");
+    expect(css).toContain(".template-card--active {\n  border: 1px solid rgba(18, 18, 18, 0.14);");
+    expect(css).toContain("background: rgba(18, 18, 18, 0.035);\n  box-shadow: none;");
+    expect(css).toContain(".template-card--active::before {\n  content: none;");
     expect(css).toContain(".template-card--active .template-card__thumbnail {\n  border-color: rgba(63, 95, 104, 0.32);");
-    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.1);");
-    expect(css).toContain("background: rgba(255, 254, 251, 0.86);\n  color: #17181c;\n  box-shadow: none;");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.12);");
+    expect(css).toContain("background: #ffffff;\n  color: #17181c;\n  box-shadow: none;");
+    expect(css).not.toContain("inset 3px 0 0 #111111");
     expect(css).not.toContain("inset 0 -2px 0 #3f5f68");
   });
 
@@ -374,9 +374,9 @@ describe("print helpers", () => {
     expect(css).toContain("min-height: 30px;\n  padding: 3px 0;");
     expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.06);\n  border-radius: 5px;\n  background: transparent;");
     expect(css).toContain(".numeric-field input {\n  width: 100%;\n  min-width: 0;\n  height: 24px;");
-    expect(css).toContain("border-radius: 5px;\n  background: rgba(255, 254, 251, 0.72);");
+    expect(css).toContain("border-radius: 5px;\n  background: #ffffff;");
     expect(css).toContain(".inspector-panel .numeric-field input {\n  min-height: 0;\n  height: 24px;\n  padding: 2px 7px;");
-    expect(css).toContain("border-color: rgba(17, 18, 23, 0.085);\n  background: rgba(255, 254, 251, 0.72);");
+    expect(css).toContain("border-color: rgba(17, 18, 23, 0.085);\n  background: #ffffff;");
     expect(css).toContain(".numeric-field code {\n  justify-self: start;\n  min-width: 18px;");
     expect(css).toContain(".segmented-field {\n  display: grid;\n  grid-template-columns: minmax(74px, 0.56fr) minmax(0, 1fr);");
     expect(css).toContain("align-items: center;\n  min-height: 34px;");
@@ -397,7 +397,7 @@ describe("print helpers", () => {
     expect(css).toContain("gap: 4px 10px;\n  align-items: center;\n  min-height: 42px;\n  padding: 8px 0;");
     expect(css).toContain("background: transparent;");
     expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.18);");
-    expect(css).toContain("box-shadow: inset 3px 0 0 rgba(17, 18, 23, 0.28);");
+    expect(css).toContain("background: rgba(17, 18, 23, 0.018);\n  box-shadow: none;");
     expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;\n  min-width: 0;");
     expect(css).not.toContain(".inspector-panel label:has(> input:not([type])) > .visibility-toggle");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
@@ -422,14 +422,14 @@ describe("print helpers", () => {
   test("inspector textareas use quiet writing wells instead of lined notebook boxes", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel label > textarea {\n  min-height: 76px;\n  padding: 10px 11px 10px 13px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-left: 3px solid rgba(17, 18, 23, 0.12);");
-    expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.78), rgba(250, 250, 246, 0.5))");
+    expect(css).toContain(".inspector-panel label > textarea {\n  min-height: 76px;\n  padding: 10px 11px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;");
+    expect(css).toContain("background: #ffffff;\n  box-shadow: none;");
     expect(css).toContain(".inspector-panel label > textarea:hover {\n  border-color: rgba(17, 18, 23, 0.14);");
-    expect(css).toContain("border-left-color: rgba(17, 18, 23, 0.22);");
     expect(css).toContain(".inspector-panel label > textarea:focus {\n  border-color: rgba(17, 18, 23, 0.22);");
-    expect(css).toContain("border-left-color: #111111;\n  background: #fffefb;");
-    expect(css).toContain("box-shadow:\n    0 0 0 2px rgba(17, 18, 23, 0.06),");
+    expect(css).toContain("background: #fffefb;\n  box-shadow: 0 0 0 2px rgba(17, 18, 23, 0.055);");
+    expect(css).not.toContain("border-left: 3px solid rgba(17, 18, 23, 0.12);");
+    expect(css).not.toContain("border-left-color: #111111;");
     expect(css).not.toContain("0 37px / 100% 28px");
   });
 
@@ -522,11 +522,12 @@ describe("print helpers", () => {
     expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.09);");
     expect(css).toContain("border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 7px;");
-    expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.54), rgba(244, 246, 241, 0.3))");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 7px;");
+    expect(css).toContain("background: #f7f8f6;\n  box-shadow: none;");
     expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 1px solid transparent;\n  border-radius: 3px;");
-    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.1);");
-    expect(css).toContain("background: rgba(255, 254, 251, 0.86);\n  color: #17181c;\n  box-shadow: none;");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.12);");
+    expect(css).toContain("background: #ffffff;\n  color: #17181c;\n  box-shadow: none;");
+    expect(css).not.toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.54), rgba(244, 246, 241, 0.3))");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.12);");
   });
 
