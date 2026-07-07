@@ -76,8 +76,12 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar h1:hover,\n.topbar h1:focus {\n  border-color: rgba(17, 18, 23, 0.1);");
     expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
     expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
+    expect(css).toContain(".topbar__identity {\n  position: absolute;\n  width: 1px;");
+    expect(css).toContain("clip: rect(0 0 0 0);\n  border: 0;\n  white-space: nowrap;");
     expect(css).toContain(".topbar__status {\n  display: inline-flex;\n  gap: 5px;");
+    expect(css).toContain(".topbar__status::before {\n  content: none;");
     expect(css).toContain(".topbar__status--idle {\n  color: #89918d;");
+    expect(css).toContain(".topbar__status--idle::before {\n  content: none;");
     expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 1px;");
     expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.065);\n  border-radius: 5px;\n  background: #f8f8f7;");
     expect(css).toContain(".topbar__actions {\n  position: relative;\n  margin-left: 2px;");
@@ -91,6 +95,7 @@ describe("print helpers", () => {
     expect(css).not.toContain("background: #d9b16a !important;");
     expect(css).not.toContain("background: #e2bf7e !important;");
     expect(css).not.toMatch(/\\.topbar \\{[\\s\\S]*?background: #101114;/);
+    expect(css).not.toContain("border: 1px solid rgba(17, 18, 23, 0.065);\n  border-radius: 4px;\n  background: rgba(17, 18, 23, 0.018);");
   });
 
   test("top identity switcher uses a clear current marker instead of plain hover fill", () => {
