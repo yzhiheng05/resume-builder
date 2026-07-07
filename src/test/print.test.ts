@@ -462,15 +462,19 @@ describe("print helpers", () => {
     expect(css).not.toContain(".confirm-dialog {\n  width: min(420px, 100%);\n  border: 1px solid rgba(32, 37, 40, 0.12);\n  border-radius: 8px;\n  background: #f8f7f2;");
   });
 
-  test("photo editor uses a compact asset well instead of a dashed upload box", () => {
+  test("photo editor uses a flat property row instead of a card upload well", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".photo-editor {\n  grid-template-columns: 54px minmax(0, 1fr);\n  gap: 10px;");
-    expect(css).toContain("min-height: 74px;\n  padding: 8px;\n  border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;");
-    expect(css).toContain("background: rgba(255, 254, 251, 0.42);");
+    expect(css).toContain("min-height: 70px;\n  padding: 8px 0;\n  border: 0;");
+    expect(css).toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.065);\n  border-radius: 0;");
+    expect(css).toContain("background: transparent;\n  box-shadow: none;");
     expect(css).toContain(".photo-editor__preview {\n  width: 44px;\n  height: 56px;\n  min-height: 56px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.09);\n  border-radius: 4px;\n  background: #ffffff;");
     expect(css).toContain(".photo-editor__body {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
     expect(css).toContain(".photo-editor .secondary-button,\n.photo-editor .ghost-button {\n  min-height: 28px;");
+    expect(css).toContain("background: transparent;\n  box-shadow: none;\n  font-size: 11px;");
+    expect(css).not.toContain("min-height: 74px;\n  padding: 8px;\n  border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;");
     expect(css).not.toContain("border: 1px dashed rgba(167, 194, 255, 0.9);");
   });
 
@@ -503,16 +507,31 @@ describe("print helpers", () => {
     expect(css).not.toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
   });
 
-  test("inspector hint notes use solid note rows instead of dashed blue callouts", () => {
+  test("inspector hint notes use quiet inline rows instead of decorated callouts", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".editor-empty-note {\n  margin: 0;\n  padding: 9px 10px 9px 13px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.26);");
-    expect(css).toContain(".inspector-panel .editor-empty-note {\n  position: relative;\n  color: #68716e;");
-    expect(css).toContain(".inspector-panel .editor-empty-note::before {\n  content: \"\";");
-    expect(css).toContain("width: 2px;\n  border-radius: 999px;\n  background: rgba(63, 95, 104, 0.38);");
+    expect(css).toContain(".inspector-panel .editor-empty-note {\n  position: relative;");
+    expect(css).toContain("padding: 7px 0;\n  border: 0;");
+    expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.055);\n  border-radius: 0;");
+    expect(css).toContain("background: transparent;\n  color: #68716e;");
+    expect(css).toContain(".inspector-panel .editor-empty-note::before {\n  content: none;");
+    expect(css).not.toContain("width: 2px;\n  border-radius: 999px;\n  background: rgba(63, 95, 104, 0.38);");
     expect(css).not.toContain("border: 1px dashed rgba(191, 219, 254, 0.82);");
     expect(css).not.toContain("linear-gradient(180deg, rgba(247, 250, 255, 0.96), rgba(239, 246, 255, 0.74));");
+  });
+
+  test("inspector context label is plain text instead of a capsule badge", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel .editor-sidebar__header h2 {\n  font-size: 17px;");
+    expect(css).toContain(".inspector-context {\n  min-width: 0;\n  max-width: 156px;");
+    expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;");
+    expect(css).toContain("background: transparent;\n  color: #858d89;");
+    expect(css).toContain("font-size: 11px;\n  font-weight: 720;");
+    expect(css).not.toContain(".inspector-context {\n  min-width: 0;\n  max-width: 156px;\n  overflow: hidden;\n  padding: 3px 8px;");
+    expect(css).not.toContain("border: 1px solid rgba(63, 95, 104, 0.14);\n  border-radius: 999px;\n  background: rgba(255, 254, 251, 0.42);");
   });
 
   test("secondary controls use compact rails instead of bare text and underline buttons", () => {

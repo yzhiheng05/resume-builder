@@ -3722,7 +3722,7 @@ body {
 }
 
 .inspector-panel .editor-sidebar__header h2 {
-  font-size: 18px;
+  font-size: 17px;
   letter-spacing: 0;
 }
 
@@ -3730,13 +3730,13 @@ body {
   min-width: 0;
   max-width: 156px;
   overflow: hidden;
-  padding: 3px 8px;
-  border: 1px solid rgba(63, 95, 104, 0.14);
-  border-radius: 999px;
-  background: rgba(255, 254, 251, 0.42);
-  color: #5b6864;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #858d89;
   font-size: 11px;
-  font-weight: 760;
+  font-weight: 720;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3812,18 +3812,16 @@ body {
 
 .inspector-panel .editor-empty-note {
   position: relative;
+  padding: 7px 0;
+  border: 0;
+  border-top: 1px solid rgba(17, 18, 23, 0.055);
+  border-radius: 0;
+  background: transparent;
   color: #68716e;
 }
 
 .inspector-panel .editor-empty-note::before {
-  content: "";
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  left: 6px;
-  width: 2px;
-  border-radius: 999px;
-  background: rgba(63, 95, 104, 0.38);
+  content: none;
 }
 
 .inspector-empty {
@@ -4250,21 +4248,22 @@ body {
   grid-template-columns: 54px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  min-height: 74px;
-  padding: 8px;
-  border: 1px solid rgba(17, 18, 23, 0.075);
-  border-radius: 6px;
-  background: rgba(255, 254, 251, 0.42);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  min-height: 70px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.065);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .photo-editor__preview {
   width: 44px;
   height: 56px;
   min-height: 56px;
-  border: 1px solid rgba(17, 18, 23, 0.1);
+  border: 1px solid rgba(17, 18, 23, 0.09);
   border-radius: 4px;
-  background: #fffefb;
+  background: #ffffff;
   color: #8a9692;
   font-size: 11px;
 }
@@ -4285,9 +4284,11 @@ body {
 .photo-editor .secondary-button,
 .photo-editor .ghost-button {
   min-height: 28px;
-  padding: 0 8px;
+  padding: 0 7px;
   border-radius: 4px;
-  font-size: 12px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 11px;
 }
 
 .photo-editor__upload input {
@@ -4311,7 +4312,7 @@ body {
 
 .inspector-panel .personal-field-row:focus-within {
   border-bottom-color: rgba(17, 18, 23, 0.16);
-  background: linear-gradient(90deg, rgba(17, 18, 23, 0.022), transparent 52%);
+  background: rgba(17, 18, 23, 0.018);
 }
 
 .personal-field-row__label {
