@@ -3974,7 +3974,7 @@ body {
 .segmented-control button {
   min-height: 24px;
   padding: 0 7px;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 3px;
   background: transparent;
   color: #525a61;
@@ -3992,11 +3992,10 @@ body {
 
 .template-chip--active,
 .segmented-control button.is-active {
-  background: rgba(255, 254, 251, 0.76);
+  border-color: rgba(17, 18, 23, 0.1);
+  background: rgba(255, 254, 251, 0.86);
   color: #17181c;
-  box-shadow:
-    inset 3px 0 0 #111111,
-    0 3px 8px rgba(39, 47, 43, 0.04);
+  box-shadow: none;
 }
 
 .color-field {

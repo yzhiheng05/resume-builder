@@ -267,8 +267,8 @@ describe("print helpers", () => {
     expect(css).toContain("background: #ffffff;\n  box-shadow:\n    inset 3px 0 0 #111111,");
     expect(css).toContain(".template-card--active::before {\n  opacity: 1;");
     expect(css).toContain(".template-card--active .template-card__thumbnail {\n  border-color: rgba(63, 95, 104, 0.32);");
-    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.76);");
-    expect(css).toContain("color: #17181c;\n  box-shadow:\n    inset 3px 0 0 #111111,");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.1);");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.86);\n  color: #17181c;\n  box-shadow: none;");
     expect(css).not.toContain("inset 0 -2px 0 #3f5f68");
   });
 
@@ -524,9 +524,9 @@ describe("print helpers", () => {
     expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 7px;");
     expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.54), rgba(244, 246, 241, 0.3))");
-    expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 0;\n  border-radius: 3px;");
-    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  background: rgba(255, 254, 251, 0.76);");
-    expect(css).toContain("color: #17181c;\n  box-shadow:\n    inset 3px 0 0 #111111,");
+    expect(css).toContain(".template-chip,\n.segmented-control button {\n  min-height: 24px;\n  padding: 0 7px;\n  border: 1px solid transparent;\n  border-radius: 3px;");
+    expect(css).toContain(".template-chip--active,\n.segmented-control button.is-active {\n  border-color: rgba(17, 18, 23, 0.1);");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.86);\n  color: #17181c;\n  box-shadow: none;");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.12);");
   });
 
