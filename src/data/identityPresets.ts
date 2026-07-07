@@ -108,9 +108,9 @@ const identityDefaultTemplates: Record<IdentityPreset, TemplateId> = {
 };
 
 const identityEditorTitles: Record<IdentityPreset, string> = {
-  student: "学生简历",
-  professional: "职场简历",
-  general: "通用简历"
+  student: "新建简历",
+  professional: "新建简历",
+  general: "新建简历"
 };
 
 const identitySwitchLabels: Record<IdentityPreset, string> = {

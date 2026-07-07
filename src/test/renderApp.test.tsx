@@ -117,7 +117,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: /学生/ })).toBeInTheDocument();
   });
 
-  test("initializes student identity and shows student-specific titles", () => {
+  test("initializes student identity and shows file-style title", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: /学生/ }));
@@ -125,7 +125,7 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "模块" })).toBeInTheDocument();
     expect(screen.getByLabelText("纸面状态")).toHaveTextContent("校招简历");
     expect(screen.getByRole("heading", { name: "属性" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "学生简历" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
     expect(getTopbarIdentity()).toHaveTextContent("学生");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByRole("heading", { name: "当前纸面" })).toBeInTheDocument();
@@ -181,19 +181,19 @@ describe("App", () => {
       target: { files: [file] }
     });
 
-    await screen.findByText("学生简历");
+    await screen.findByText("新建简历");
     expect(getTopbarIdentity()).toHaveTextContent("学生");
-    expect(screen.getByRole("heading", { name: "学生简历" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
   });
 
-  test("uses stored identity titles when entering editor directly", () => {
+  test("uses stored identity with a file-style title when entering editor directly", () => {
     seedStoredResume("professional");
     render(<App />);
 
     expect(getTopbarIdentity()).toHaveTextContent("职场人");
-    expect(screen.getByRole("heading", { name: "职场简历" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(screen.getByLabelText("模块标题")).toHaveValue("个人信息");
     expect(document.querySelector(".inspector-context")).toHaveTextContent("个人信息");
@@ -222,15 +222,15 @@ describe("App", () => {
     expect(within(getMainPreviewSurface()).queryByText("137 0000 8800")).not.toBeInTheDocument();
   });
 
-  test("switches identity safely and updates identity-aware titles", () => {
+  test("switches identity safely without changing the file-style title", () => {
     seedStoredResume("general");
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "通用简历" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
 
     fireEvent.click(screen.getByRole("button", { name: "职场" }));
-    expect(screen.getByRole("heading", { name: "职场简历" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(getTopbarStatus()).toHaveTextContent("身份已切换，当前内容不会自动覆盖。");
 
