@@ -19,7 +19,8 @@ describe("print helpers", () => {
     expect(printCss).toContain(".resume-paper--template-sidebar .resume-section--active::after");
     expect(printCss).toContain(".resume-print-mode .preview-surface::before");
     expect(printCss).toContain(".preview-surface::before");
-    expect(printCss).toContain(".preview-surface > .resume-paper::after {\n  content: \"第 1 页结束\";");
+    expect(printCss).toContain(".preview-surface > .resume-paper::after {\n  content: \"\";");
+    expect(printCss).toContain("border-top: 1px dashed rgba(17, 18, 23, 0.095);");
     expect(printCss).toContain(".resume-print-mode .resume-paper::after {\n  content: none !important;");
     expect(printCss).toContain("  .resume-paper::after {\n    content: none !important;");
     expect(printCss).toContain("margin: 0;");
@@ -237,6 +238,8 @@ describe("print helpers", () => {
   test("resume paper body uses subdued metadata and neutral bullet marks", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
+    expect(css).toContain(".resume-paper {\n  position: relative;\n  border: 1px solid rgba(18, 18, 18, 0.075);\n  border-radius: 1px;");
+    expect(css).toContain("box-shadow: 0 2px 8px rgba(18, 18, 18, 0.055);");
     expect(css).toContain(".resume-paper .resume-section {\n  margin-bottom: 14px;\n  padding: 4px 0 10px;");
     expect(css).toContain("border: 0;\n  border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".resume-paper .resume-section__title {\n  font-size: calc(var(--resume-font-size) - 0.5px);\n  font-weight: 760;");
@@ -570,8 +573,8 @@ describe("print helpers", () => {
   test("selected resume sections use a visible but restrained paper highlight", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(17, 18, 23, 0.2);");
-    expect(css).toContain("outline-offset: 2px;\n  background: rgba(17, 18, 23, 0.01);\n  box-shadow: none;");
+    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.42);");
+    expect(css).toContain("outline-offset: 3px;\n  background: rgba(63, 95, 104, 0.018);\n  box-shadow: none;");
     expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: none;");
     expect(css).toContain("top: -4px;\n  right: -4px;");
     expect(css).toContain("width: 7px;\n  height: 7px;");
