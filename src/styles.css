@@ -4326,18 +4326,18 @@ body {
   grid-template-columns: minmax(68px, 0.42fr) minmax(0, 1fr) auto;
   gap: 8px;
   align-items: center;
-  min-height: 38px;
-  padding: 5px 0;
+  min-height: 36px;
+  padding: 4px 0;
   border: 0;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.065);
+  border-bottom: 1px solid rgba(17, 18, 23, 0.052);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
 .inspector-panel .personal-field-row:focus-within {
-  border-bottom-color: rgba(17, 18, 23, 0.16);
-  background: rgba(17, 18, 23, 0.018);
+  border-bottom-color: rgba(17, 18, 23, 0.14);
+  background: rgba(17, 18, 23, 0.012);
 }
 
 .personal-field-row__label {
@@ -4360,11 +4360,11 @@ body {
   padding: 2px 7px;
   border: 1px solid transparent;
   border-radius: 5px;
-  background: rgba(255, 254, 251, 0.38);
+  background: transparent;
   box-shadow: none;
-  color: #17181c;
+  color: #202428;
   font-size: 13px;
-  font-weight: 730;
+  font-weight: 680;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -4437,22 +4437,22 @@ body {
   grid-template-columns: minmax(72px, 0.6fr) minmax(0, 1fr);
   gap: 4px 10px;
   align-items: center;
-  min-height: 42px;
-  padding: 8px 0;
+  min-height: 38px;
+  padding: 6px 0;
   border: 0;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.075);
+  border-bottom: 1px solid rgba(17, 18, 23, 0.058);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   color: #5a625f;
   font-size: 11px;
-  font-weight: 780;
+  font-weight: 740;
   letter-spacing: 0;
 }
 
 .inspector-panel label:has(> input:not([type])):focus-within {
-  border-color: rgba(17, 18, 23, 0.18);
-  background: rgba(17, 18, 23, 0.018);
+  border-color: rgba(17, 18, 23, 0.14);
+  background: rgba(17, 18, 23, 0.012);
   box-shadow: none;
 }
 
@@ -4540,8 +4540,9 @@ body {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  color: #17181c;
+  color: #202428;
   font-size: 14px;
+  font-weight: 680;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -4575,10 +4576,10 @@ body {
 .inspector-panel .list-item,
 .inspector-panel .inline-row {
   position: relative;
-  padding: 9px 0 10px;
+  padding: 8px 0 9px;
   overflow: hidden;
   border: 0;
-  border-top: 1px solid rgba(17, 18, 23, 0.08);
+  border-top: 1px solid rgba(17, 18, 23, 0.064);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -4619,9 +4620,9 @@ body {
   justify-content: space-between;
   min-height: 22px;
   padding: 0 0 2px;
-  color: #7a827d;
+  color: #858d89;
   font-size: 10px;
-  font-weight: 820;
+  font-weight: 760;
   line-height: 1;
 }
 

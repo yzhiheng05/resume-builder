@@ -280,7 +280,7 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".template-card {\n  position: relative;\n  grid-template-columns: 38px minmax(0, 1fr);");
-    expect(css).toContain("background: transparent;");
+    expect(css).toContain("background: rgba(255, 254, 251, 0.38);");
     expect(css).toContain(".template-card::before {\n  content: none;");
     expect(css).toContain(".template-card--active {\n  border: 1px solid rgba(18, 18, 18, 0.14);");
     expect(css).toContain("background: rgba(18, 18, 18, 0.035);\n  box-shadow: none;");
@@ -434,10 +434,10 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-panel .inspector-module-row--switch {\n  grid-template-columns: minmax(72px, 0.55fr) auto;");
     expect(css).toContain(".inspector-panel .inspector-module-row--switch .visibility-toggle {\n  justify-self: end;");
     expect(css).toContain(".inspector-panel label:has(> input:not([type])) {\n  display: grid;\n  grid-template-columns: minmax(72px, 0.6fr) minmax(0, 1fr);");
-    expect(css).toContain("gap: 4px 10px;\n  align-items: center;\n  min-height: 42px;\n  padding: 8px 0;");
+    expect(css).toContain("gap: 4px 10px;\n  align-items: center;\n  min-height: 38px;\n  padding: 6px 0;");
     expect(css).toContain("background: transparent;");
-    expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.18);");
-    expect(css).toContain("background: rgba(17, 18, 23, 0.018);\n  box-shadow: none;");
+    expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.14);");
+    expect(css).toContain("background: rgba(17, 18, 23, 0.012);\n  box-shadow: none;");
     expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;\n  min-width: 0;");
     expect(css).not.toContain(".inspector-panel label:has(> input:not([type])) > .visibility-toggle");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
@@ -451,9 +451,9 @@ describe("print helpers", () => {
     expect(css).toContain(".personal-inspector {\n  gap: 8px;\n  padding-top: 2px;");
     expect(css).toContain(".inspector-panel .personal-field-row {\n  position: relative;\n  display: grid;");
     expect(css).toContain("grid-template-columns: minmax(68px, 0.42fr) minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 38px;\n  padding: 5px 0;");
+    expect(css).toContain("min-height: 36px;\n  padding: 4px 0;");
     expect(css).toContain(".personal-field-row input:not([type]) {\n  width: 100%;\n  min-height: 28px;");
-    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.38);");
+    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 5px;\n  background: transparent;");
     expect(css).toContain(".personal-field-row .visibility-toggle--icon {\n  justify-self: end;\n  width: 31px;");
     expect(css).toContain(".personal-field-row .visibility-toggle--icon > span {\n  position: absolute;\n  width: 1px;");
     expect(css).toContain(".personal-field-row .visibility-toggle--icon input {\n  width: 31px;\n  height: 18px;");
@@ -476,7 +476,7 @@ describe("print helpers", () => {
   test("inspector repeatable entries use flat headers instead of card-side actions", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 9px 0 10px;");
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 8px 0 9px;");
     expect(css).toContain(".inspector-panel .inline-row {\n  display: grid;\n  gap: 6px;\n  align-items: stretch;");
     expect(css).toContain(".inspector-entry-header {\n  display: flex;\n  gap: 8px;");
     expect(css).toContain("justify-content: space-between;\n  min-height: 22px;\n  padding: 0 0 2px;");
@@ -522,8 +522,8 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".inspector-form {\n  gap: 10px;\n  counter-reset: inspector-entry;");
-    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 9px 0 10px;");
-    expect(css).toContain("border: 0;\n  border-top: 1px solid rgba(17, 18, 23, 0.08);");
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 8px 0 9px;");
+    expect(css).toContain("border: 0;\n  border-top: 1px solid rgba(17, 18, 23, 0.064);");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain("counter-increment: inspector-entry;");
     expect(css).toContain(".inspector-panel .list-item::before,\n.inspector-panel .inline-row::before {\n  content: none;");
