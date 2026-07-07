@@ -274,13 +274,11 @@ describe("print helpers", () => {
     expect(css).toContain("align-self: flex-start;");
     expect(css).toContain("padding: 4px 9px;\n  border: 1px solid rgba(18, 18, 18, 0.06);\n  border-radius: 999px;");
     expect(css).toContain(".preview-panel {\n  flex: 1;\n  gap: 0;");
-    expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 34px;\n  top: 16px;");
-    expect(css).toContain("right: 34px;\n  top: 16px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.045);\n  border-radius: 4px;");
-    expect(css).toContain("0 2px 6px rgba(39, 47, 43, 0.035);");
-    expect(css).toContain("font-size: 10px;\n  font-weight: 760;");
-    expect(css).toContain(".canvas-statusbar span:first-child {\n  border-left: 0;\n  background: rgba(17, 18, 23, 0.06);");
-    expect(css).not.toContain("background: rgba(255, 254, 251, 0.42);\n  box-shadow: none;");
+    expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  width: 1px;");
+    expect(css).toContain("clip: rect(0 0 0 0);\n  padding: 0;\n  border: 0;");
+    expect(css).toContain(".canvas-statusbar span {\n  display: inline;");
+    expect(css).not.toContain("right: 34px;\n  top: 16px;");
+    expect(css).not.toContain("background: rgba(255, 255, 255, 0.82);");
   });
 
   test("module library uses grouped material wells instead of loose button stacks", () => {
@@ -341,6 +339,8 @@ describe("print helpers", () => {
     expect(css).toContain(".editor-sidebar__header h2 {\n  color: #17181c;\n  font-size: 18px;");
     expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
     expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
+    expect(css).toContain(".editor-sidebar,\n.inspector-panel {\n  top: 48px;\n  height: calc(100vh - 48px);");
+    expect(css).toContain(".editor-sidebar,\n  .inspector-panel {\n    position: static;\n    height: auto;");
   });
 
   test("paper style controls sit in the left rail as a quiet tool tray", () => {
@@ -380,8 +380,24 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.18);");
     expect(css).toContain("box-shadow: inset 3px 0 0 rgba(17, 18, 23, 0.28);");
     expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;\n  min-width: 0;");
-    expect(css).toContain(".inspector-panel label:has(> input:not([type])) > .visibility-toggle {\n  grid-column: 2;\n  justify-self: end;");
+    expect(css).not.toContain(".inspector-panel label:has(> input:not([type])) > .visibility-toggle");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
+  });
+
+  test("personal inspector uses compact editable rows and icon switches", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-subsection-title {\n  display: flex;\n  gap: 8px;");
+    expect(css).toContain(".inspector-subsection-title::after {\n  content: \"\";\n  flex: 1;");
+    expect(css).toContain(".personal-inspector {\n  gap: 8px;\n  padding-top: 2px;");
+    expect(css).toContain(".inspector-panel .personal-field-row {\n  position: relative;\n  display: grid;");
+    expect(css).toContain("grid-template-columns: minmax(68px, 0.42fr) minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 38px;\n  padding: 5px 0;");
+    expect(css).toContain(".personal-field-row input:not([type]) {\n  width: 100%;\n  min-height: 28px;");
+    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 5px;\n  background: rgba(255, 254, 251, 0.38);");
+    expect(css).toContain(".personal-field-row .visibility-toggle--icon {\n  justify-self: end;\n  width: 31px;");
+    expect(css).toContain(".personal-field-row .visibility-toggle--icon > span {\n  position: absolute;\n  width: 1px;");
+    expect(css).toContain(".personal-field-row .visibility-toggle--icon input {\n  width: 31px;\n  height: 18px;");
   });
 
   test("inspector textareas use quiet writing wells instead of lined notebook boxes", () => {
@@ -396,16 +412,6 @@ describe("print helpers", () => {
     expect(css).toContain("border-left-color: #111111;\n  background: #fffefb;");
     expect(css).toContain("box-shadow:\n    0 0 0 2px rgba(17, 18, 23, 0.06),");
     expect(css).not.toContain("0 37px / 100% 28px");
-  });
-
-  test("disabled inspector actions read as quiet unavailable commands instead of broken buttons", () => {
-    const css = readFileSync("src/styles.css", "utf8");
-
-    expect(css).toContain(".inspector-actions .secondary-button:disabled,\n.inspector-actions .ghost-button:disabled {\n  border-color: transparent;");
-    expect(css).toContain("background: rgba(17, 18, 23, 0.025);");
-    expect(css).toContain("color: #9aa19d;\n  opacity: 1;");
-    expect(css).toContain("box-shadow: none;\n  cursor: default;");
-    expect(css).not.toContain(".inspector-actions .secondary-button:disabled,\n.inspector-actions .ghost-button:disabled {\n  color: #a4aaa7;\n  cursor: default;");
   });
 
   test("delete confirmation dialog uses app-native danger material instead of a plain alert card", () => {

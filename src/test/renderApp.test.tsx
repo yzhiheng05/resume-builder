@@ -195,6 +195,29 @@ describe("App", () => {
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(screen.getByLabelText("模块标题")).toHaveValue("个人信息");
     expect(document.querySelector(".inspector-context")).toHaveTextContent("个人信息");
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
+    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByText("资料")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByText("基础字段")).toBeInTheDocument();
+    expect(within(inspectorPanel).queryByRole("button", { name: "复制模块" })).not.toBeInTheDocument();
+    expect(within(inspectorPanel).queryByRole("button", { name: "删除模块" })).not.toBeInTheDocument();
+  });
+
+  test("personal inspector uses compact field rows with icon visibility switches", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
+    const phoneSwitch = within(inspectorPanel).getByRole("checkbox", { name: "手机显示到简历" });
+
+    expect(inspectorPanel.querySelectorAll(".personal-field-row").length).toBeGreaterThanOrEqual(7);
+    expect(within(inspectorPanel).getByLabelText("姓名")).toHaveValue("陈知远");
+    expect(phoneSwitch.closest(".visibility-toggle--icon")).not.toHaveTextContent("显示到简历");
+    expect(within(getMainPreviewSurface()).getByText("137 0000 8800")).toBeInTheDocument();
+
+    fireEvent.click(phoneSwitch);
+
+    expect(within(getMainPreviewSurface()).queryByText("137 0000 8800")).not.toBeInTheDocument();
   });
 
   test("switches identity safely and updates identity-aware titles", () => {
@@ -249,8 +272,25 @@ describe("App", () => {
     fireEvent.click(screen.getAllByText("职业摘要")[0]);
     const titleInput = screen.getByLabelText("模块标题");
     fireEvent.change(titleInput, { target: { value: "个人优势" } });
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
 
     expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
+    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByText("内容")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "复制模块" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "删除模块" })).toBeInTheDocument();
+  });
+
+  test("timeline inspector uses the same section rhythm as personal modules", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    fireEvent.click(screen.getAllByText("项目经历")[0]);
+
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
+    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByText("条目")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByLabelText("标题")).toBeInTheDocument();
   });
 
   test("confirms module deletion with an in-app dialog instead of browser confirm", () => {

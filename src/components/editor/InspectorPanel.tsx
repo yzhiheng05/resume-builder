@@ -44,7 +44,10 @@ function PersonalInspector({
   ];
 
   return (
-    <div className="inspector-form">
+    <div className="inspector-form personal-inspector">
+      <div className="inspector-subsection-title">
+        <span>资料</span>
+      </div>
       <div className="photo-editor">
         <div className="photo-editor__preview">
           {module.data.photoDataUrl ? <img src={module.data.photoDataUrl} alt="个人照片预览" /> : <span>照片</span>}
@@ -75,22 +78,28 @@ function PersonalInspector({
         </div>
       </div>
 
+      <div className="inspector-subsection-title">
+        <span>基础字段</span>
+      </div>
       {fields.map((field) => (
-        <label key={field.key}>
-          <span>{field.label}</span>
-          <input
-            aria-label={field.label}
-            value={personalData[field.key] as string}
-            onChange={(event) => onUpdateField(field.key, event.target.value)}
-          />
+        <label key={field.key} className="personal-field-row">
+          <span className="personal-field-row__label">{field.label}</span>
+          <span className="personal-field-row__control">
+            <input
+              aria-label={field.label}
+              value={personalData[field.key] as string}
+              onChange={(event) => onUpdateField(field.key, event.target.value)}
+            />
+          </span>
           {field.visibilityKey ? (
-            <span className="visibility-toggle">
+            <span className="visibility-toggle visibility-toggle--icon">
               <input
+                aria-label={`${field.label}显示到简历`}
                 type="checkbox"
                 checked={personalData.personalVisibility[field.visibilityKey]}
                 onChange={() => onToggleField(field.visibilityKey as PersonalVisibleField)}
               />
-              <span>显示到简历</span>
+              <span aria-hidden="true">显示</span>
             </span>
           ) : null}
         </label>
@@ -105,15 +114,20 @@ function TextInspector({ module, onUpdateText }: { module: ResumeModuleInstance;
   }
 
   return (
-    <label>
-      正文
-      <textarea
-        aria-label={`${module.title}内容`}
-        rows={5}
-        value={module.data.value}
-        onChange={(event) => onUpdateText(event.target.value)}
-      />
-    </label>
+    <>
+      <div className="inspector-subsection-title">
+        <span>内容</span>
+      </div>
+      <label>
+        正文
+        <textarea
+          aria-label={`${module.title}内容`}
+          rows={5}
+          value={module.data.value}
+          onChange={(event) => onUpdateText(event.target.value)}
+        />
+      </label>
+    </>
   );
 }
 
@@ -134,6 +148,9 @@ function TimelineInspector({
 
   return (
     <div className="inspector-form">
+      <div className="inspector-subsection-title">
+        <span>条目</span>
+      </div>
       {module.data.entries.map((entry, index) => (
         <article key={entry.id} className="list-item">
           <label>
@@ -185,6 +202,9 @@ function ListInspector({
 
   return (
     <div className="inspector-form">
+      <div className="inspector-subsection-title">
+        <span>条目</span>
+      </div>
       {module.data.items.map((item, index) => (
         <div key={`${module.id}-${index}`} className="inline-row">
           <label className="inline-row__field">
@@ -241,6 +261,10 @@ export function InspectorPanel({
   onAddListItem: (moduleId: string) => void;
   onRemoveListItem: (moduleId: string, index: number) => void;
 }) {
+  const canDuplicateActiveModule = activeModule ? canAddMultipleModules(activeModule.kind) : false;
+  const canDeleteActiveModule = Boolean(activeModule && activeModule.kind !== "personal");
+  const shouldShowModuleActions = canDuplicateActiveModule || canDeleteActiveModule;
+
   return (
     <aside className="inspector-panel" aria-label="属性面板">
       <div className="editor-sidebar__header">
@@ -250,24 +274,23 @@ export function InspectorPanel({
 
       {activeModule ? (
         <div className="inspector-section">
-          <div className="inspector-actions">
-            <button
-              type="button"
-              className="secondary-button"
-              disabled={!canAddMultipleModules(activeModule.kind)}
-              onClick={() => onDuplicateModule(activeModule.id)}
-            >
-              复制模块
-            </button>
-            <button
-              type="button"
-              className="ghost-button"
-              disabled={activeModule.kind === "personal"}
-              onClick={() => onDeleteModule(activeModule.id)}
-            >
-              删除模块
-            </button>
+          <div className="inspector-subsection-title">
+            <span>模块</span>
           </div>
+          {shouldShowModuleActions ? (
+            <div className="inspector-actions">
+              {canDuplicateActiveModule ? (
+                <button type="button" className="secondary-button" onClick={() => onDuplicateModule(activeModule.id)}>
+                  复制模块
+                </button>
+              ) : null}
+              {canDeleteActiveModule ? (
+                <button type="button" className="ghost-button" onClick={() => onDeleteModule(activeModule.id)}>
+                  删除模块
+                </button>
+              ) : null}
+            </div>
+          ) : null}
           <label>
             模块标题
             <input
