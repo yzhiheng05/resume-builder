@@ -153,6 +153,17 @@ function TimelineInspector({
       </div>
       {module.data.entries.map((entry, index) => (
         <article key={entry.id} className="list-item">
+          <div className="inspector-entry-header">
+            <span>条目 {index + 1}</span>
+            <button
+              type="button"
+              className="ghost-button inspector-entry-header__action"
+              aria-label={`删除条目 ${index + 1}`}
+              onClick={() => onRemoveTimelineEntry(index)}
+            >
+              删除
+            </button>
+          </div>
           <label>
             标题
             <input value={entry.title} onChange={(event) => onUpdateTimelineEntry(index, { title: event.target.value })} />
@@ -173,9 +184,6 @@ function TimelineInspector({
             地点
             <input value={entry.location} onChange={(event) => onUpdateTimelineEntry(index, { location: event.target.value })} />
           </label>
-          <button type="button" className="ghost-button" onClick={() => onRemoveTimelineEntry(index)}>
-            删除条目
-          </button>
         </article>
       ))}
       <button type="button" className="secondary-button" onClick={onAddTimelineEntry}>
@@ -206,7 +214,18 @@ function ListInspector({
         <span>条目</span>
       </div>
       {module.data.items.map((item, index) => (
-        <div key={`${module.id}-${index}`} className="inline-row">
+        <div key={`${module.id}-${index}`} className="inline-row inspector-list-row">
+          <div className="inspector-entry-header">
+            <span>条目 {index + 1}</span>
+            <button
+              type="button"
+              className="ghost-button inspector-entry-header__action"
+              aria-label={`删除${module.title} ${index + 1}`}
+              onClick={() => onRemoveListItem(index)}
+            >
+              删除
+            </button>
+          </div>
           <label className="inline-row__field">
             {module.title} {index + 1}
             <textarea
@@ -216,9 +235,6 @@ function ListInspector({
               onChange={(event) => onUpdateListItem(index, event.target.value)}
             />
           </label>
-          <button type="button" className="ghost-button" onClick={() => onRemoveListItem(index)}>
-            删除
-          </button>
         </div>
       ))}
       <button type="button" className="secondary-button" onClick={onAddListItem}>

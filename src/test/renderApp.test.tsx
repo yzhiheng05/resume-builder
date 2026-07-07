@@ -292,7 +292,21 @@ describe("App", () => {
     const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
     expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
     expect(within(inspectorPanel).getByText("条目")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByText("条目 1")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByRole("button", { name: "删除条目 1" })).toBeInTheDocument();
     expect(within(inspectorPanel).getByLabelText("标题")).toBeInTheDocument();
+  });
+
+  test("list inspector uses compact entry headers instead of side delete buttons", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    fireEvent.click(screen.getAllByText("技能")[0]);
+
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
+    expect(within(inspectorPanel).getByText("条目 1")).toBeInTheDocument();
+    expect(within(inspectorPanel).getByRole("button", { name: "删除技能 1" })).toBeInTheDocument();
+    expect(inspectorPanel.querySelector(".inspector-list-row")).toBeInTheDocument();
   });
 
   test("confirms module deletion with an in-app dialog instead of browser confirm", () => {

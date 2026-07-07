@@ -4536,7 +4536,7 @@ body {
 .inspector-panel .list-item,
 .inspector-panel .inline-row {
   position: relative;
-  padding: 8px 0 0;
+  padding: 9px 0 10px;
   overflow: hidden;
   border: 0;
   border-top: 1px solid rgba(17, 18, 23, 0.08);
@@ -4564,25 +4564,46 @@ body {
 
 .inspector-panel .list-item {
   display: grid;
-  gap: 6px;
+  gap: 5px;
 }
 
 .inspector-panel .inline-row {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: end;
+  display: grid;
+  gap: 6px;
+  align-items: stretch;
 }
 
-.inspector-panel .list-item .ghost-button,
-.inspector-panel .inline-row .ghost-button {
+.inspector-entry-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 22px;
+  padding: 0 0 2px;
+  color: #7a827d;
+  font-size: 10px;
+  font-weight: 820;
+  line-height: 1;
+}
+
+.inspector-entry-header span {
+  min-width: 0;
+  overflow: hidden;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inspector-panel .inspector-entry-header__action {
   justify-self: end;
-  min-height: 24px;
-  padding: 0 7px;
+  min-height: 22px;
+  padding: 0 6px;
   border-color: transparent;
   border-radius: 4px;
   background: transparent;
   color: #7b6b66;
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 760;
 }
 
 .inspector-panel .list-item > label,
@@ -4596,6 +4617,11 @@ body {
   background: transparent;
 }
 
+.inspector-panel .inspector-list-row .inline-row__field {
+  padding: 0;
+  border: 0;
+}
+
 .inspector-panel .list-item > label:focus-within,
 .inspector-panel .list-item > label:has(> input:not([type])):focus-within {
   border-color: rgba(17, 18, 23, 0.16);
@@ -4603,8 +4629,7 @@ body {
   box-shadow: inset 2px 0 0 rgba(17, 18, 23, 0.2);
 }
 
-.inspector-panel .list-item .ghost-button:hover,
-.inspector-panel .inline-row .ghost-button:hover {
+.inspector-panel .inspector-entry-header__action:hover {
   border-color: rgba(132, 68, 62, 0.22);
   background: rgba(132, 68, 62, 0.06);
   color: #6f3833;

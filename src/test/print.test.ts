@@ -424,6 +424,18 @@ describe("print helpers", () => {
     expect(css).not.toContain("0 37px / 100% 28px");
   });
 
+  test("inspector repeatable entries use flat headers instead of card-side actions", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 9px 0 10px;");
+    expect(css).toContain(".inspector-panel .inline-row {\n  display: grid;\n  gap: 6px;\n  align-items: stretch;");
+    expect(css).toContain(".inspector-entry-header {\n  display: flex;\n  gap: 8px;");
+    expect(css).toContain("justify-content: space-between;\n  min-height: 22px;\n  padding: 0 0 2px;");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 22px;");
+    expect(css).toContain(".inspector-panel .inspector-list-row .inline-row__field {\n  padding: 0;\n  border: 0;");
+    expect(css).not.toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button");
+  });
+
   test("delete confirmation dialog uses app-native danger material instead of a plain alert card", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
@@ -457,7 +469,7 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".inspector-form {\n  gap: 10px;\n  counter-reset: inspector-entry;");
-    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 8px 0 0;");
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 9px 0 10px;");
     expect(css).toContain("border: 0;\n  border-top: 1px solid rgba(17, 18, 23, 0.08);");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain("counter-increment: inspector-entry;");
@@ -468,10 +480,12 @@ describe("print helpers", () => {
     expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.06);");
     expect(css).toContain(".inspector-panel .list-item > label:focus-within,\n.inspector-panel .list-item > label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.16);");
     expect(css).toContain("border-color: rgba(17, 18, 23, 0.16);\n  background: rgba(17, 18, 23, 0.02);");
-    expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 24px;");
-    expect(css).toContain("min-height: 24px;\n  padding: 0 7px;");
+    expect(css).toContain(".inspector-entry-header {\n  display: flex;\n  gap: 8px;");
+    expect(css).toContain("justify-content: space-between;\n  min-height: 22px;\n  padding: 0 0 2px;");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 22px;");
+    expect(css).toContain("min-height: 22px;\n  padding: 0 6px;");
     expect(css).toContain("border-color: transparent;\n  border-radius: 4px;\n  background: transparent;");
-    expect(css).toContain(".inspector-panel .list-item .ghost-button:hover,\n.inspector-panel .inline-row .ghost-button:hover {\n  border-color: rgba(132, 68, 62, 0.22);");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action:hover {\n  border-color: rgba(132, 68, 62, 0.22);");
     expect(css).toContain("box-shadow: none;\n  transform: none;");
     expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 34px;");
     expect(css).toContain("background: rgba(17, 18, 23, 0.045);");

@@ -4,6 +4,18 @@
 
 ## 2026-07-07
 
+- 任务：继续降低右侧经历 / 列表编辑区的表单卡片感，向 Magic Resume 的轻量属性面板靠拢
+- 操作：为经历条目和列表条目新增 `inspector-entry-header`，将删除动作收进条目头部右侧；列表条目改为 `inspector-list-row` 扁平分组；同步收紧条目间距、删除按钮尺寸和写作区边界，并补充渲染与 CSS 回归测试
+- 结果：重复条目编辑区从“灰底卡片 + 侧边删除按钮”变成“条目头 + 属性字段”的结构，更克制、更容易扫描；不改模块数据、排序、持久化、JSON 导入导出或 PDF 打印逻辑
+- 验证：
+  - `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，61 项测试全部通过
+  - `npm test` 通过，94 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Chrome/CDP 浏览器检查：桌面 1200px 无横向溢出，选择“技能”后右侧渲染 4 个 `inspector-entry-header` 和 4 个 `inspector-list-row`，首个删除按钮可访问名称为“删除技能 1”；移动 390px 无横向溢出，条目头和删除动作仍存在
+
+## 2026-07-07
+
 - 任务：继续压缩右侧属性面板的模块基础信息区，修复短内容时的纵向留白问题
 - 操作：将模块动作、模块标题、显示状态和提示文案收进 `inspector-module-card`；模块标题与显示状态改为两行紧凑属性行；右侧 inspector 增加 `align-content: start`，避免 grid 内容被拉出异常大间距；同步补充渲染测试和 CSS 回归测试
 - 结果：右侧模块基础区更像 Magic Resume 的轻量属性面板，标题输入与显隐开关更集中；短内容模块的右侧顶部不再出现明显断层；不改模块数据、持久化、JSON 导入导出或 PDF 打印逻辑
