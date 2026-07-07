@@ -533,15 +533,15 @@ describe("print helpers", () => {
   test("selected resume sections use a visible but restrained paper highlight", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(17, 18, 23, 0.28);");
-    expect(css).toContain("outline-offset: 3px;\n  background: rgba(17, 18, 23, 0.018);");
-    expect(css).toContain("inset 0 1px 0 rgba(255, 255, 255, 0.5);");
-    expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: \"\";");
+    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(17, 18, 23, 0.2);");
+    expect(css).toContain("outline-offset: 2px;\n  background: rgba(17, 18, 23, 0.01);\n  box-shadow: none;");
+    expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: none;");
     expect(css).toContain("top: -4px;\n  right: -4px;");
     expect(css).toContain("width: 7px;\n  height: 7px;");
-    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: \"\";");
+    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: none;");
     expect(css).toContain("bottom: -4px;\n  left: -4px;");
     expect(css).toContain("border-radius: 50%;\n  background: #ffffff;");
+    expect(css).not.toContain("0 7px 18px rgba(17, 18, 23, 0.045)");
     expect(css).not.toContain("content: \"正在编辑\";");
   });
 

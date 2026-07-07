@@ -4,6 +4,18 @@
 
 ## 2026-07-07
 
+- 任务：继续降低纸张内选中模块的设计器装饰感，让默认预览更接近 Magic Resume 的克制文档风格
+- 操作：将 `.resume-paper .resume-section--active` 从带投影和两个角点的选中态改为细描边；移除选中态投影，将 `::before` / `::after` 角点设为 `content: none`；同步更新 CSS 回归测试
+- 结果：点击纸张模块后仍能分辨选中状态，但不再出现明显“设计器控制点”和浮层阴影，纸张本身更像正式简历文档；不改模块选择、拖拽排序、打印隐藏规则或数据逻辑
+- 验证：
+  - `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，61 项测试全部通过
+  - `npm test` 通过，94 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Chrome/CDP 浏览器检查：桌面 1200px 与移动 390px 下选中模块 outline 为 `rgba(17, 18, 23, 0.2) solid 1px`，`box-shadow` 为 `none`，`::before` / `::after` 均为 `none`，页面无横向溢出
+
+## 2026-07-07
+
 - 任务：继续降低左侧“当前纸面”列表的模板化序号感，贴近 Magic Resume 的工具列表
 - 操作：将模块列表左侧的 `01/02/03` 序号替换为 `module-outline__grip` 轻量握柄；弱化当前模块选中态，移除黑色竖条阴影，仅保留低对比边框和背景；同步更新渲染与 CSS 回归测试
 - 结果：左侧模块列表更像编辑器工具栏里的可排序模块清单，不再出现明显 AI 模板常见的数字序列装饰；不改模块顺序、选择逻辑、拖拽排序、持久化或导出逻辑
