@@ -83,7 +83,14 @@ export function ModuleLibraryPanel({
               >
                 <span className="module-outline__grip" aria-hidden="true" />
                 <span className="module-outline__label">{module.title}</span>
-                <small>{module.visible ? "显示" : "隐藏"}</small>
+                <small
+                  className={`module-outline__status${
+                    module.visible ? " module-outline__status--visible" : " module-outline__status--hidden"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {module.visible ? "显示" : "隐藏"}
+                </small>
               </button>
             ))}
           </div>

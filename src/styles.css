@@ -2523,7 +2523,7 @@ body {
 
 .module-outline__item {
   display: grid;
-  grid-template-columns: 16px minmax(0, 1fr) auto;
+  grid-template-columns: 16px minmax(0, 1fr) 8px;
   gap: 8px;
   align-items: center;
   min-height: 32px;
@@ -2578,11 +2578,24 @@ body {
   white-space: nowrap;
 }
 
-.module-outline__item small {
+.module-outline__status {
   justify-self: end;
-  color: #8f9692;
-  font-size: 10px;
-  font-weight: 720;
+  width: 6px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: rgba(63, 95, 104, 0.38);
+  color: transparent;
+  font-size: 0;
+  line-height: 0;
+  text-indent: 12px;
+  white-space: nowrap;
+}
+
+.module-outline__status--hidden {
+  border: 1px solid rgba(17, 18, 23, 0.16);
+  background: transparent;
+  opacity: 0.72;
 }
 
 .module-add-drawer {

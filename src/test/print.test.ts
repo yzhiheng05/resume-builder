@@ -305,12 +305,15 @@ describe("print helpers", () => {
 
     expect(css).toContain(".module-outline,\n.module-library__group {\n  display: grid;\n  gap: 6px;");
     expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 1px;");
-    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) auto;");
+    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) 8px;");
     expect(css).toContain("min-height: 32px;\n  padding: 5px 7px 5px 8px;");
     expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
     expect(css).toContain("background: rgba(17, 18, 23, 0.04);\n  box-shadow: none;");
     expect(css).toContain(".module-outline__grip {\n  width: 12px;\n  height: 16px;");
     expect(css).toContain(".module-outline__item--active .module-outline__grip,\n.module-outline__item:hover .module-outline__grip,");
+    expect(css).toContain(".module-outline__status {\n  justify-self: end;\n  width: 6px;\n  height: 6px;");
+    expect(css).toContain("background: rgba(63, 95, 104, 0.38);\n  color: transparent;\n  font-size: 0;");
+    expect(css).toContain(".module-outline__status--hidden {\n  border: 1px solid rgba(17, 18, 23, 0.16);");
     expect(css).not.toContain(".module-outline__index");
     expect(css).not.toContain("box-shadow:\n    inset 2px 0 0 #111111,");
     expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 7px;");
