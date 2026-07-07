@@ -67,15 +67,16 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".topbar {\n  position: sticky;");
-    expect(css).toContain("padding: 8px 18px;\n  align-items: center;\n  background: #ffffff;");
-    expect(css).toContain("border-bottom: 1px solid rgba(18, 18, 18, 0.1);\n  box-shadow: none;");
+    expect(css).toContain("padding: 6px 16px;\n  align-items: center;\n  background: #ffffff;");
+    expect(css).toContain("border-bottom: 1px solid rgba(18, 18, 18, 0.075);\n  box-shadow: none;");
     expect(css).toContain(".topbar__kicker::after {\n  content: \"/\";");
-    expect(css).toContain(".topbar h1 {\n  color: #17181c;\n  min-height: 28px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: #fbfbfa;");
+    expect(css).toContain(".topbar h1 {\n  color: #17181c;\n  min-height: 24px;");
+    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 4px;\n  background: transparent;");
+    expect(css).toContain(".topbar h1:hover,\n.topbar h1:focus {\n  border-color: rgba(17, 18, 23, 0.1);");
     expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
     expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 2px;");
-    expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 5px;\n  background: #fbfbfa;");
+    expect(css).toContain("padding: 1px;\n  border: 1px solid rgba(18, 18, 18, 0.075);\n  border-radius: 5px;\n  background: #fbfbfa;");
     expect(css).toContain(".topbar__actions {\n  border-radius: 6px;");
     expect(css).toContain(".topbar__primary-action {\n  min-width: 48px;");
     expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
@@ -131,10 +132,10 @@ describe("print helpers", () => {
   test("canvas workbench uses a plain light neutral stage", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".editor-workspace {\n  grid-template-columns: minmax(260px, 300px) minmax(620px, 1fr) minmax(300px, 360px);");
-    expect(css).toContain("background: #f3f3f1;");
-    expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 48px);");
-    expect(css).toContain("padding: 12px 22px 22px;\n  background: #f6f6f4;");
+    expect(css).toContain(".editor-workspace {\n  grid-template-columns: minmax(248px, 288px) minmax(620px, 1fr) minmax(300px, 352px);");
+    expect(css).toContain("background: #eef0ee;");
+    expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 44px);");
+    expect(css).toContain("padding: 10px 20px 22px;\n  background: #eef0ee;");
     expect(css).not.toContain("--canvas-bg: #d2d6d4;");
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
   });
@@ -143,8 +144,8 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".preview-surface {\n  position: relative;\n  flex: 1;");
-    expect(css).toContain("padding: 22px 28px 28px;");
-    expect(css).toContain("background: #f4f4f2;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.06);");
+    expect(css).toContain("padding: 20px 28px 30px;");
+    expect(css).toContain("background: #eef0ee;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.045);");
     expect(css).toContain(".preview-surface::before,\n.preview-surface::after {\n  content: none;\n  display: none;");
     expect(css).not.toContain("linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px) 0 0 / 36px 36px");
     expect(css).not.toContain("repeating-linear-gradient(90deg, rgba(33, 38, 48, 0.24) 0 1px, transparent 1px 16px)");
@@ -164,8 +165,8 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain("--accent: #3f5f68;");
-    expect(css).toContain("linear-gradient(#111111, #111111) 4px 5px / 8px 1px no-repeat");
-    expect(css).toContain("inset 3px 0 0 #111111,");
+    expect(css).toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
+    expect(css).toContain("inset 2px 0 0 #111111,");
     expect(css).not.toContain("--accent: #36846b;");
   });
 
@@ -272,7 +273,7 @@ describe("print helpers", () => {
 
     expect(css).toContain(".canvas-panel__header {\n  display: flex;\n  align-self: flex-start;\n  justify-content: space-between;");
     expect(css).toContain("align-self: flex-start;");
-    expect(css).toContain("padding: 4px 9px;\n  border: 1px solid rgba(18, 18, 18, 0.06);\n  border-radius: 999px;");
+    expect(css).toContain("padding: 3px 8px;\n  border: 1px solid rgba(18, 18, 18, 0.045);\n  border-radius: 999px;");
     expect(css).toContain(".preview-panel {\n  flex: 1;\n  gap: 0;");
     expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  width: 1px;");
     expect(css).toContain("clip: rect(0 0 0 0);\n  padding: 0;\n  border: 0;");
@@ -285,44 +286,46 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".module-outline,\n.module-library__group {\n  display: grid;\n  gap: 6px;");
-    expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 2px;");
-    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 24px minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 34px;\n  padding: 6px 8px;");
-    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
-    expect(css).toContain("box-shadow:\n    inset 3px 0 0 #111111,");
-    expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 8px;");
-    expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.09);\n  padding-top: 10px;");
-    expect(css).toContain(".module-add-drawer > summary {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: #ffffff;");
+    expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 1px;");
+    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 22px minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 32px;\n  padding: 5px 7px;");
+    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.16);");
+    expect(css).toContain("box-shadow:\n    inset 2px 0 0 #111111,");
+    expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 7px;");
+    expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.075);\n  padding-top: 9px;");
+    expect(css).toContain(".module-add-drawer > summary {\n  position: relative;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 4px;\n  background: #f8f8f6;");
     expect(css).toContain(".module-add-drawer > summary::after {\n  content: \"+\";");
+    expect(css).toContain("top: 50%;\n  right: 8px;");
+    expect(css).toContain("transform: translateY(-50%);");
     expect(css).toContain(".module-add-drawer[open] > summary::after {\n  content: \"-\";");
     expect(css).toContain(".module-library__group {\n  display: grid;\n  gap: 6px;\n  padding: 0;\n  border: 0;");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
-    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 2px 7px;");
-    expect(css).toContain("padding: 0 2px 7px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.09);");
-    expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 2px;\n  border-top: 0;");
-    expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 18px minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 38px;\n  padding: 7px 8px 7px 9px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.045);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.18);");
-    expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(17, 18, 23, 0.14);\n  background: rgba(255, 254, 251, 0.66);");
+    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 1px 6px;");
+    expect(css).toContain("padding: 0 1px 6px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.09);");
+    expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 1px;\n  border-top: 0;");
+    expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 34px;\n  padding: 5px 7px 5px 8px;");
+    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 4px;\n  background: transparent;");
+    expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(17, 18, 23, 0.08);\n  background: rgba(17, 18, 23, 0.028);");
   });
 
   test("module add markers use neutral chrome instead of colored decoration", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".module-library__item::before {\n  content: \"\";");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.14);\n  border-radius: 3px;");
-    expect(css).toContain("linear-gradient(#111111, #111111) 4px 5px / 8px 1px no-repeat");
-    expect(css).toContain("linear-gradient(rgba(17, 18, 23, 0.32), rgba(17, 18, 23, 0.32)) 4px 9px / 6px 1px no-repeat");
-    expect(css).toContain("rgba(17, 18, 23, 0.035);");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.12);\n  border-radius: 2px;");
+    expect(css).toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
+    expect(css).toContain("linear-gradient(rgba(17, 18, 23, 0.3), rgba(17, 18, 23, 0.3)) 3px 8px / 6px 1px no-repeat");
+    expect(css).toContain("rgba(17, 18, 23, 0.026);");
     expect(css).toContain(".module-library__item::after {\n  content: \"\";");
-    expect(css).toContain("position: absolute;\n  right: 13px;");
-    expect(css).toContain("linear-gradient(#111111, #111111) center / 9px 1px no-repeat");
-    expect(css).toContain("linear-gradient(#111111, #111111) center / 1px 9px no-repeat");
+    expect(css).toContain("position: absolute;\n  right: 10px;");
+    expect(css).toContain("linear-gradient(#111111, #111111) center / 8px 1px no-repeat");
+    expect(css).toContain("linear-gradient(#111111, #111111) center / 1px 8px no-repeat");
     expect(css).toContain(".module-library__item small {\n  grid-column: 3;\n  justify-self: end;");
-    expect(css).toContain("min-width: 42px;\n  padding: 3px 18px 3px 7px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.095);\n  border-radius: 999px;");
-    expect(css).toContain("background: rgba(255, 254, 251, 0.42);");
+    expect(css).toContain("min-width: 38px;\n  padding: 2px 14px 2px 6px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 999px;");
+    expect(css).toContain("background: rgba(17, 18, 23, 0.026);");
     expect(css).toContain(".module-library__item:hover:not(:disabled)::after,\n.module-library__item:focus-visible:not(:disabled)::after {\n  opacity: 1;");
     expect(css).toContain(".module-library__item:disabled small {\n  padding-right: 7px;");
     expect(css).not.toContain(".module-library__item::after {\n  content: \"+\";");
@@ -333,13 +336,13 @@ describe("print helpers", () => {
   test("side panel headers use compact tool headers instead of large page titles", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".editor-sidebar__header {\n  display: grid;\n  gap: 4px;\n  margin: 0 0 16px;");
-    expect(css).toContain("margin: 0 0 16px;\n  padding: 2px 2px 14px;");
+    expect(css).toContain(".editor-sidebar__header {\n  display: grid;\n  gap: 4px;\n  margin: 0 0 14px;");
+    expect(css).toContain("margin: 0 0 14px;\n  padding: 1px 1px 12px;");
     expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);\n  border-radius: 0;");
-    expect(css).toContain(".editor-sidebar__header h2 {\n  color: #17181c;\n  font-size: 18px;");
+    expect(css).toContain(".editor-sidebar__header h2 {\n  color: #17181c;\n  font-size: 17px;");
     expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
     expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
-    expect(css).toContain(".editor-sidebar,\n.inspector-panel {\n  top: 48px;\n  height: calc(100vh - 48px);");
+    expect(css).toContain(".editor-sidebar,\n.inspector-panel {\n  top: 44px;\n  height: calc(100vh - 44px);");
     expect(css).toContain(".editor-sidebar,\n  .inspector-panel {\n    position: static;\n    height: auto;");
   });
 
@@ -485,7 +488,7 @@ describe("print helpers", () => {
   test("secondary controls use compact rails instead of bare text and underline buttons", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 2px 7px;");
+    expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 1px 6px;");
     expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.09);");
     expect(css).toContain("border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".template-chip-group,\n.segmented-control {\n  gap: 3px;\n  padding: 3px;");
@@ -500,15 +503,16 @@ describe("print helpers", () => {
   test("selected resume sections use a visible but restrained paper highlight", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.34);");
-    expect(css).toContain("linear-gradient(90deg, rgba(63, 95, 104, 0.095), rgba(63, 95, 104, 0.03) 46%, transparent 80%)");
-    expect(css).toContain("inset 0 1px 0 rgba(255, 255, 255, 0.62);");
+    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(17, 18, 23, 0.28);");
+    expect(css).toContain("outline-offset: 3px;\n  background: rgba(17, 18, 23, 0.018);");
+    expect(css).toContain("inset 0 1px 0 rgba(255, 255, 255, 0.5);");
     expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: \"\";");
-    expect(css).toContain("width: 4px;");
-    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: \"正在编辑\";");
-    expect(css).toContain("right: 10px;\n  top: 8px;");
-    expect(css).toContain("border-radius: 999px;\n  background: rgba(255, 254, 251, 0.82);");
-    expect(css).toContain("font-size: 9px;\n  font-weight: 820;");
+    expect(css).toContain("top: -4px;\n  right: -4px;");
+    expect(css).toContain("width: 7px;\n  height: 7px;");
+    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: \"\";");
+    expect(css).toContain("bottom: -4px;\n  left: -4px;");
+    expect(css).toContain("border-radius: 50%;\n  background: #ffffff;");
+    expect(css).not.toContain("content: \"正在编辑\";");
   });
 
   test("setPrintMode toggles the print class on body", () => {
