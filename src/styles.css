@@ -2320,7 +2320,12 @@ body {
 }
 
 .topbar__status::before {
-  content: none;
+  content: "";
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9aa29e;
 }
 
 .topbar__status--idle {
@@ -2328,7 +2333,7 @@ body {
 }
 
 .topbar__status--idle::before {
-  content: none;
+  background: #b7beba;
 }
 
 .topbar__controls {
@@ -2358,14 +2363,14 @@ body {
 .topbar__actions {
   position: relative;
   margin-left: 2px;
-  padding: 0 0 0 5px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  padding: 2px;
+  border: 1px solid rgba(18, 18, 18, 0.065);
+  border-radius: 6px;
+  background: #f8f8f7;
 }
 
 .topbar__actions::before {
-  content: "";
+  content: none;
   position: absolute;
   top: 5px;
   bottom: 5px;
@@ -2398,16 +2403,16 @@ body {
 .topbar__actions button,
 .topbar__file-action {
   min-width: 0;
-  padding: 4px 6px;
-  color: #7b8580;
+  padding: 4px 8px;
+  color: #68716c;
   font-size: 10px;
-  font-weight: 720;
+  font-weight: 740;
 }
 
 .topbar__actions button:hover,
 .topbar__file-action:hover,
 .topbar__identity-switcher button:hover {
-  background: rgba(18, 18, 18, 0.038);
+  background: #ffffff;
   color: #17181c;
   transform: none;
 }
@@ -2429,8 +2434,9 @@ body {
 .topbar__primary-action {
   min-width: 48px;
   margin-left: 2px;
-  padding-inline: 11px !important;
+  padding-inline: 12px !important;
   border: 1px solid #111111 !important;
+  border-radius: 5px !important;
   background: #111111 !important;
   color: #ffffff !important;
   font-weight: 800 !important;
