@@ -45,6 +45,7 @@ export function getDefaultStoredResumeState(): StoredResumeStateV4 {
 export function normalizeStoredResumeState(state: StoredResumeStateV4): StoredResumeStateV4 {
   const normalized = normalizeResumeDraftState({
     selectedIdentity: state.selectedIdentity,
+    documentTitle: state.documentTitle,
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     resumeStyle: state.resumeStyle,
@@ -55,6 +56,7 @@ export function normalizeStoredResumeState(state: StoredResumeStateV4): StoredRe
   return {
     schemaVersion: 4,
     selectedIdentity: normalized.selectedIdentity ?? "general",
+    documentTitle: normalized.documentTitle,
     templateId: normalized.templateId,
     hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
     resumeStyle: normalized.resumeStyle,
@@ -75,6 +77,7 @@ export function resolveInitialResumeSeed({
 
     return {
       selectedIdentity: fixtureState.selectedIdentity,
+      documentTitle: fixtureState.documentTitle,
       templateId: fixtureState.templateId,
       hasUserSelectedTemplate: fixtureState.hasUserSelectedTemplate,
       resumeStyle: fixtureState.resumeStyle,
@@ -90,6 +93,7 @@ export function resolveInitialResumeSeed({
 
     return {
       selectedIdentity: normalized.selectedIdentity,
+      documentTitle: normalized.documentTitle,
       templateId: normalized.templateId,
       hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
       resumeStyle: normalized.resumeStyle,
@@ -102,6 +106,7 @@ export function resolveInitialResumeSeed({
 
   return {
     selectedIdentity: null,
+    documentTitle: getDefaultStoredResumeState().documentTitle,
     templateId: "classic",
     hasUserSelectedTemplate: false,
     resumeStyle: getDefaultStoredResumeState().resumeStyle,

@@ -74,9 +74,9 @@ describe("print helpers", () => {
     expect(css).toContain("align-items: center;\n  background: #ffffff;");
     expect(css).toContain("border-bottom: 1px solid rgba(18, 18, 18, 0.075);\n  box-shadow: none;");
     expect(css).toContain(".topbar__kicker::after {\n  content: \"/\";");
-    expect(css).toContain(".topbar h1 {\n  color: #17181c;\n  min-height: 24px;");
+    expect(css).toContain(".topbar__title-input {\n  color: #17181c;\n  min-height: 24px;");
     expect(css).toContain("border: 1px solid transparent;\n  border-radius: 4px;\n  background: transparent;");
-    expect(css).toContain(".topbar h1:hover,\n.topbar h1:focus {\n  border-color: rgba(17, 18, 23, 0.1);");
+    expect(css).toContain(".topbar__title-input:hover,\n.topbar__title-input:focus {\n  border-color: rgba(17, 18, 23, 0.1);");
     expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
     expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".topbar__identity {\n  position: absolute;\n  width: 1px;");

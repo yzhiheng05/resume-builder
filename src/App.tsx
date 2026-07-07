@@ -469,6 +469,7 @@ function ModuleLibrary({
 export default function App() {
   const hasStoredState = useResumeStore((state) => state.hasStoredState);
   const selectedIdentity = useResumeStore((state) => state.selectedIdentity);
+  const documentTitle = useResumeStore((state) => state.documentTitle);
   const templateId = useResumeStore((state) => state.templateId);
   const resumeStyle = useResumeStore((state) => state.resumeStyle);
   const activeModuleId = useResumeStore((state) => state.activeModuleId);
@@ -480,6 +481,7 @@ export default function App() {
   const switchIdentity = useResumeStore((state) => state.switchIdentity);
   const applyIdentityRecommendation = useResumeStore((state) => state.applyIdentityRecommendation);
   const replaceResumeState = useResumeStore((state) => state.replaceResumeState);
+  const updateDocumentTitle = useResumeStore((state) => state.updateDocumentTitle);
   const updateResumeStyle = useResumeStore((state) => state.updateResumeStyle);
   const updateModuleTitle = useResumeStore((state) => state.updateModuleTitle);
   const toggleModuleVisibility = useResumeStore((state) => state.toggleModuleVisibility);
@@ -528,6 +530,7 @@ export default function App() {
     const content = serializeResumeBackup({
       schemaVersion: 4,
       selectedIdentity,
+      documentTitle,
       templateId,
       hasUserSelectedTemplate: useResumeStore.getState().hasUserSelectedTemplate,
       resumeStyle,
@@ -594,7 +597,9 @@ export default function App() {
       <HeaderBar
         identity={currentIdentity}
         identityLabel={identityLabel}
+        documentTitle={documentTitle}
         statusMessage={statusMessage}
+        onDocumentTitleChange={updateDocumentTitle}
         onReset={reset}
         onExportData={handleExportData}
         onImportData={(file) => {

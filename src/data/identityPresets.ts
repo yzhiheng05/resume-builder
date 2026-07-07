@@ -1,4 +1,6 @@
 import { createModuleInstance } from "../lib/moduleRegistry";
+import { defaultDocumentTitle } from "../lib/documentTitle";
+import { defaultResumeStyle } from "../lib/resumeStyle";
 import type {
   IdentityPreset,
   ListModuleData,
@@ -11,7 +13,6 @@ import type {
   TextModuleData,
   TemplateId
 } from "../types/resume";
-import { defaultResumeStyle } from "../lib/resumeStyle";
 
 interface PresetModuleDescriptor {
   kind: ModuleKind;
@@ -405,6 +406,7 @@ export function buildPresetState(identity: IdentityPreset): StoredResumeStateV4 
   return {
     schemaVersion: 4,
     selectedIdentity: identity,
+    documentTitle: defaultDocumentTitle,
     templateId: getDefaultTemplateForIdentity(identity),
     hasUserSelectedTemplate: false,
     resumeStyle: { ...defaultResumeStyle },
@@ -454,6 +456,7 @@ export function applyIdentityPreset(
 
   return {
     selectedIdentity: identity,
+    documentTitle: state.documentTitle,
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     resumeStyle: state.resumeStyle,

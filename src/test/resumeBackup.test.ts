@@ -73,6 +73,7 @@ describe("resume backup helpers", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.state.schemaVersion).toBe(4);
+      expect(result.state.documentTitle).toBe("新建简历");
       expect(result.state.selectedIdentity).toBe("general");
       expect(result.state.templateId).toBe("classic");
       expect(result.state.hasUserSelectedTemplate).toBe(false);
@@ -110,6 +111,7 @@ describe("resume backup helpers", () => {
   test("serializes and parses style settings in v4 backups", () => {
     const state = {
       ...buildPresetState("general"),
+      documentTitle: "前端求职简历",
       resumeStyle: {
         accentColor: "#0f766e",
         density: "compact" as const,
@@ -128,6 +130,7 @@ describe("resume backup helpers", () => {
     expect(parsed.ok).toBe(true);
     if (parsed.ok) {
       expect(parsed.state.schemaVersion).toBe(4);
+      expect(parsed.state.documentTitle).toBe("前端求职简历");
       expect(parsed.state.resumeStyle.accentColor).toBe("#0f766e");
       expect(parsed.state.resumeStyle.density).toBe("compact");
       expect(parsed.state.resumeStyle.fontSizePx).toBe(15.5);

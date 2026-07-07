@@ -9,7 +9,9 @@ import type { IdentityPreset } from "../types/resume";
 interface HeaderBarProps {
   identity: IdentityPreset;
   identityLabel: string;
+  documentTitle: string;
   statusMessage?: string;
+  onDocumentTitleChange: (documentTitle: string) => void;
   onReset: () => void;
   onExportData: () => void;
   onImportData: (file: File) => void;
@@ -20,7 +22,9 @@ interface HeaderBarProps {
 export function HeaderBar({
   identity,
   identityLabel,
+  documentTitle,
   statusMessage,
+  onDocumentTitleChange,
   onReset,
   onExportData,
   onImportData,
@@ -32,7 +36,12 @@ export function HeaderBar({
       <div className="topbar__brand">
         <div className="topbar__document">
           <p className="topbar__kicker">{RESUME_TOOL_BRAND}</p>
-          <h1>{getIdentityEditorTitle(identity)}</h1>
+          <input
+            aria-label="简历名称"
+            className="topbar__title-input"
+            value={documentTitle || getIdentityEditorTitle(identity)}
+            onChange={(event) => onDocumentTitleChange(event.target.value)}
+          />
         </div>
         <p className="topbar__identity">{identityLabel}</p>
         <p className={`topbar__status ${statusMessage ? "" : "topbar__status--idle"}`} role="status">

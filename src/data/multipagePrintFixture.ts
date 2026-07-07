@@ -4,6 +4,7 @@ import type { StoredResumeStateV4 } from "../types/resume";
 export const multipagePrintFixture: StoredResumeStateV4 = {
   schemaVersion: 4,
   selectedIdentity: "student",
+  documentTitle: "多页打印简历",
   templateId: "campus",
   hasUserSelectedTemplate: false,
   resumeStyle: { ...defaultResumeStyle },

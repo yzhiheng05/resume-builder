@@ -91,6 +91,7 @@ export interface ResumeModuleInstance {
 
 export interface ResumeDraftState {
   selectedIdentity: IdentityPreset | null;
+  documentTitle: string;
   templateId: TemplateId;
   hasUserSelectedTemplate: boolean;
   resumeStyle: ResumeStyleSettings;
@@ -101,6 +102,7 @@ export interface ResumeDraftState {
 export interface StoredResumeStateV4 {
   schemaVersion: 4;
   selectedIdentity: IdentityPreset;
+  documentTitle: string;
   templateId: TemplateId;
   hasUserSelectedTemplate: boolean;
   resumeStyle: ResumeStyleSettings;

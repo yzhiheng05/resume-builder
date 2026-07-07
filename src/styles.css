@@ -135,13 +135,13 @@ button {
   text-transform: uppercase;
 }
 
-.topbar h1,
+.topbar__title-input,
 .editor-heading h2,
 .preview-panel__title {
   margin: 0;
 }
 
-.topbar h1 {
+.topbar__title-input {
   font-size: 30px;
   line-height: 1.08;
 }
@@ -2259,15 +2259,17 @@ body {
   text-transform: none;
 }
 
-.topbar h1 {
+.topbar__title-input {
   color: #17181c;
   min-height: 24px;
+  width: min(42vw, 280px);
   max-width: min(42vw, 280px);
   padding: 3px 7px;
   overflow: hidden;
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 760;
   line-height: 1.15;
@@ -2275,8 +2277,8 @@ body {
   white-space: nowrap;
 }
 
-.topbar h1:hover,
-.topbar h1:focus {
+.topbar__title-input:hover,
+.topbar__title-input:focus {
   border-color: rgba(17, 18, 23, 0.1);
   background: #fbfbfa;
   outline: none;

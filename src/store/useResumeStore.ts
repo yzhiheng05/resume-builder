@@ -16,6 +16,7 @@ import {
   isTimelineModuleData
 } from "../lib/moduleRegistry";
 import { toStoredResumeStateV4 } from "../lib/resumeMigration";
+import { normalizeDocumentTitle } from "../lib/documentTitle";
 import { defaultResumeStyle, normalizeResumeStyle } from "../lib/resumeStyle";
 import { resolveInitialResumeSeed } from "../lib/resumeSeed";
 import { loadResumeState, moveModule, saveResumeState } from "../lib/storage";
@@ -65,6 +66,7 @@ function getNextActiveModuleId(moduleOrder: string[], removedModuleId: string) {
 function normalizeState(state: ResumeDraftState): ResumeDraftState {
   return {
     selectedIdentity: state.selectedIdentity,
+    documentTitle: normalizeDocumentTitle(state.documentTitle),
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     resumeStyle: normalizeResumeStyle(state.resumeStyle ?? defaultResumeStyle),
@@ -82,6 +84,7 @@ interface ResumeState extends ResumeDraftState {
   initializeIdentity: (identity: IdentityPreset) => void;
   switchIdentity: (identity: IdentityPreset) => void;
   setTemplate: (templateId: TemplateId) => void;
+  updateDocumentTitle: (documentTitle: string) => void;
   applyIdentityRecommendation: () => void;
   replaceResumeState: (nextState: ResumeDraftState) => void;
   selectModule: (moduleId: string | null) => void;
@@ -109,6 +112,7 @@ interface ResumeState extends ResumeDraftState {
 export function createResumeStore(seed: typeof initialSeed = initialSeed) {
   const initialState = normalizeState({
     selectedIdentity: seed.selectedIdentity,
+    documentTitle: seed.documentTitle,
     templateId: seed.templateId,
     hasUserSelectedTemplate: seed.hasUserSelectedTemplate,
     resumeStyle: seed.resumeStyle,
@@ -131,6 +135,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const shouldSyncTemplate = !state.hasUserSelectedTemplate;
         const nextState = normalizeState({
           selectedIdentity: identity,
+          documentTitle: state.documentTitle,
           templateId: shouldSyncTemplate ? getDefaultTemplateForIdentity(identity) : state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -144,8 +149,23 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
       set((state) => {
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId,
           hasUserSelectedTemplate: true,
+          resumeStyle: state.resumeStyle,
+          modules: state.modules,
+          moduleOrder: state.moduleOrder
+        });
+        persistState(nextState);
+        return nextState;
+      }),
+    updateDocumentTitle: (documentTitle) =>
+      set((state) => {
+        const nextState = normalizeState({
+          selectedIdentity: state.selectedIdentity,
+          documentTitle,
+          templateId: state.templateId,
+          hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
           modules: state.modules,
           moduleOrder: state.moduleOrder
@@ -163,6 +183,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
           applyIdentityPreset(
             {
               selectedIdentity: state.selectedIdentity,
+              documentTitle: state.documentTitle,
               templateId: state.templateId,
               hasUserSelectedTemplate: state.hasUserSelectedTemplate,
               resumeStyle: state.resumeStyle,
@@ -185,6 +206,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
       set((state) => {
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: normalizeResumeStyle({
@@ -204,6 +226,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         );
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -220,6 +243,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         );
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -233,6 +257,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
       set((state) => {
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -247,6 +272,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const moduleOrder = moveModule(state.moduleOrder, moduleId, toIndex);
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -273,6 +299,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const modules = [...state.modules, nextModule];
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -309,6 +336,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -328,6 +356,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
         const modules = state.modules.filter((module) => module.id !== moduleId);
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -362,6 +391,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -392,6 +422,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -418,6 +449,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -446,6 +478,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -472,6 +505,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -498,6 +532,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -525,6 +560,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -551,6 +587,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,
@@ -577,6 +614,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
 
         const nextState = normalizeState({
           selectedIdentity: state.selectedIdentity,
+          documentTitle: state.documentTitle,
           templateId: state.templateId,
           hasUserSelectedTemplate: state.hasUserSelectedTemplate,
           resumeStyle: state.resumeStyle,

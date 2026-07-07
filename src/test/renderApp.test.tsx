@@ -125,7 +125,7 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "模块" })).toBeInTheDocument();
     expect(screen.getByLabelText("纸面状态")).toHaveTextContent("校招简历");
     expect(screen.getByRole("heading", { name: "属性" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
+    expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getTopbarIdentity()).toHaveTextContent("学生");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByRole("heading", { name: "当前纸面" })).toBeInTheDocument();
@@ -168,6 +168,29 @@ describe("App", () => {
     expect(getTopbarStatus()).toHaveTextContent("数据已导出。");
   });
 
+  test("edits the document title and includes it in exported json", () => {
+    seedStoredResume("general");
+    render(<App />);
+
+    const titleInput = screen.getByLabelText("简历名称");
+    fireEvent.change(titleInput, { target: { value: "前端求职简历" } });
+
+    const anchorClicks: HTMLAnchorElement[] = [];
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function clickMock(
+      this: HTMLAnchorElement
+    ) {
+      anchorClicks.push(this);
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "导出 JSON" }));
+
+    expect(titleInput).toHaveValue("前端求职简历");
+    const storedState = JSON.parse(storage.getItem(STORAGE_KEY) ?? "{}");
+    expect(storedState.documentTitle).toBe("前端求职简历");
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(anchorClicks[0].download).toMatch(/^campus-resume-\d{4}-\d{2}-\d{2}\.json$/);
+  });
+
   test("imports valid backup after confirmation", async () => {
     seedStoredResume("professional");
     render(<App />);
@@ -181,9 +204,9 @@ describe("App", () => {
       target: { files: [file] }
     });
 
-    await screen.findByText("新建简历");
+    await screen.findByDisplayValue("新建简历");
     expect(getTopbarIdentity()).toHaveTextContent("学生");
-    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
+    expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(getTopbarStatus()).toHaveTextContent("数据已导入。");
   });
@@ -193,7 +216,7 @@ describe("App", () => {
     render(<App />);
 
     expect(getTopbarIdentity()).toHaveTextContent("职场人");
-    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
+    expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(screen.getByLabelText("模块标题")).toHaveValue("个人信息");
     expect(document.querySelector(".inspector-context")).toHaveTextContent("个人信息");
@@ -226,11 +249,11 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
+    expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
 
     fireEvent.click(screen.getByRole("button", { name: "职场" }));
-    expect(screen.getByRole("heading", { name: "新建简历" })).toBeInTheDocument();
+    expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(getTopbarStatus()).toHaveTextContent("身份已切换，当前内容不会自动覆盖。");
 

@@ -157,6 +157,7 @@ describe("resume helpers", () => {
     });
 
     expect(migrated?.schemaVersion).toBe(4);
+    expect(migrated?.documentTitle).toBe("新建简历");
     expect(migrated?.resumeStyle).toEqual({
       accentColor: "#3f5f68",
       density: "comfortable",
@@ -376,6 +377,18 @@ describe("resume store", () => {
     expect(useResumeStore.getState().resumeStyle.paragraphSpacingPx).toBe(8);
     expect(useResumeStore.getState().resumeStyle.pageMarginXmm).toBe(20);
     expect(useResumeStore.getState().resumeStyle.pageMarginYmm).toBe(22);
+  });
+
+  test("updates document title without replacing modules", () => {
+    const beforeIds = useResumeStore.getState().modules.map((module) => module.id);
+
+    act(() => {
+      useResumeStore.getState().updateDocumentTitle("前端求职简历");
+    });
+
+    expect(useResumeStore.getState().modules.map((module) => module.id)).toEqual(beforeIds);
+    expect(useResumeStore.getState().documentTitle).toBe("前端求职简历");
+    expect(loadResumeState()?.documentTitle).toBe("前端求职简历");
   });
 
   test("updates timeline and list modules", () => {

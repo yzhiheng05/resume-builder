@@ -3,6 +3,7 @@ import {
   getDefaultTemplateForIdentity,
   normalizeModuleOrder
 } from "../data/identityPresets";
+import { normalizeDocumentTitle } from "./documentTitle";
 import {
   cloneModuleData,
   createEmptyPersonalModuleData,
@@ -110,6 +111,7 @@ export function normalizeResumeDraftState(state: ResumeDraftState): ResumeDraftS
 
   return {
     selectedIdentity: state.selectedIdentity,
+    documentTitle: normalizeDocumentTitle(state.documentTitle),
     templateId: state.templateId,
     hasUserSelectedTemplate: state.hasUserSelectedTemplate,
     resumeStyle: normalizeResumeStyle(state.resumeStyle),
@@ -131,6 +133,7 @@ export function toStoredResumeStateV4(state: ResumeDraftState): StoredResumeStat
   return {
     schemaVersion: 4,
     selectedIdentity: normalized.selectedIdentity ?? state.selectedIdentity,
+    documentTitle: normalized.documentTitle,
     templateId: normalized.templateId,
     hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
     resumeStyle: normalized.resumeStyle,
@@ -230,6 +233,7 @@ export function migrateLegacyStoredResumeState(
     applyIdentityPreset(
       {
         selectedIdentity,
+        documentTitle: normalizeDocumentTitle(undefined),
         templateId: getDefaultTemplateForIdentity(selectedIdentity),
         hasUserSelectedTemplate: false,
         resumeStyle: { ...defaultResumeStyle },
@@ -243,6 +247,7 @@ export function migrateLegacyStoredResumeState(
   return {
     schemaVersion: 4,
     selectedIdentity: applied.selectedIdentity ?? selectedIdentity,
+    documentTitle: applied.documentTitle,
     templateId: applied.templateId,
     hasUserSelectedTemplate: applied.hasUserSelectedTemplate,
     resumeStyle: applied.resumeStyle,
@@ -256,6 +261,7 @@ export function migrateStoredResumeStateV2(
 ): StoredResumeStateV4 {
   const normalized = normalizeResumeDraftState({
     selectedIdentity: value.selectedIdentity,
+    documentTitle: normalizeDocumentTitle(undefined),
     templateId: getDefaultTemplateForIdentity(value.selectedIdentity),
     hasUserSelectedTemplate: false,
     resumeStyle: { ...defaultResumeStyle },
@@ -266,6 +272,7 @@ export function migrateStoredResumeStateV2(
   return {
     schemaVersion: 4,
     selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+    documentTitle: normalized.documentTitle,
     templateId: normalized.templateId,
     hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
     resumeStyle: normalized.resumeStyle,
@@ -281,6 +288,7 @@ export function migrateUnknownStoredResumeState(
   if (isStoredResumeStateV4(value)) {
     const normalized = normalizeResumeDraftState({
       selectedIdentity: value.selectedIdentity,
+      documentTitle: normalizeDocumentTitle(value.documentTitle),
       templateId: value.templateId,
       hasUserSelectedTemplate: value.hasUserSelectedTemplate,
       resumeStyle: value.resumeStyle,
@@ -291,6 +299,7 @@ export function migrateUnknownStoredResumeState(
     return {
       schemaVersion: 4,
       selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+      documentTitle: normalized.documentTitle,
       templateId: normalized.templateId,
       hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
       resumeStyle: normalized.resumeStyle,
@@ -302,6 +311,7 @@ export function migrateUnknownStoredResumeState(
   if (isStoredResumeStateV3(value)) {
     const normalized = normalizeResumeDraftState({
       selectedIdentity: value.selectedIdentity,
+      documentTitle: normalizeDocumentTitle(undefined),
       templateId: value.templateId,
       hasUserSelectedTemplate: value.hasUserSelectedTemplate,
       resumeStyle: { ...defaultResumeStyle },
@@ -312,6 +322,7 @@ export function migrateUnknownStoredResumeState(
     return {
       schemaVersion: 4,
       selectedIdentity: normalized.selectedIdentity ?? value.selectedIdentity,
+      documentTitle: normalized.documentTitle,
       templateId: normalized.templateId,
       hasUserSelectedTemplate: normalized.hasUserSelectedTemplate,
       resumeStyle: normalized.resumeStyle,
