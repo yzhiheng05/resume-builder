@@ -611,7 +611,13 @@ export default function App() {
       />
 
       <main className="editor-workspace">
-        <ModuleLibraryPanel modules={modules} onAddModule={addModule} />
+        <ModuleLibraryPanel
+          modules={modules}
+          moduleOrder={moduleOrder}
+          activeModuleId={activeModuleId}
+          onSelectModule={selectModule}
+          onAddModule={addModule}
+        />
 
         <section className="canvas-panel" aria-label="简历画布" style={editorPanelStyle}>
           <div className="canvas-panel__header">

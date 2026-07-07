@@ -2459,6 +2459,7 @@ body {
   gap: 16px;
 }
 
+.module-outline,
 .module-library__group {
   display: grid;
   gap: 6px;
@@ -2467,6 +2468,69 @@ body {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.module-outline {
+  gap: 7px;
+}
+
+.module-outline__list {
+  display: grid;
+  gap: 2px;
+}
+
+.module-outline__item {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: #2f3538;
+  text-align: left;
+  box-shadow: none;
+}
+
+.module-outline__item:hover,
+.module-outline__item:focus-visible {
+  border-color: rgba(17, 18, 23, 0.09);
+  background: rgba(17, 18, 23, 0.035);
+  transform: none;
+}
+
+.module-outline__item--active {
+  border-color: rgba(17, 18, 23, 0.12);
+  background: #ffffff;
+  box-shadow:
+    inset 3px 0 0 #111111,
+    0 1px 4px rgba(17, 18, 23, 0.05);
+}
+
+.module-outline__index {
+  color: #9aa19d;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 760;
+}
+
+.module-outline__label {
+  min-width: 0;
+  overflow: hidden;
+  color: #25282c;
+  font-size: 12px;
+  font-weight: 720;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.module-outline__item small {
+  justify-self: end;
+  color: #8b938f;
+  font-size: 10px;
+  font-weight: 720;
 }
 
 .module-library__group-header h3 {

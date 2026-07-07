@@ -128,6 +128,10 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "学生简历" })).toBeInTheDocument();
     expect(getTopbarIdentity()).toHaveTextContent("学生");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
+    expect(screen.getByRole("heading", { name: "当前纸面" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /选择模块：个人信息/ })).toHaveClass("module-outline__item--active");
+    fireEvent.click(screen.getByRole("button", { name: /选择模块：项目经历/ }));
+    expect(screen.getByRole("button", { name: /选择模块：项目经历/ })).toHaveClass("module-outline__item--active");
     expect(screen.getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /项目经历 添加/ })).toBeInTheDocument();
     expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();

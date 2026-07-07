@@ -286,6 +286,12 @@ describe("print helpers", () => {
   test("module library uses grouped material wells instead of loose button stacks", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
+    expect(css).toContain(".module-outline,\n.module-library__group {\n  display: grid;\n  gap: 6px;");
+    expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 2px;");
+    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 24px minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 34px;\n  padding: 6px 8px;");
+    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
+    expect(css).toContain("box-shadow:\n    inset 3px 0 0 #111111,");
     expect(css).toContain(".module-library__group {\n  display: grid;\n  gap: 6px;\n  padding: 0;\n  border: 0;");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 2px 7px;");

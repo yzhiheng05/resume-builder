@@ -29,20 +29,54 @@ const moduleGroups: Array<{
 
 export function ModuleLibraryPanel({
   modules,
+  moduleOrder,
+  activeModuleId,
+  onSelectModule,
   onAddModule
 }: {
   modules: ResumeModuleInstance[];
+  moduleOrder: string[];
+  activeModuleId: string | null;
+  onSelectModule: (moduleId: string) => void;
   onAddModule: (kind: ModuleKind) => void;
 }) {
+  const moduleById = new Map(modules.map((module) => [module.id, module] as const));
+  const orderedModules = [
+    ...moduleOrder.map((moduleId) => moduleById.get(moduleId)).filter((module): module is ResumeModuleInstance => Boolean(module)),
+    ...modules.filter((module) => !moduleOrder.includes(module.id))
+  ];
+
   return (
     <aside className="editor-sidebar editor-sidebar--library" aria-label="模块库">
       <div className="editor-sidebar__header">
-        <p className="editor-heading__eyebrow">模块库</p>
+        <p className="editor-heading__eyebrow">布局</p>
         <h2>模块</h2>
-        <p>把需要的段落放到纸面上。</p>
+        <p>管理纸面段落，或添加新的内容模块。</p>
       </div>
 
       <div className="module-library__list">
+        <section className="module-outline" aria-labelledby="module-outline-title">
+          <div className="module-library__group-header">
+            <h3 id="module-outline-title">当前纸面</h3>
+            <p>{orderedModules.length} 个模块</p>
+          </div>
+          <div className="module-outline__list">
+            {orderedModules.map((module, index) => (
+              <button
+                key={module.id}
+                type="button"
+                className={`module-outline__item${module.id === activeModuleId ? " module-outline__item--active" : ""}`}
+                onClick={() => onSelectModule(module.id)}
+                aria-label={`选择模块：${module.title}`}
+              >
+                <span className="module-outline__index">{String(index + 1).padStart(2, "0")}</span>
+                <span className="module-outline__label">{module.title}</span>
+                <small>{module.visible ? "显示" : "隐藏"}</small>
+              </button>
+            ))}
+          </div>
+        </section>
+
         {moduleGroups.map((group) => (
           <section key={group.title} className="module-library__group" aria-labelledby={`module-group-${group.title}`}>
             <div className="module-library__group-header">
