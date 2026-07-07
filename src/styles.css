@@ -2212,7 +2212,7 @@ body {
   top: 0;
   z-index: 20;
   margin: 0;
-  padding: 9px 18px;
+  padding: 8px 18px;
   align-items: center;
   background: #ffffff;
   border-bottom: 1px solid rgba(18, 18, 18, 0.1);
@@ -2221,16 +2221,17 @@ body {
 
 .topbar__brand {
   display: flex;
-  gap: 10px;
+  flex: 1;
+  gap: 8px;
   align-items: center;
-  min-width: 240px;
+  min-width: 0;
   color: #17181c;
 }
 
 .topbar__document {
   display: flex;
-  gap: 8px;
-  align-items: baseline;
+  gap: 0;
+  align-items: center;
   min-width: 0;
 }
 
@@ -2239,6 +2240,14 @@ body {
   color: #68716e;
   font-size: 11px;
   font-weight: 760;
+  white-space: nowrap;
+}
+
+.topbar__kicker::after {
+  content: "/";
+  margin: 0 8px;
+  color: #a0a6a3;
+  font-weight: 620;
 }
 
 .eyebrow,
@@ -2251,8 +2260,17 @@ body {
 
 .topbar h1 {
   color: #17181c;
-  font-size: 16px;
+  min-height: 28px;
+  max-width: min(42vw, 280px);
+  padding: 5px 9px;
+  overflow: hidden;
+  border: 1px solid rgba(17, 18, 23, 0.08);
+  border-radius: 5px;
+  background: #fbfbfa;
+  font-size: 14px;
+  font-weight: 760;
   line-height: 1.15;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -2263,13 +2281,14 @@ body {
 
 .topbar__identity {
   margin: 0;
-  padding: 2px 6px;
+  padding: 3px 6px;
   border: 1px solid rgba(17, 18, 23, 0.12);
   border-radius: 4px;
   color: #4f5b56;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 720;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .topbar__status {
@@ -2281,13 +2300,13 @@ body {
 .topbar__controls {
   display: inline-flex;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   min-width: 0;
-  padding: 2px;
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  border-radius: 8px;
-  background: #ffffff;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   box-shadow: none;
 }
 
@@ -2296,15 +2315,14 @@ body {
   display: inline-flex;
   gap: 2px;
   align-items: center;
-  padding: 0;
-  border: 0;
+  padding: 2px;
+  border: 1px solid rgba(18, 18, 18, 0.08);
   border-radius: 5px;
-  background: transparent;
+  background: #fbfbfa;
 }
 
 .topbar__actions {
-  padding-left: 5px;
-  border-left: 1px solid rgba(18, 18, 18, 0.08);
+  border-radius: 6px;
 }
 
 .topbar__actions button,
@@ -2320,19 +2338,20 @@ body {
 .topbar__actions button,
 .topbar__file-action,
 .topbar__identity-switcher button {
-  padding: 6px 8px;
+  min-height: 26px;
+  padding: 5px 8px;
   border: 0;
   background: transparent;
   color: #4f5b56;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .topbar__actions button,
 .topbar__file-action {
   min-width: 0;
-  padding: 5px 7px;
+  padding: 5px 8px;
   color: #68716e;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 740;
 }
 
@@ -2361,9 +2380,9 @@ body {
 }
 
 .topbar__primary-action {
-  min-width: 44px;
-  margin-left: 3px;
-  padding-inline: 11px !important;
+  min-width: 48px;
+  margin-left: 2px;
+  padding-inline: 12px !important;
   border: 1px solid #111111 !important;
   background: #111111 !important;
   color: #ffffff !important;

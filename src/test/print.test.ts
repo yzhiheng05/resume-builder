@@ -67,14 +67,17 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".topbar {\n  position: sticky;");
-    expect(css).toContain("padding: 9px 18px;\n  align-items: center;\n  background: #ffffff;");
+    expect(css).toContain("padding: 8px 18px;\n  align-items: center;\n  background: #ffffff;");
     expect(css).toContain("border-bottom: 1px solid rgba(18, 18, 18, 0.1);\n  box-shadow: none;");
+    expect(css).toContain(".topbar__kicker::after {\n  content: \"/\";");
+    expect(css).toContain(".topbar h1 {\n  color: #17181c;\n  min-height: 28px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: #fbfbfa;");
     expect(css).toContain(".topbar__controls {\n  display: inline-flex;\n  justify-content: flex-end;");
-    expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 8px;\n  background: #ffffff;");
+    expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 2px;");
-    expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 5px;\n  background: transparent;");
-    expect(css).toContain(".topbar__actions {\n  padding-left: 5px;\n  border-left: 1px solid rgba(18, 18, 18, 0.08);");
-    expect(css).toContain(".topbar__primary-action {\n  min-width: 44px;");
+    expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 5px;\n  background: #fbfbfa;");
+    expect(css).toContain(".topbar__actions {\n  border-radius: 6px;");
+    expect(css).toContain(".topbar__primary-action {\n  min-width: 48px;");
     expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
     expect(css).toContain("color: #ffffff !important;\n  font-weight: 800 !important;");
     expect(css).toContain(".topbar__primary-action:hover {\n  background: #2a2a2a !important;");
