@@ -292,6 +292,12 @@ describe("print helpers", () => {
     expect(css).toContain("min-height: 34px;\n  padding: 6px 8px;");
     expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
     expect(css).toContain("box-shadow:\n    inset 3px 0 0 #111111,");
+    expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 8px;");
+    expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.09);\n  padding-top: 10px;");
+    expect(css).toContain(".module-add-drawer > summary {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.08);\n  border-radius: 5px;\n  background: #ffffff;");
+    expect(css).toContain(".module-add-drawer > summary::after {\n  content: \"+\";");
+    expect(css).toContain(".module-add-drawer[open] > summary::after {\n  content: \"-\";");
     expect(css).toContain(".module-library__group {\n  display: grid;\n  gap: 6px;\n  padding: 0;\n  border: 0;");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 2px 7px;");
@@ -321,7 +327,7 @@ describe("print helpers", () => {
     expect(css).toContain("background: rgba(255, 254, 251, 0.42);");
     expect(css).toContain(".module-library__item:hover:not(:disabled)::after,\n.module-library__item:focus-visible:not(:disabled)::after {\n  opacity: 1;");
     expect(css).toContain(".module-library__item:disabled small {\n  padding-right: 7px;");
-    expect(css).not.toContain("content: \"+\";");
+    expect(css).not.toContain(".module-library__item::after {\n  content: \"+\";");
     expect(css).not.toContain("rgba(134, 205, 182, 0.62)");
     expect(css).not.toContain("#86cdb6");
   });

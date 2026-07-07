@@ -133,6 +133,11 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: /选择模块：项目经历/ }));
     expect(screen.getByRole("button", { name: /选择模块：项目经历/ })).toHaveClass("module-outline__item--active");
     expect(screen.getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
+    const moduleDrawer = document.querySelector(".module-add-drawer") as HTMLDetailsElement;
+    expect(moduleDrawer.open).toBe(false);
+    expect(screen.getByText("添加模块")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("添加模块"));
+    expect(moduleDrawer.open).toBe(true);
     expect(screen.getByRole("button", { name: /项目经历 添加/ })).toBeInTheDocument();
     expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });

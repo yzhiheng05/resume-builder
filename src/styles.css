@@ -2533,6 +2533,62 @@ body {
   font-weight: 720;
 }
 
+.module-add-drawer {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid rgba(17, 18, 23, 0.09);
+  padding-top: 10px;
+}
+
+.module-add-drawer > summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 8px;
+  border: 1px solid rgba(17, 18, 23, 0.08);
+  border-radius: 5px;
+  background: #ffffff;
+  color: #25282c;
+  cursor: pointer;
+  list-style: none;
+}
+
+.module-add-drawer > summary::-webkit-details-marker {
+  display: none;
+}
+
+.module-add-drawer > summary::after {
+  content: "+";
+  justify-self: end;
+  color: #111111;
+  font-size: 15px;
+  font-weight: 760;
+  line-height: 1;
+}
+
+.module-add-drawer[open] > summary::after {
+  content: "-";
+}
+
+.module-add-drawer > summary span {
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.module-add-drawer > summary small {
+  color: #8b938f;
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.module-add-drawer__content {
+  display: grid;
+  gap: 14px;
+  padding-top: 6px;
+}
+
 .module-library__group-header h3 {
   margin: 0;
   color: #303832;

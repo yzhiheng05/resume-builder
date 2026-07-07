@@ -77,36 +77,44 @@ export function ModuleLibraryPanel({
           </div>
         </section>
 
-        {moduleGroups.map((group) => (
-          <section key={group.title} className="module-library__group" aria-labelledby={`module-group-${group.title}`}>
-            <div className="module-library__group-header">
-              <h3 id={`module-group-${group.title}`}>{group.title}</h3>
-              <p>{group.description}</p>
-            </div>
-            <div className="module-library__group-items">
-              {group.kinds
-                .filter((kind) => getModuleCatalog().includes(kind))
-                .map((kind) => {
-                  const existing = modules.some((module) => module.kind === kind);
-                  const disabled = existing && !canAddMultipleModules(kind);
+        <details className="module-add-drawer">
+          <summary>
+            <span>添加模块</span>
+            <small>官方模块库</small>
+          </summary>
+          <div className="module-add-drawer__content">
+            {moduleGroups.map((group) => (
+              <section key={group.title} className="module-library__group" aria-labelledby={`module-group-${group.title}`}>
+                <div className="module-library__group-header">
+                  <h3 id={`module-group-${group.title}`}>{group.title}</h3>
+                  <p>{group.description}</p>
+                </div>
+                <div className="module-library__group-items">
+                  {group.kinds
+                    .filter((kind) => getModuleCatalog().includes(kind))
+                    .map((kind) => {
+                      const existing = modules.some((module) => module.kind === kind);
+                      const disabled = existing && !canAddMultipleModules(kind);
 
-                  return (
-                    <button
-                      key={kind}
-                      type="button"
-                      className={`module-library__item${disabled ? " module-library__item--added" : ""}`}
-                      disabled={disabled}
-                      onClick={() => onAddModule(kind)}
-                      aria-label={`${getModuleLabel(kind)} ${disabled ? "已在纸面" : "添加"}`}
-                    >
-                      <span>{getModuleLabel(kind)}</span>
-                      <small aria-hidden="true">{disabled ? "已在纸面" : "添加"}</small>
-                    </button>
-                  );
-                })}
-            </div>
-          </section>
-        ))}
+                      return (
+                        <button
+                          key={kind}
+                          type="button"
+                          className={`module-library__item${disabled ? " module-library__item--added" : ""}`}
+                          disabled={disabled}
+                          onClick={() => onAddModule(kind)}
+                          aria-label={`${getModuleLabel(kind)} ${disabled ? "已在纸面" : "添加"}`}
+                        >
+                          <span>{getModuleLabel(kind)}</span>
+                          <small aria-hidden="true">{disabled ? "已在纸面" : "添加"}</small>
+                        </button>
+                      );
+                    })}
+                </div>
+              </section>
+            ))}
+          </div>
+        </details>
       </div>
     </aside>
   );
