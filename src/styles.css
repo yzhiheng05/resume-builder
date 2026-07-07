@@ -1601,6 +1601,11 @@ button {
   print-color-adjust: exact;
 }
 
+.resume-print-mode .resume-paper::after {
+  content: none !important;
+  display: none !important;
+}
+
 .resume-print-mode .resume-template--sidebar {
   grid-template-columns: minmax(150px, 0.88fr) minmax(0, 1.65fr);
   gap: 12px;
@@ -2985,6 +2990,28 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
     0 12px 30px rgba(18, 18, 18, 0.13);
+}
+
+.preview-surface > .resume-paper::after {
+  content: "第 1 页结束";
+  position: absolute;
+  z-index: 4;
+  top: calc(297mm - var(--resume-page-margin-y));
+  left: calc(-1 * var(--resume-page-margin-x));
+  right: calc(-1 * var(--resume-page-margin-x));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 0;
+  border-top: 1px dashed rgba(17, 18, 23, 0.2);
+  color: rgba(69, 77, 85, 0.58);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-shadow:
+    -8px 0 0 #ffffff,
+    8px 0 0 #ffffff;
 }
 
 .canvas-statusbar {
@@ -4554,6 +4581,11 @@ body {
     box-shadow: none;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  .resume-paper::after {
+    content: none !important;
+    display: none !important;
   }
 
   .resume-template--sidebar {

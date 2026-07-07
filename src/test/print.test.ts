@@ -19,6 +19,9 @@ describe("print helpers", () => {
     expect(printCss).toContain(".resume-paper--template-sidebar .resume-section--active::after");
     expect(printCss).toContain(".resume-print-mode .preview-surface::before");
     expect(printCss).toContain(".preview-surface::before");
+    expect(printCss).toContain(".preview-surface > .resume-paper::after {\n  content: \"第 1 页结束\";");
+    expect(printCss).toContain(".resume-print-mode .resume-paper::after {\n  content: none !important;");
+    expect(printCss).toContain("  .resume-paper::after {\n    content: none !important;");
     expect(printCss).toContain("margin: 0;");
     expect(printCss).toContain("--resume-page-margin-x");
     expect(printCss).toContain("--resume-page-margin-y");
