@@ -99,7 +99,7 @@ const presetConfigs: Record<IdentityPreset, IdentityPresetConfig> = {
   }
 };
 
-export const RESUME_TOOL_BRAND = "求职简历工具";
+export const RESUME_TOOL_BRAND = "魔方简历";
 
 const identityDefaultTemplates: Record<IdentityPreset, TemplateId> = {
   student: "campus",

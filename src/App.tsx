@@ -52,7 +52,7 @@ function IdentityEntryScreen({ onSelect }: { onSelect: (identity: IdentityPreset
           <div className="identity-screen__paper" aria-hidden="true">
             <div className="identity-paper__toolbar">
               <span>A4</span>
-              <span>模块化简历</span>
+              <span>纸面编辑</span>
             </div>
             <div className="identity-paper__sheet">
               <i className="identity-paper__name" />

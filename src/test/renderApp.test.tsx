@@ -113,7 +113,7 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "选择简历结构" })).toBeInTheDocument();
     expect(screen.getByText(RESUME_TOOL_BRAND)).toBeInTheDocument();
     expect(screen.getByText("选择起点")).toBeInTheDocument();
-    expect(screen.getByText("模块化简历")).toBeInTheDocument();
+    expect(screen.getByText("纸面编辑")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /学生/ })).toBeInTheDocument();
   });
 
