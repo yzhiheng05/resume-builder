@@ -408,6 +408,11 @@ describe("print helpers", () => {
 
     expect(css).toContain(".inspector-module-card {\n  display: grid;\n  gap: 0;");
     expect(css).toContain("padding: 2px 0 4px;\n  border-top: 1px solid rgba(17, 18, 23, 0.06);");
+    expect(css).toContain(".inspector-actions {\n  justify-content: flex-end;\n  gap: 4px;");
+    expect(css).toContain("padding: 0 0 6px;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.05);");
+    expect(css).toContain(".inspector-actions .secondary-button,\n.inspector-actions .ghost-button {\n  min-height: 24px;");
+    expect(css).toContain("border-color: transparent;\n  border-radius: 3px;\n  background: transparent;");
+    expect(css).toContain(".inspector-actions .secondary-button:hover,\n.inspector-actions .ghost-button:hover {\n  border-color: rgba(17, 18, 23, 0.08);");
     expect(css).toContain(".inspector-panel .inspector-module-row,\n.inspector-panel .inspector-module-row:has(> input:not([type])) {\n  display: grid;");
     expect(css).toContain("grid-template-columns: minmax(72px, 0.55fr) minmax(0, 1fr);");
     expect(css).toContain("min-height: 36px;\n  padding: 5px 0;");
@@ -460,7 +465,7 @@ describe("print helpers", () => {
     expect(css).toContain(".inspector-panel .inline-row {\n  display: grid;\n  gap: 6px;\n  align-items: stretch;");
     expect(css).toContain(".inspector-entry-header {\n  display: flex;\n  gap: 8px;");
     expect(css).toContain("justify-content: space-between;\n  min-height: 22px;\n  padding: 0 0 2px;");
-    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 22px;");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 20px;");
     expect(css).toContain(".inspector-panel .inspector-list-row .inline-row__field {\n  padding: 0;\n  border: 0;");
     expect(css).not.toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button");
   });
@@ -515,13 +520,14 @@ describe("print helpers", () => {
     expect(css).toContain("border-color: rgba(17, 18, 23, 0.16);\n  background: rgba(17, 18, 23, 0.02);");
     expect(css).toContain(".inspector-entry-header {\n  display: flex;\n  gap: 8px;");
     expect(css).toContain("justify-content: space-between;\n  min-height: 22px;\n  padding: 0 0 2px;");
-    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 22px;");
-    expect(css).toContain("min-height: 22px;\n  padding: 0 6px;");
-    expect(css).toContain("border-color: transparent;\n  border-radius: 4px;\n  background: transparent;");
-    expect(css).toContain(".inspector-panel .inspector-entry-header__action:hover {\n  border-color: rgba(132, 68, 62, 0.22);");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action {\n  justify-self: end;\n  min-height: 20px;");
+    expect(css).toContain("min-height: 20px;\n  padding: 0 4px;");
+    expect(css).toContain("border-color: transparent;\n  border-radius: 3px;\n  background: transparent;");
+    expect(css).toContain(".inspector-panel .inspector-entry-header__action:hover {\n  border-color: rgba(132, 68, 62, 0.12);");
     expect(css).toContain("box-shadow: none;\n  transform: none;");
-    expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 34px;");
-    expect(css).toContain("background: rgba(17, 18, 23, 0.045);");
+    expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 32px;");
+    expect(css).toContain("border-color: rgba(17, 18, 23, 0.09);\n  border-radius: 4px;\n  background: #ffffff;");
+    expect(css).toContain(".inspector-form > .secondary-button:hover {\n  border-color: rgba(63, 95, 104, 0.24);");
     expect(css).not.toContain("content: \"条目 \" counter(inspector-entry, decimal-leading-zero);");
     expect(css).not.toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.62), rgba(246, 248, 242, 0.42))");
     expect(css).not.toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
