@@ -299,17 +299,22 @@ describe("App", () => {
   });
 
   test("renders empty resume content as draft skeletons instead of visible form prompts", () => {
-    seedStoredResume("student");
+    const state = buildPresetState("student");
+    const summaryModule = state.modules.find((module) => module.kind === "summary");
+    if (!summaryModule || !("value" in summaryModule.data)) {
+      throw new Error("Expected preset to include a summary module");
+    }
+    summaryModule.data = { value: "" };
+    storage.setItem(STORAGE_KEY, JSON.stringify(state));
+    useResumeStore.getState().replaceResumeState(state);
     render(<App />);
 
     const previewSurface = getMainPreviewSurface();
 
-    expect(within(previewSurface).queryByText("姓名")).not.toBeInTheDocument();
-    expect(within(previewSurface).queryByText("动作 / 职责 / 结果")).not.toBeInTheDocument();
-    expect(within(previewSurface).queryByText("组织 / 公司 / 项目名称")).not.toBeInTheDocument();
-    expect(within(previewSurface).getByLabelText("姓名")).toBeInTheDocument();
-    expect(within(previewSurface).getAllByLabelText("动作 / 职责 / 结果").length).toBeGreaterThan(0);
+    expect(within(previewSurface).queryByText("摘要内容")).not.toBeInTheDocument();
+    expect(within(previewSurface).getByLabelText("摘要内容")).toBeInTheDocument();
     expect(previewSurface.querySelectorAll(".resume-placeholder__line").length).toBeGreaterThan(0);
+    expect(within(previewSurface).getByText("宋哈娜")).toBeInTheDocument();
   });
 
   test("renders personal contacts as separate paper items", () => {

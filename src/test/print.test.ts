@@ -353,12 +353,13 @@ describe("print helpers", () => {
   test("inspector text fields use compact property rows instead of bare underlines", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel label:has(> input:not([type])) {\n  display: grid;\n  grid-template-columns: minmax(68px, 0.74fr) minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 42px;\n  padding: 7px 0;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.075);");
+    expect(css).toContain(".inspector-panel label:has(> input:not([type])) {\n  display: grid;\n  grid-template-columns: minmax(72px, 0.6fr) minmax(0, 1fr);");
+    expect(css).toContain("gap: 4px 10px;\n  align-items: center;\n  min-height: 42px;\n  padding: 8px 0;");
     expect(css).toContain("background: transparent;");
     expect(css).toContain(".inspector-panel label:has(> input:not([type])):focus-within {\n  border-color: rgba(63, 95, 104, 0.28);");
     expect(css).toContain("box-shadow: inset 3px 0 0 rgba(63, 95, 104, 0.36);");
-    expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;");
+    expect(css).toContain(".inspector-panel label > input:not([type]) {\n  min-height: 28px;\n  padding: 3px 0;\n  min-width: 0;");
+    expect(css).toContain(".inspector-panel label:has(> input:not([type])) > .visibility-toggle {\n  grid-column: 2;\n  justify-self: end;");
     expect(css).not.toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.16);");
   });
 

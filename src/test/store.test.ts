@@ -2,7 +2,7 @@ import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, test } from "vitest";
 import { buildPresetState } from "../data/identityPresets";
 import { multipagePrintFixture } from "../data/multipagePrintFixture";
-import { isPersonalModuleData } from "../lib/moduleRegistry";
+import { isListModuleData, isPersonalModuleData, isTextModuleData, isTimelineModuleData } from "../lib/moduleRegistry";
 import { migrateLegacyStoredResumeState, migrateUnknownStoredResumeState } from "../lib/resumeMigration";
 import { loadResumeState, moveModule, STORAGE_KEY } from "../lib/storage";
 import {
@@ -52,6 +52,19 @@ describe("resume helpers", () => {
     const state = buildPresetState("student");
     const moved = moveModule(state.moduleOrder, state.moduleOrder[0], 2);
     expect(moved[2]).toBe(state.moduleOrder[0]);
+  });
+
+  test("student preset opens with real resume content instead of empty placeholders", () => {
+    const state = buildPresetState("student");
+    const personal = state.modules.find((module) => module.kind === "personal");
+    const summary = state.modules.find((module) => module.kind === "summary");
+    const project = state.modules.find((module) => module.kind === "project");
+    const skills = state.modules.find((module) => module.kind === "skills");
+
+    expect(personal && isPersonalModuleData(personal.data) ? personal.data.name : "").toBe("宋哈娜");
+    expect(summary && isTextModuleData(summary.data) ? summary.data.value : "").toContain("前端工程");
+    expect(project && isTimelineModuleData(project.data) ? project.data.entries[0]?.title : "").toBe("校园活动管理平台");
+    expect(skills && isListModuleData(skills.data) ? skills.data.items.length : 0).toBeGreaterThan(3);
   });
 
   test("loads migrated stored state", () => {

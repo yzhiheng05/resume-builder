@@ -4081,11 +4081,11 @@ body {
 
 .inspector-panel label:has(> input:not([type])) {
   display: grid;
-  grid-template-columns: minmax(68px, 0.74fr) minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-columns: minmax(72px, 0.6fr) minmax(0, 1fr);
+  gap: 4px 10px;
   align-items: center;
   min-height: 42px;
-  padding: 7px 0;
+  padding: 8px 0;
   border: 0;
   border-bottom: 1px solid rgba(17, 18, 23, 0.075);
   border-radius: 0;
@@ -4120,12 +4120,21 @@ body {
 .inspector-panel label > input:not([type]) {
   min-height: 28px;
   padding: 3px 0;
+  min-width: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
   color: #17181c;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inspector-panel label:has(> input:not([type])) > .visibility-toggle {
+  grid-column: 2;
+  justify-self: end;
+  margin-top: 1px;
 }
 
 .inspector-panel label > input:not([type]):focus {
