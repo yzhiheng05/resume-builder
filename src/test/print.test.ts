@@ -124,7 +124,7 @@ describe("print helpers", () => {
     expect(css).toContain("box-shadow: none;");
     expect(css).toContain(".editor-sidebar--library {\n    background: #ffffff;");
     expect(css).toContain(".canvas-panel {\n    min-height: auto;\n    padding-top: 18px;");
-    expect(css).toContain("background: #f1f1ef;");
+    expect(css).toContain("background: #f6f6f4;");
     expect(css).toContain(".inspector-panel {\n    background: #ffffff;");
   });
 
@@ -134,7 +134,7 @@ describe("print helpers", () => {
     expect(css).toContain(".editor-workspace {\n  grid-template-columns: minmax(260px, 300px) minmax(620px, 1fr) minmax(300px, 360px);");
     expect(css).toContain("background: #f3f3f1;");
     expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 48px);");
-    expect(css).toContain("padding: 14px 24px 24px;\n  background: #f1f1ef;");
+    expect(css).toContain("padding: 12px 22px 22px;\n  background: #f6f6f4;");
     expect(css).not.toContain("--canvas-bg: #d2d6d4;");
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
   });
@@ -143,8 +143,8 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".preview-surface {\n  position: relative;\n  flex: 1;");
-    expect(css).toContain("padding: 28px 30px 30px;");
-    expect(css).toContain("background: #eeeeec;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.08);");
+    expect(css).toContain("padding: 22px 28px 28px;");
+    expect(css).toContain("background: #f4f4f2;\n  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.06);");
     expect(css).toContain(".preview-surface::before,\n.preview-surface::after {\n  content: none;\n  display: none;");
     expect(css).not.toContain("linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px) 0 0 / 36px 36px");
     expect(css).not.toContain("repeating-linear-gradient(90deg, rgba(33, 38, 48, 0.24) 0 1px, transparent 1px 16px)");
@@ -272,12 +272,12 @@ describe("print helpers", () => {
 
     expect(css).toContain(".canvas-panel__header {\n  display: flex;\n  align-self: flex-start;\n  justify-content: space-between;");
     expect(css).toContain("align-self: flex-start;");
-    expect(css).toContain("padding: 5px 10px;\n  border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 999px;");
+    expect(css).toContain("padding: 4px 9px;\n  border: 1px solid rgba(18, 18, 18, 0.06);\n  border-radius: 999px;");
     expect(css).toContain(".preview-panel {\n  flex: 1;\n  gap: 0;");
-    expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 38px;\n  top: 20px;");
-    expect(css).toContain("right: 38px;\n  top: 20px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.055);\n  border-radius: 4px;");
-    expect(css).toContain("0 4px 10px rgba(39, 47, 43, 0.045);");
+    expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 34px;\n  top: 16px;");
+    expect(css).toContain("right: 34px;\n  top: 16px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.045);\n  border-radius: 4px;");
+    expect(css).toContain("0 2px 6px rgba(39, 47, 43, 0.035);");
     expect(css).toContain("font-size: 10px;\n  font-weight: 760;");
     expect(css).toContain(".canvas-statusbar span:first-child {\n  border-left: 0;\n  background: rgba(17, 18, 23, 0.06);");
     expect(css).not.toContain("background: rgba(255, 254, 251, 0.42);\n  box-shadow: none;");
@@ -433,28 +433,30 @@ describe("print helpers", () => {
     expect(css).not.toContain("border: 1px dashed rgba(167, 194, 255, 0.9);");
   });
 
-  test("timeline and list editors use compact entry wells instead of raw stacked forms", () => {
+  test("timeline and list editors use quiet property groups instead of decorated entry cards", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-form {\n  gap: 12px;\n  counter-reset: inspector-entry;");
-    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 34px 8px 8px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 7px;");
-    expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.62), rgba(246, 248, 242, 0.42))");
+    expect(css).toContain(".inspector-form {\n  gap: 10px;\n  counter-reset: inspector-entry;");
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 8px 0 0;");
+    expect(css).toContain("border: 0;\n  border-top: 1px solid rgba(17, 18, 23, 0.08);");
+    expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain("counter-increment: inspector-entry;");
-    expect(css).toContain(".inspector-panel .list-item::before,\n.inspector-panel .inline-row::before {\n  content: \"条目 \" counter(inspector-entry, decimal-leading-zero);");
-    expect(css).toContain(".inspector-panel .list-item::after,\n.inspector-panel .inline-row::after {\n  content: \"\";");
-    expect(css).toContain(".inspector-panel .list-item > label,\n.inspector-panel .list-item > label:has(> input:not([type])) {\n  grid-template-columns: minmax(66px, 0.62fr) minmax(0, 1fr);");
-    expect(css).toContain("min-height: 38px;\n  padding: 5px 8px;\n  border: 1px solid rgba(17, 18, 23, 0.055);");
-    expect(css).toContain(".inspector-panel .list-item > label:focus-within,\n.inspector-panel .list-item > label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.12);");
-    expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 26px;");
-    expect(css).toContain("border-color: rgba(132, 68, 62, 0.14);");
-    expect(css).toContain("background: rgba(132, 68, 62, 0.035);");
+    expect(css).toContain(".inspector-panel .list-item::before,\n.inspector-panel .inline-row::before {\n  content: none;");
+    expect(css).toContain(".inspector-panel .list-item::after,\n.inspector-panel .inline-row::after {\n  content: none;");
+    expect(css).toContain(".inspector-panel .list-item > label,\n.inspector-panel .list-item > label:has(> input:not([type])) {\n  grid-template-columns: minmax(62px, 0.56fr) minmax(0, 1fr);");
+    expect(css).toContain("grid-template-columns: minmax(62px, 0.56fr) minmax(0, 1fr);\n  min-height: 34px;\n  padding: 4px 0;");
+    expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.06);");
+    expect(css).toContain(".inspector-panel .list-item > label:focus-within,\n.inspector-panel .list-item > label:has(> input:not([type])):focus-within {\n  border-color: rgba(17, 18, 23, 0.16);");
+    expect(css).toContain("border-color: rgba(17, 18, 23, 0.16);\n  background: rgba(17, 18, 23, 0.02);");
+    expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 24px;");
+    expect(css).toContain("min-height: 24px;\n  padding: 0 7px;");
+    expect(css).toContain("border-color: transparent;\n  border-radius: 4px;\n  background: transparent;");
     expect(css).toContain(".inspector-panel .list-item .ghost-button:hover,\n.inspector-panel .inline-row .ghost-button:hover {\n  border-color: rgba(132, 68, 62, 0.22);");
     expect(css).toContain("box-shadow: none;\n  transform: none;");
     expect(css).toContain(".inspector-form > .secondary-button {\n  width: 100%;\n  min-height: 34px;");
     expect(css).toContain("background: rgba(17, 18, 23, 0.045);");
-    expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 12px 0;");
-    expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  border-top: 1px solid rgba(17, 18, 23, 0.09);");
+    expect(css).not.toContain("content: \"条目 \" counter(inspector-entry, decimal-leading-zero);");
+    expect(css).not.toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.62), rgba(246, 248, 242, 0.42))");
     expect(css).not.toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
   });
 
