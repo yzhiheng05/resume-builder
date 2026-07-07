@@ -60,7 +60,6 @@ export function GlobalStylePanel({
   onTemplateChange: (templateId: TemplateId) => void;
   onStyleChange: (nextStyle: Partial<ResumeStyleSettings>) => void;
 }) {
-  const selectedTemplate = templates.find((template) => template.id === templateId);
   const densityOptions: Array<{ value: ResumeStyleSettings["density"]; label: string }> = [
     { value: "comfortable", label: "舒展" },
     { value: "compact", label: "紧凑" }
@@ -107,10 +106,6 @@ export function GlobalStylePanel({
           <h4 id="style-template-title">模板</h4>
         </div>
         <div className="style-board">
-          <div className="style-board__row">
-            <span>当前模板</span>
-            <strong>{selectedTemplate?.name ?? "经典简历"}</strong>
-          </div>
           <div className="template-chip-group" role="group" aria-label="当前模板">
             {templates.map((template) => (
               <button
