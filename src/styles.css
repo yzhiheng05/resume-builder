@@ -2607,10 +2607,11 @@ body {
   gap: 8px;
   align-items: center;
   min-height: 32px;
-  padding: 5px 24px 5px 7px;
-  border: 1px solid rgba(17, 18, 23, 0.07);
-  border-radius: 4px;
-  background: #f8f8f6;
+  padding: 5px 18px 5px 1px;
+  border: 0;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.065);
+  border-radius: 0;
+  background: transparent;
   color: #25282c;
   cursor: pointer;
   list-style: none;
@@ -2624,10 +2625,10 @@ body {
   content: "+";
   position: absolute;
   top: 50%;
-  right: 8px;
-  color: #111111;
-  font-size: 15px;
-  font-weight: 760;
+  right: 1px;
+  color: #68706d;
+  font-size: 13px;
+  font-weight: 680;
   line-height: 1;
   transform: translateY(-50%);
 }
@@ -2638,7 +2639,7 @@ body {
 
 .module-add-drawer > summary span {
   font-size: 12px;
-  font-weight: 760;
+  font-weight: 720;
 }
 
 .module-add-drawer > summary small {
@@ -2690,77 +2691,52 @@ body {
 .module-library__item {
   position: relative;
   display: grid;
-  grid-template-columns: 16px minmax(0, 1fr) auto;
-  column-gap: 9px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 8px;
   align-items: center;
-  min-height: 34px;
-  padding: 5px 7px 5px 8px;
+  min-height: 32px;
+  padding: 5px 1px;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  border-bottom-color: rgba(17, 18, 23, 0.045);
   background: transparent;
   color: #232b2f;
   box-shadow: none;
 }
 
 .module-library__item::before {
-  content: "";
-  display: grid;
-  place-items: center;
-  width: 14px;
-  height: 14px;
-  margin-left: 0;
-  border: 1px solid rgba(17, 18, 23, 0.12);
-  border-radius: 2px;
-  background:
-    linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat,
-    linear-gradient(rgba(17, 18, 23, 0.3), rgba(17, 18, 23, 0.3)) 3px 8px / 6px 1px no-repeat,
-    rgba(17, 18, 23, 0.026);
+  content: none;
 }
 
 .module-library__item::after {
-  content: "";
-  position: absolute;
-  right: 10px;
-  width: 8px;
-  height: 8px;
-  background:
-    linear-gradient(#111111, #111111) center / 8px 1px no-repeat,
-    linear-gradient(#111111, #111111) center / 1px 8px no-repeat;
-  opacity: 0.42;
-  transform: none;
-  transition:
-    opacity 120ms ease,
-    background 120ms ease;
+  content: none;
 }
 
 .module-library__item:hover:not(:disabled) {
-  border-color: rgba(17, 18, 23, 0.08);
-  background: rgba(17, 18, 23, 0.028);
+  border-bottom-color: rgba(17, 18, 23, 0.1);
+  background: rgba(17, 18, 23, 0.018);
   box-shadow: none;
   transform: none;
 }
 
 .module-library__item:hover:not(:disabled)::after,
 .module-library__item:focus-visible:not(:disabled)::after {
-  opacity: 1;
-  background:
-    linear-gradient(#111111, #111111) center / 8px 1px no-repeat,
-    linear-gradient(#111111, #111111) center / 1px 8px no-repeat;
+  content: none;
 }
 
 .module-library__item small {
-  grid-column: 3;
   justify-self: end;
-  min-width: 38px;
-  padding: 2px 14px 2px 6px;
-  border: 1px solid rgba(17, 18, 23, 0.075);
-  border-radius: 999px;
-  background: rgba(17, 18, 23, 0.026);
-  color: #5f6a66;
+  min-width: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #8a918e;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 720;
   line-height: 1;
-  text-align: left;
+  text-align: right;
   white-space: nowrap;
 }
 
@@ -2771,34 +2747,23 @@ body {
 }
 
 .module-library__item:disabled {
-  border-color: rgba(127, 137, 151, 0.08);
-  background: rgba(255, 254, 251, 0.08);
+  border-bottom-color: rgba(127, 137, 151, 0.06);
+  background: transparent;
   opacity: 0.58;
 }
 
 .module-library__item:disabled::before {
-  border-color: rgba(127, 137, 151, 0.38);
-  background:
-    linear-gradient(rgba(127, 137, 151, 0.64), rgba(127, 137, 151, 0.64)) 4px 5px / 8px 1px no-repeat,
-    linear-gradient(rgba(127, 137, 151, 0.42), rgba(127, 137, 151, 0.42)) 4px 9px / 6px 1px no-repeat,
-    rgba(127, 137, 151, 0.12);
+  content: none;
 }
 
 .module-library__item:disabled::after {
-  content: "";
-  right: 14px;
-  width: 7px;
-  height: 7px;
-  border-radius: 2px;
-  background: rgba(127, 137, 151, 0.5);
-  opacity: 0.7;
-  transform: none;
+  content: none;
 }
 
 .module-library__item:disabled small {
-  padding-right: 7px;
-  border-color: rgba(127, 137, 151, 0.12);
-  background: rgba(127, 137, 151, 0.08);
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #7c8580;
 }
 

@@ -169,7 +169,7 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain("--accent: #3f5f68;");
-    expect(css).toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
+    expect(css).toContain(".module-library__item::before {\n  content: none;");
     expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
     expect(css).not.toContain("--accent: #36846b;");
   });
@@ -303,9 +303,11 @@ describe("print helpers", () => {
     expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 7px;");
     expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.075);\n  padding-top: 9px;");
     expect(css).toContain(".module-add-drawer > summary {\n  position: relative;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 4px;\n  background: #f8f8f6;");
+    expect(css).toContain("padding: 5px 18px 5px 1px;\n  border: 0;");
+    expect(css).toContain("border-bottom: 1px solid rgba(17, 18, 23, 0.065);\n  border-radius: 0;");
+    expect(css).toContain("background: transparent;");
     expect(css).toContain(".module-add-drawer > summary::after {\n  content: \"+\";");
-    expect(css).toContain("top: 50%;\n  right: 8px;");
+    expect(css).toContain("top: 50%;\n  right: 1px;");
     expect(css).toContain("transform: translateY(-50%);");
     expect(css).toContain(".module-add-drawer[open] > summary::after {\n  content: \"-\";");
     expect(css).toContain(".module-library__group {\n  display: grid;\n  gap: 6px;\n  padding: 0;\n  border: 0;");
@@ -313,30 +315,28 @@ describe("print helpers", () => {
     expect(css).toContain(".module-library__group-header {\n  display: grid;\n  gap: 2px;\n  padding: 0 1px 6px;");
     expect(css).toContain("padding: 0 1px 6px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.09);");
     expect(css).toContain(".module-library__group-items {\n  display: grid;\n  gap: 1px;\n  border-top: 0;");
-    expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 34px;\n  padding: 5px 7px 5px 8px;");
-    expect(css).toContain("border: 1px solid transparent;\n  border-radius: 4px;\n  background: transparent;");
-    expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-color: rgba(17, 18, 23, 0.08);\n  background: rgba(17, 18, 23, 0.028);");
+    expect(css).toContain(".module-library__item {\n  position: relative;\n  display: grid;");
+    expect(css).toContain("grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 32px;\n  padding: 5px 1px;");
+    expect(css).toContain("border-width: 0 0 1px;\n  border-radius: 0;");
+    expect(css).toContain("border-bottom-color: rgba(17, 18, 23, 0.045);");
+    expect(css).toContain(".module-library__item:hover:not(:disabled) {\n  border-bottom-color: rgba(17, 18, 23, 0.1);\n  background: rgba(17, 18, 23, 0.018);");
   });
 
-  test("module add markers use neutral chrome instead of colored decoration", () => {
+  test("module add rows use plain text instead of repeated icon chrome", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".module-library__item::before {\n  content: \"\";");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.12);\n  border-radius: 2px;");
-    expect(css).toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
-    expect(css).toContain("linear-gradient(rgba(17, 18, 23, 0.3), rgba(17, 18, 23, 0.3)) 3px 8px / 6px 1px no-repeat");
-    expect(css).toContain("rgba(17, 18, 23, 0.026);");
-    expect(css).toContain(".module-library__item::after {\n  content: \"\";");
-    expect(css).toContain("position: absolute;\n  right: 10px;");
-    expect(css).toContain("linear-gradient(#111111, #111111) center / 8px 1px no-repeat");
-    expect(css).toContain("linear-gradient(#111111, #111111) center / 1px 8px no-repeat");
-    expect(css).toContain(".module-library__item small {\n  grid-column: 3;\n  justify-self: end;");
-    expect(css).toContain("min-width: 38px;\n  padding: 2px 14px 2px 6px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 999px;");
-    expect(css).toContain("background: rgba(17, 18, 23, 0.026);");
-    expect(css).toContain(".module-library__item:hover:not(:disabled)::after,\n.module-library__item:focus-visible:not(:disabled)::after {\n  opacity: 1;");
-    expect(css).toContain(".module-library__item:disabled small {\n  padding-right: 7px;");
+    expect(css).toContain(".module-library__item::before {\n  content: none;");
+    expect(css).toContain(".module-library__item::after {\n  content: none;");
+    expect(css).toContain(".module-library__item small {\n  justify-self: end;");
+    expect(css).toContain("min-width: 28px;\n  padding: 0;");
+    expect(css).toContain("border: 0;\n  border-radius: 0;");
+    expect(css).toContain("background: transparent;\n  color: #8a918e;");
+    expect(css).toContain(".module-library__item:hover:not(:disabled)::after,\n.module-library__item:focus-visible:not(:disabled)::after {\n  content: none;");
+    expect(css).toContain(".module-library__item:disabled small {\n  padding: 0;");
+    expect(css).not.toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
+    expect(css).not.toContain("linear-gradient(#111111, #111111) center / 8px 1px no-repeat");
+    expect(css).not.toContain("min-width: 38px;\n  padding: 2px 14px 2px 6px;");
     expect(css).not.toContain(".module-library__item::after {\n  content: \"+\";");
     expect(css).not.toContain("rgba(134, 205, 182, 0.62)");
     expect(css).not.toContain("#86cdb6");
