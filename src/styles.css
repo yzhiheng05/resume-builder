@@ -3179,9 +3179,9 @@ body {
 
 .resume-paper .resume-section {
   margin-bottom: 14px;
-  padding: 7px 10px 11px;
+  padding: 4px 0 10px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
@@ -3227,12 +3227,12 @@ body {
 }
 
 .resume-paper .resume-section__header {
-  margin-bottom: 7px;
+  margin-bottom: 6px;
 }
 
 .resume-paper .resume-section__title {
   font-size: calc(var(--resume-font-size) - 0.5px);
-  font-weight: 820;
+  font-weight: 760;
   line-height: 1.25;
   letter-spacing: 0;
 }
@@ -3372,16 +3372,16 @@ body {
 }
 
 .resume-paper--template-campus .resume-section {
-  padding-left: 16px;
+  padding-left: 10px;
 }
 
 .resume-paper--template-campus .resume-section__header {
-  border-bottom-color: color-mix(in srgb, var(--resume-accent) 30%, rgba(203, 213, 225, 0.64));
+  border-bottom-color: rgba(41, 49, 60, 0.16);
 }
 
 .resume-paper--template-campus .resume-section__title {
-  color: color-mix(in srgb, var(--resume-accent) 82%, #1f2937);
-  font-weight: 840;
+  color: #29313c;
+  font-weight: 760;
 }
 
 .resume-paper--template-campus .resume-entry__title {
@@ -3551,7 +3551,7 @@ body {
 
 .resume-paper--template-campus {
   background:
-    linear-gradient(90deg, rgba(63, 95, 104, 0.16) 0 1.5mm, transparent 1.5mm),
+    linear-gradient(90deg, rgba(63, 95, 104, 0.1) 0 1mm, transparent 1mm),
     #ffffff;
 }
 
@@ -3561,23 +3561,15 @@ body {
 
 .resume-paper--template-campus .resume-section {
   position: relative;
-  padding-left: 14px;
+  padding-left: 10px;
 }
 
 .resume-paper--template-campus .resume-section::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  left: 0;
-  width: 5px;
-  height: 5px;
-  border: 1px solid rgba(63, 95, 104, 0.42);
-  border-radius: 50%;
-  background: #ffffff;
+  content: none;
 }
 
 .resume-paper--template-campus .resume-section__title {
-  color: color-mix(in srgb, var(--resume-accent) 82%, #1f2937);
+  color: #29313c;
 }
 
 .resume-paper--template-campus .resume-section__handle {
@@ -4974,17 +4966,17 @@ body {
 
   .resume-paper--template-campus {
     background:
-      linear-gradient(90deg, rgba(63, 95, 104, 0.16) 0 1.5mm, transparent 1.5mm),
+      linear-gradient(90deg, rgba(63, 95, 104, 0.1) 0 1mm, transparent 1mm),
       #ffffff !important;
   }
 
   .resume-paper--template-campus .resume-section__header {
-    border-bottom-color: color-mix(in srgb, var(--resume-accent) 30%, rgba(203, 213, 225, 0.64));
+    border-bottom-color: rgba(41, 49, 60, 0.16);
   }
 
   .resume-paper--template-campus .resume-section__title {
-    color: color-mix(in srgb, var(--resume-accent) 82%, #1f2937);
-    font-weight: 840;
+    color: #29313c;
+    font-weight: 760;
   }
 
   .resume-paper--template-sidebar {
@@ -5057,7 +5049,7 @@ body {
   }
 
   .resume-paper--template-campus .resume-section {
-    padding-left: 14px;
+    padding-left: 10px;
   }
 
   .resume-section__header {

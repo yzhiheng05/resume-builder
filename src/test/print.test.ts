@@ -35,9 +35,11 @@ describe("print helpers", () => {
   test("campus template uses a narrow timeline accent instead of a broad color band", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain("rgba(63, 95, 104, 0.16) 0 1.5mm");
-    expect(css).toContain("transparent 1.5mm");
+    expect(css).toContain("rgba(63, 95, 104, 0.1) 0 1mm");
+    expect(css).toContain("transparent 1mm");
+    expect(css).toContain(".resume-paper--template-campus .resume-section::before {\n  content: none;");
     expect(css).not.toContain("rgba(54, 132, 107, 0.13) 0 5mm");
+    expect(css).not.toContain("rgba(63, 95, 104, 0.16) 0 1.5mm");
     expect(css).not.toContain("transparent 5mm");
   });
 
@@ -235,6 +237,9 @@ describe("print helpers", () => {
   test("resume paper body uses subdued metadata and neutral bullet marks", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
+    expect(css).toContain(".resume-paper .resume-section {\n  margin-bottom: 14px;\n  padding: 4px 0 10px;");
+    expect(css).toContain("border: 0;\n  border-radius: 0;\n  background: transparent;");
+    expect(css).toContain(".resume-paper .resume-section__title {\n  font-size: calc(var(--resume-font-size) - 0.5px);\n  font-weight: 760;");
     expect(css).toContain(".resume-paper .resume-entry__meta p:first-child,\n.resume-paper .resume-award__date {\n  color: #4f5b67;\n  font-weight: 640;");
     expect(css).toContain(".resume-paper .resume-entry__meta p:last-child,\n.resume-paper .resume-award__issuer {\n  color: #78838d;");
     expect(css).toContain(".resume-paper .resume-bullets li::before {\n  top: 0.78em;\n  width: 3px;\n  height: 3px;\n  background: #7a858d;");
