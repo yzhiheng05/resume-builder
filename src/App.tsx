@@ -615,8 +615,16 @@ export default function App() {
           modules={modules}
           moduleOrder={moduleOrder}
           activeModuleId={activeModuleId}
+          templates={templateOptions}
+          templateId={templateId}
+          resumeStyle={resumeStyle}
           onSelectModule={selectModule}
           onAddModule={addModule}
+          onTemplateChange={(nextTemplateId) => {
+            setTemplate(nextTemplateId);
+            showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
+          }}
+          onStyleChange={updateResumeStyle}
         />
 
         <section className="canvas-panel" aria-label="简历画布" style={editorPanelStyle}>
@@ -646,14 +654,6 @@ export default function App() {
         <InspectorPanel
           activeModule={activeModule}
           moduleHint={activeModule ? selectedPreset?.moduleHints[activeModule.kind] : undefined}
-          templates={templateOptions}
-          templateId={templateId}
-          resumeStyle={resumeStyle}
-          onTemplateChange={(nextTemplateId) => {
-            setTemplate(nextTemplateId);
-            showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
-          }}
-          onStyleChange={updateResumeStyle}
           onUpdateModuleTitle={updateModuleTitle}
           onToggleModuleVisibility={toggleModuleVisibility}
           onDuplicateModule={duplicateModule}

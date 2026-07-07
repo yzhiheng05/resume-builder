@@ -139,6 +139,11 @@ describe("App", () => {
     fireEvent.click(screen.getByText("添加模块"));
     expect(moduleDrawer.open).toBe(true);
     expect(screen.getByRole("button", { name: /项目经历 添加/ })).toBeInTheDocument();
+    const libraryPanel = document.querySelector(".editor-sidebar--library") as HTMLElement;
+    const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
+    expect(within(libraryPanel).getByRole("heading", { name: "纸张样式" })).toBeInTheDocument();
+    expect(within(libraryPanel).getByRole("group", { name: "当前模板" })).toBeInTheDocument();
+    expect(within(inspectorPanel).queryByRole("heading", { name: "纸张样式" })).not.toBeInTheDocument();
     expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });
 
@@ -188,6 +193,8 @@ describe("App", () => {
     expect(getTopbarIdentity()).toHaveTextContent("职场人");
     expect(screen.getByRole("heading", { name: "职场简历" })).toBeInTheDocument();
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
+    expect(screen.getByLabelText("模块标题")).toHaveValue("个人信息");
+    expect(document.querySelector(".inspector-context")).toHaveTextContent("个人信息");
   });
 
   test("switches identity safely and updates identity-aware titles", () => {

@@ -119,7 +119,7 @@ export function createResumeStore(seed: typeof initialSeed = initialSeed) {
   return create<ResumeState>((set, get) => ({
     ...initialState,
     hasStoredState: seed.hasStoredState,
-    activeModuleId: null,
+    activeModuleId: initialState.moduleOrder[0] ?? null,
     selectModule: (moduleId) => set({ activeModuleId: moduleId }),
     initializeIdentity: (identity) => {
       const nextState = normalizeState(buildPresetState(identity));

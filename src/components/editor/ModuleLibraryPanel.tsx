@@ -3,7 +3,9 @@ import {
   getModuleCatalog,
   getModuleLabel
 } from "../../lib/moduleRegistry";
-import type { ModuleKind, ResumeModuleInstance } from "../../types/resume";
+import type { ResumeTemplateDefinition } from "../../data/resumeTemplates";
+import type { ModuleKind, ResumeModuleInstance, ResumeStyleSettings, TemplateId } from "../../types/resume";
+import { GlobalStylePanel } from "./GlobalStylePanel";
 
 const moduleGroups: Array<{
   title: string;
@@ -31,14 +33,24 @@ export function ModuleLibraryPanel({
   modules,
   moduleOrder,
   activeModuleId,
+  templates,
+  templateId,
+  resumeStyle,
   onSelectModule,
-  onAddModule
+  onAddModule,
+  onTemplateChange,
+  onStyleChange
 }: {
   modules: ResumeModuleInstance[];
   moduleOrder: string[];
   activeModuleId: string | null;
+  templates: ResumeTemplateDefinition[];
+  templateId: TemplateId;
+  resumeStyle: ResumeStyleSettings;
   onSelectModule: (moduleId: string) => void;
   onAddModule: (kind: ModuleKind) => void;
+  onTemplateChange: (templateId: TemplateId) => void;
+  onStyleChange: (nextStyle: Partial<ResumeStyleSettings>) => void;
 }) {
   const moduleById = new Map(modules.map((module) => [module.id, module] as const));
   const orderedModules = [
@@ -115,6 +127,14 @@ export function ModuleLibraryPanel({
             ))}
           </div>
         </details>
+
+        <GlobalStylePanel
+          templates={templates}
+          templateId={templateId}
+          resumeStyle={resumeStyle}
+          onTemplateChange={onTemplateChange}
+          onStyleChange={onStyleChange}
+        />
       </div>
     </aside>
   );

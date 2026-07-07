@@ -343,7 +343,7 @@ describe("print helpers", () => {
     expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
   });
 
-  test("inspector style controls sit in a quiet tool tray instead of raw form rows", () => {
+  test("paper style controls sit in the left rail as a quiet tool tray", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px 0 0;");
