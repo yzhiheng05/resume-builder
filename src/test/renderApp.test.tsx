@@ -130,6 +130,8 @@ describe("App", () => {
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByRole("heading", { name: "当前纸面" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /选择模块：个人信息/ })).toHaveClass("module-outline__item--active");
+    expect(document.querySelector(".module-outline__grip")).toBeInTheDocument();
+    expect(document.querySelector(".module-outline__index")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /选择模块：项目经历/ }));
     expect(screen.getByRole("button", { name: /选择模块：项目经历/ })).toHaveClass("module-outline__item--active");
     expect(screen.getByText("可拖动排序")).toBeInTheDocument();

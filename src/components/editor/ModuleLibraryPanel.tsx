@@ -73,7 +73,7 @@ export function ModuleLibraryPanel({
             <p>{orderedModules.length} 个模块</p>
           </div>
           <div className="module-outline__list">
-            {orderedModules.map((module, index) => (
+            {orderedModules.map((module) => (
               <button
                 key={module.id}
                 type="button"
@@ -81,7 +81,7 @@ export function ModuleLibraryPanel({
                 onClick={() => onSelectModule(module.id)}
                 aria-label={`选择模块：${module.title}`}
               >
-                <span className="module-outline__index">{String(index + 1).padStart(2, "0")}</span>
+                <span className="module-outline__grip" aria-hidden="true" />
                 <span className="module-outline__label">{module.title}</span>
                 <small>{module.visible ? "显示" : "隐藏"}</small>
               </button>

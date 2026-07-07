@@ -170,7 +170,7 @@ describe("print helpers", () => {
 
     expect(css).toContain("--accent: #3f5f68;");
     expect(css).toContain("linear-gradient(#111111, #111111) 3px 4px / 8px 1px no-repeat");
-    expect(css).toContain("inset 2px 0 0 #111111,");
+    expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
     expect(css).not.toContain("--accent: #36846b;");
   });
 
@@ -292,10 +292,14 @@ describe("print helpers", () => {
 
     expect(css).toContain(".module-outline,\n.module-library__group {\n  display: grid;\n  gap: 6px;");
     expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 1px;");
-    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 22px minmax(0, 1fr) auto;");
-    expect(css).toContain("min-height: 32px;\n  padding: 5px 7px;");
-    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.16);");
-    expect(css).toContain("box-shadow:\n    inset 2px 0 0 #111111,");
+    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) auto;");
+    expect(css).toContain("min-height: 32px;\n  padding: 5px 7px 5px 8px;");
+    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
+    expect(css).toContain("background: rgba(17, 18, 23, 0.04);\n  box-shadow: none;");
+    expect(css).toContain(".module-outline__grip {\n  width: 12px;\n  height: 16px;");
+    expect(css).toContain(".module-outline__item--active .module-outline__grip,\n.module-outline__item:hover .module-outline__grip,");
+    expect(css).not.toContain(".module-outline__index");
+    expect(css).not.toContain("box-shadow:\n    inset 2px 0 0 #111111,");
     expect(css).toContain(".module-add-drawer {\n  display: grid;\n  gap: 7px;");
     expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.075);\n  padding-top: 9px;");
     expect(css).toContain(".module-add-drawer > summary {\n  position: relative;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
