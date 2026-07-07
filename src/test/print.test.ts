@@ -262,15 +262,13 @@ describe("print helpers", () => {
     expect(css).not.toContain("inset 0 -2px 0 #3f5f68");
   });
 
-  test("canvas template controls use a framed tool rail instead of bare divider lines", () => {
+  test("canvas workbench uses a compact document rail and keeps preview chrome minimal", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".canvas-panel__header {\n  display: flex;\n  align-self: flex-start;\n  justify-content: space-between;");
     expect(css).toContain("align-self: flex-start;");
     expect(css).toContain("padding: 5px 10px;\n  border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 999px;");
-    expect(css).toContain(".template-selector {\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  width: 100%;\n  gap: 3px;\n  padding: 4px;");
-    expect(css).toContain("border: 1px solid rgba(18, 18, 18, 0.08);\n  border-radius: 8px;");
-    expect(css).toContain("background: #ffffff;\n  box-shadow: none;");
+    expect(css).toContain(".preview-panel {\n  flex: 1;\n  gap: 0;");
     expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  right: 38px;\n  top: 20px;");
     expect(css).toContain("right: 38px;\n  top: 20px;");
     expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.055);\n  border-radius: 4px;");
@@ -278,7 +276,6 @@ describe("print helpers", () => {
     expect(css).toContain("font-size: 10px;\n  font-weight: 760;");
     expect(css).toContain(".canvas-statusbar span:first-child {\n  border-left: 0;\n  background: rgba(63, 95, 104, 0.08);");
     expect(css).not.toContain("background: rgba(255, 254, 251, 0.42);\n  box-shadow: none;");
-    expect(css).toContain(".template-card {\n    grid-template-columns: minmax(0, 1fr);");
   });
 
   test("module library uses grouped material wells instead of loose button stacks", () => {

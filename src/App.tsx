@@ -627,16 +627,11 @@ export default function App() {
             moduleOrder={moduleOrder}
             templateId={templateId}
             resumeStyle={resumeStyle}
-            templateOptions={templateOptions}
             activeModuleId={activeModuleId}
             eyebrow={selectedTemplate.name}
             heading="纸面"
             hint={getPreviewHint(templateId)}
             onSurfaceHeightChange={setPreviewSurfaceHeight}
-            onTemplateChange={(nextTemplateId) => {
-              setTemplate(nextTemplateId);
-              showStatus(`已切换到${getResumeTemplate(nextTemplateId).name}。`);
-            }}
             onModuleOrderChange={setModuleOrder}
             onModuleSelect={selectModule}
           />

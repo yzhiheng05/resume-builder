@@ -11,7 +11,6 @@ import PreviewPanel, {
   normalizeModuleOrder
 } from "../components/preview/PreviewPanel";
 import { buildPresetState } from "../data/identityPresets";
-import { getResumeTemplates } from "../data/resumeTemplates";
 import { isListModuleData, isPersonalModuleData, isTextModuleData } from "../lib/moduleRegistry";
 
 const sampleState = buildPresetState("student");
@@ -44,7 +43,6 @@ describe("preview sorting", () => {
         modules={sampleState.modules}
         moduleOrder={nextOrder}
         templateId="classic"
-        templateOptions={getResumeTemplates()}
       />
     );
 
@@ -72,7 +70,6 @@ describe("preview sorting", () => {
         modules={sampleState.modules}
         moduleOrder={sampleState.moduleOrder}
         templateId="classic"
-        templateOptions={getResumeTemplates()}
       />
     );
 
@@ -122,18 +119,16 @@ describe("preview sorting", () => {
     expect(previewModules[0]?.title).toBe("个人信息");
   });
 
-  test("renders template selector cards", () => {
+  test("renders sidebar paper without template selector chrome", () => {
     render(
       <PreviewPanel
         modules={sampleState.modules}
         moduleOrder={sampleState.moduleOrder}
         templateId="sidebar"
-        templateOptions={getResumeTemplates()}
       />
     );
 
-    expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+    expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
     expect(screen.getByText(getPreviewHint("sidebar"))).toBeInTheDocument();
     expect(screen.getByText("左栏信息区")).toBeInTheDocument();
     expect(screen.getByText("右栏经历区")).toBeInTheDocument();
@@ -147,7 +142,6 @@ describe("preview sorting", () => {
         modules={sampleState.modules}
         moduleOrder={sampleState.moduleOrder}
         templateId="classic"
-        templateOptions={getResumeTemplates()}
       />
     );
 

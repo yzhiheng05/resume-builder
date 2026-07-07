@@ -15,9 +15,8 @@ import {
   verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 
-import TemplateSelector from "./TemplateSelector";
 import ResumeTemplateRenderer from "./ResumeTemplateRenderer";
-import { getResumeTemplate, type ResumeTemplateDefinition } from "../../data/resumeTemplates";
+import { getResumeTemplate } from "../../data/resumeTemplates";
 import { defaultResumeStyle, getResumeStyleVars } from "../../lib/resumeStyle";
 import type { ResumeModuleInstance, ResumeStyleSettings, TemplateId } from "../../types/resume";
 import { getSidebarColumnForModuleKind } from "./templates/templateUtils";
@@ -27,13 +26,11 @@ export interface PreviewPanelProps {
   moduleOrder: string[];
   templateId: TemplateId;
   resumeStyle?: ResumeStyleSettings;
-  templateOptions: ResumeTemplateDefinition[];
   activeModuleId?: string | null;
   eyebrow?: string;
   heading?: string;
   hint?: string;
   onSurfaceHeightChange?: (height: number) => void;
-  onTemplateChange?: (templateId: TemplateId) => void;
   onModuleOrderChange?: (nextOrder: string[]) => void;
   onModuleSelect?: (moduleId: string) => void;
 }
@@ -153,13 +150,11 @@ export default function PreviewPanel({
   moduleOrder,
   templateId,
   resumeStyle = defaultResumeStyle,
-  templateOptions,
   activeModuleId,
   eyebrow,
   heading = "实时预览",
   hint,
   onSurfaceHeightChange,
-  onTemplateChange,
   onModuleOrderChange,
   onModuleSelect
 }: PreviewPanelProps) {
@@ -226,13 +221,6 @@ export default function PreviewPanel({
           <h1 className="preview-panel__title">{heading}</h1>
           <p className="preview-panel__hint">{resolvedHint}</p>
         </div>
-        <TemplateSelector
-          templates={templateOptions}
-          selectedTemplateId={templateId}
-          modules={previewModules}
-          resumeStyle={resumeStyle}
-          onTemplateChange={(nextTemplateId) => onTemplateChange?.(nextTemplateId)}
-        />
       </div>
 
       <div className="preview-surface" data-resume-preview-root="true" ref={surfaceRef}>

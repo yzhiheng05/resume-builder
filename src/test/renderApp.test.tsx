@@ -3,7 +3,6 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, vi } from "vitest";
 import App from "../App";
 import { buildPresetState, RESUME_TOOL_BRAND } from "../data/identityPresets";
-import { getResumeTemplates } from "../data/resumeTemplates";
 import {
   RESUME_BACKUP_APP_ID,
   RESUME_BACKUP_VERSION,
@@ -131,7 +130,7 @@ describe("App", () => {
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
     expect(screen.getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /项目经历 添加/ })).toBeInTheDocument();
-    expect(screen.getByLabelText("简历模板选择器")).toBeInTheDocument();
+    expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });
 
   test("exports versioned resume data as json", () => {
@@ -397,29 +396,29 @@ describe("App", () => {
     expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThan(0);
   });
 
-  test("switches template from selector and keeps selection visible", () => {
+  test("switches template from the inspector style controls", () => {
     seedStoredResume("general");
+    useResumeStore.getState().selectModule(null);
     render(<App />);
 
-    const selector = screen.getByLabelText("简历模板选择器");
+    const selector = screen.getByRole("group", { name: "当前模板" });
     fireEvent.click(within(selector).getByRole("button", { name: /双栏简历/ }));
 
     expect(getTopbarStatus()).toHaveTextContent("已切换到双栏简历。");
-    expect(within(selector).getByRole("button", { name: /双栏简历/ })).toHaveClass("template-card--active");
+    expect(within(selector).getByRole("button", { name: /双栏简历/ })).toHaveClass("template-chip--active");
     expect(screen.getByText("同栏内拖动排序，导出时只保留纸张内容。")).toBeInTheDocument();
+    expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });
 
-  test("renders all template cards with designed mini previews", () => {
+  test("renders all template chips in the inspector style controls", () => {
     seedStoredResume("general");
+    useResumeStore.getState().selectModule(null);
     render(<App />);
 
-    const selector = screen.getByLabelText("简历模板选择器");
-    for (const template of getResumeTemplates()) {
-      expect(within(selector).getByRole("button", { name: new RegExp(template.name) })).toBeInTheDocument();
-      expect(selector.querySelector(`.template-mini--${template.id}`)).toBeInTheDocument();
-    }
-    expect((selector.querySelector(".template-mini--classic") as HTMLElement).style.getPropertyValue("--template-mini-accent")).toBe(
-      "#4e5b68"
-    );
+    const selector = screen.getByRole("group", { name: "当前模板" });
+    expect(within(selector).getByRole("button", { name: "经典简历" })).toHaveClass("template-chip--active");
+    expect(within(selector).getByRole("button", { name: "双栏简历" })).toBeInTheDocument();
+    expect(within(selector).getByRole("button", { name: "校招简历" })).toBeInTheDocument();
+    expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });
 });
