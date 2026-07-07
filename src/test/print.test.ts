@@ -139,7 +139,7 @@ describe("print helpers", () => {
     expect(css).toContain(".editor-workspace {\n  grid-template-columns: minmax(248px, 288px) minmax(620px, 1fr) minmax(300px, 352px);");
     expect(css).toContain("background: #eef0ee;");
     expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 44px);");
-    expect(css).toContain("padding: 10px 20px 22px;\n  background: #eef0ee;");
+    expect(css).toContain("padding: 14px 20px 22px;\n  background: #eef0ee;");
     expect(css).not.toContain("--canvas-bg: #d2d6d4;");
     expect(css).not.toContain("linear-gradient(180deg, #d9dddb 0%, #c9cecc 100%)");
   });
@@ -275,13 +275,14 @@ describe("print helpers", () => {
   test("canvas workbench uses a compact document rail and keeps preview chrome minimal", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".canvas-panel__header {\n  display: flex;\n  align-self: flex-start;\n  justify-content: space-between;");
-    expect(css).toContain("align-self: flex-start;");
-    expect(css).toContain("padding: 3px 8px;\n  border: 1px solid rgba(18, 18, 18, 0.045);\n  border-radius: 999px;");
+    expect(css).toContain(".canvas-panel {\n  display: flex;\n  flex-direction: column;\n  min-height: calc(100vh - 44px);\n  padding: 14px 20px 22px;");
+    expect(css).toContain(".canvas-panel__header {\n  position: absolute;\n  width: 1px;\n  height: 1px;");
+    expect(css).toContain("clip: rect(0 0 0 0);\n  white-space: nowrap;");
     expect(css).toContain(".preview-panel {\n  flex: 1;\n  gap: 0;");
     expect(css).toContain(".canvas-statusbar {\n  position: absolute;\n  width: 1px;");
     expect(css).toContain("clip: rect(0 0 0 0);\n  padding: 0;\n  border: 0;");
     expect(css).toContain(".canvas-statusbar span {\n  display: inline;");
+    expect(css).not.toContain("border-radius: 999px;\n  background: rgba(255, 255, 255, 0.62);");
     expect(css).not.toContain("right: 34px;\n  top: 16px;");
     expect(css).not.toContain("background: rgba(255, 255, 255, 0.82);");
   });

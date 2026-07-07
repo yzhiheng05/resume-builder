@@ -2796,23 +2796,19 @@ body {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 44px);
-  padding: 10px 20px 22px;
+  padding: 14px 20px 22px;
   background: #eef0ee;
 }
 
 .canvas-panel__header {
-  display: flex;
-  align-self: flex-start;
-  justify-content: space-between;
-  max-width: 100%;
-  gap: 12px;
-  align-items: center;
-  margin: 0 0 6px;
-  padding: 3px 8px;
-  border: 1px solid rgba(18, 18, 18, 0.045);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.62);
-  box-shadow: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .canvas-panel__meta {

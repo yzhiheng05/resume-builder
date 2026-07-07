@@ -116,10 +116,10 @@ export function moveSidebarModuleOrder(
 
 export function getPreviewHint(templateId: TemplateId): string {
   if (templateId === "sidebar") {
-    return "同栏内拖动排序，导出时只保留纸张内容。";
+    return "同栏排序";
   }
 
-  return "拖动段落调整顺序，导出时只保留纸张内容。";
+  return "可拖动排序";
 }
 
 export function getVisibleModuleOrder(moduleOrder: string[], modules: ResumeModuleInstance[]): string[] {

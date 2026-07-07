@@ -132,7 +132,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: /选择模块：个人信息/ })).toHaveClass("module-outline__item--active");
     fireEvent.click(screen.getByRole("button", { name: /选择模块：项目经历/ }));
     expect(screen.getByRole("button", { name: /选择模块：项目经历/ })).toHaveClass("module-outline__item--active");
-    expect(screen.getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
+    expect(screen.getByText("可拖动排序")).toBeInTheDocument();
     const moduleDrawer = document.querySelector(".module-add-drawer") as HTMLDetailsElement;
     expect(moduleDrawer.open).toBe(false);
     expect(screen.getByText("添加模块")).toBeInTheDocument();
@@ -471,7 +471,7 @@ describe("App", () => {
 
     expect(screen.getByRole("heading", { name: "纸面" })).toBeInTheDocument();
     const previewPanel = screen.getByLabelText("简历预览面板");
-    expect(within(previewPanel).getByText("拖动段落调整顺序，导出时只保留纸张内容。")).toBeInTheDocument();
+    expect(within(previewPanel).getByText("可拖动排序")).toBeInTheDocument();
     expect(screen.getAllByRole("heading", { level: 2 }).length).toBeGreaterThan(0);
   });
 
@@ -485,7 +485,7 @@ describe("App", () => {
 
     expect(getTopbarStatus()).toHaveTextContent("已切换到双栏简历。");
     expect(within(selector).getByRole("button", { name: /双栏简历/ })).toHaveClass("template-chip--active");
-    expect(screen.getByText("同栏内拖动排序，导出时只保留纸张内容。")).toBeInTheDocument();
+    expect(screen.getByText("同栏排序")).toBeInTheDocument();
     expect(screen.queryByLabelText("简历模板选择器")).not.toBeInTheDocument();
   });
 
