@@ -88,7 +88,9 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar__identity-switcher,\n.topbar__actions {\n  display: inline-flex;\n  gap: 1px;");
     expect(css).toContain("padding: 2px;\n  border: 1px solid rgba(18, 18, 18, 0.065);\n  border-radius: 5px;\n  background: #f8f8f7;");
     expect(css).toContain(".topbar__actions {\n  position: relative;\n  margin-left: 2px;");
+    expect(css).toContain("padding: 0 0 0 5px;\n  border: 0;\n  border-radius: 0;\n  background: transparent;");
     expect(css).toContain(".topbar__actions::before {\n  content: \"\";");
+    expect(css).toContain("top: 5px;\n  bottom: 5px;\n  left: -6px;");
     expect(css).toContain(".topbar__primary-action {\n  min-width: 48px;");
     expect(css).toContain("border: 1px solid #111111 !important;\n  background: #111111 !important;");
     expect(css).toContain("color: #ffffff !important;\n  font-weight: 800 !important;");
@@ -104,7 +106,9 @@ describe("print helpers", () => {
   test("top identity switcher uses a clear current marker instead of plain hover fill", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".topbar__actions button:hover,\n.topbar__file-action:hover,\n.topbar__identity-switcher button:hover {\n  background: rgba(18, 18, 18, 0.055);");
+    expect(css).toContain(".topbar__actions button,\n.topbar__file-action {\n  min-width: 0;\n  padding: 4px 6px;");
+    expect(css).toContain("color: #7b8580;\n  font-size: 10px;\n  font-weight: 720;");
+    expect(css).toContain(".topbar__actions button:hover,\n.topbar__file-action:hover,\n.topbar__identity-switcher button:hover {\n  background: rgba(18, 18, 18, 0.038);");
     expect(css).toContain(".topbar__identity-switcher .is-active {\n  background: #ffffff;");
     expect(css).toContain("color: #17181c;\n  font-weight: 800;");
     expect(css).toContain("box-shadow: 0 1px 3px rgba(18, 18, 18, 0.06);");

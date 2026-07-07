@@ -4,6 +4,18 @@
 
 ## 2026-07-07
 
+- 任务：继续弱化顶部文件操作区的后台工具栏感，让顶部更接近 Magic Resume 的文件栏
+- 操作：将 `.topbar__actions` 从白底分段容器改为透明轻工具区；次要文件操作按钮从 11px / 8px 内边距收敛为 10px / 6px 的淡色文字按钮；分隔线透明度降低；保留黑色“导出”主按钮；同步更新 CSS 回归测试
+- 结果：顶部栏减少一组明显按钮盒，视觉重心更集中在文件名和导出动作上；不改推荐、清空、JSON 备份、恢复、PDF 导出或身份切换逻辑
+- 验证：
+  - `npm test -- src/test/renderApp.test.tsx src/test/print.test.ts` 通过，62 项测试全部通过
+  - `npm test` 通过，95 项测试全部通过
+  - `npm run build` 通过
+  - `git diff --check` 通过
+  - Chrome 浏览器检查：桌面 1440px 与移动 390px 下页面横向溢出均为 0；顶部次要动作区透明无边框，次要按钮字号为 10px，主导出按钮仍为黑底白字
+
+## 2026-07-07
+
 - 任务：继续降低左侧模块列表的文字噪音，靠近 Magic Resume 的轻量布局栏
 - 操作：将“当前纸面”模块行右侧的“显示 / 隐藏”文字状态改为 6px 状态点；为状态元素补充 `module-outline__status`、`module-outline__status--visible`、`module-outline__status--hidden` class；将模块行列宽从 `auto` 收敛为固定 8px 状态列；同步更新 CSS 回归测试
 - 结果：左侧模块列表不再每行重复展示“显示”文字，视觉更接近安静的模块导航；不改模块选择、模块显隐、排序、添加、持久化或导出逻辑
