@@ -66,8 +66,17 @@ export function ModuleLibraryPanel({
         <p>管理纸面段落，或添加新的内容模块。</p>
       </div>
 
+      <nav className="library-tool-nav" aria-label="编辑工具">
+        <a href="#layout-modules">布局</a>
+        <a href="#style-template-title">模板</a>
+        <a href="#style-color-title">主题色</a>
+        <a href="#style-typography-title">排版</a>
+        <a href="#style-spacing-title">间距</a>
+        <a href="#style-mode-title">模式</a>
+      </nav>
+
       <div className="module-library__list">
-        <section className="module-outline" aria-labelledby="module-outline-title">
+        <section className="module-outline" id="layout-modules" aria-labelledby="module-outline-title">
           <div className="module-library__group-header">
             <h3 id="module-outline-title">当前纸面</h3>
             <p>{orderedModules.length} 个模块</p>

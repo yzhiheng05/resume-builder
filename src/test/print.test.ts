@@ -307,12 +307,17 @@ describe("print helpers", () => {
   test("module library uses grouped material wells instead of loose button stacks", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
+    expect(css).toContain(".library-tool-nav {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 7px;");
+    expect(css).toContain(".library-tool-nav a:hover,\n.library-tool-nav a:focus-visible {\n  border-color: rgba(63, 95, 104, 0.18);");
     expect(css).toContain(".module-outline,\n.module-library__group {\n  display: grid;\n  gap: 6px;");
     expect(css).toContain(".module-outline__list {\n  display: grid;\n  gap: 1px;");
-    expect(css).toContain(".module-outline__item {\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) 8px;");
+    expect(css).toContain(".module-outline__item {\n  position: relative;\n  display: grid;\n  grid-template-columns: 16px minmax(0, 1fr) 8px;");
     expect(css).toContain("min-height: 32px;\n  padding: 5px 7px 5px 8px;");
-    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(17, 18, 23, 0.12);");
-    expect(css).toContain("background: rgba(17, 18, 23, 0.04);\n  box-shadow: none;");
+    expect(css).toContain(".module-outline__item--active {\n  border-color: rgba(63, 95, 104, 0.22);");
+    expect(css).toContain("background: rgba(63, 95, 104, 0.075);\n  box-shadow: inset 2px 0 0 rgba(63, 95, 104, 0.72);");
+    expect(css).toContain(".module-outline__item--active:hover,\n.module-outline__item--active:focus-visible {\n  border-color: rgba(63, 95, 104, 0.28);");
+    expect(css).toContain("background: rgba(63, 95, 104, 0.09);\n  box-shadow: inset 2px 0 0 rgba(63, 95, 104, 0.78);");
     expect(css).toContain(".module-outline__grip {\n  width: 12px;\n  height: 16px;");
     expect(css).toContain(".module-outline__item--active .module-outline__grip,\n.module-outline__item:hover .module-outline__grip,");
     expect(css).toContain(".module-outline__status {\n  justify-self: end;\n  width: 6px;\n  height: 6px;");
@@ -586,12 +591,13 @@ describe("print helpers", () => {
   test("selected resume sections use a visible but restrained paper highlight", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.42);");
-    expect(css).toContain("outline-offset: 3px;\n  background: rgba(63, 95, 104, 0.018);\n  box-shadow: none;");
-    expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: none;");
+    expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.62);");
+    expect(css).toContain("outline-offset: 4px;\n  background: rgba(63, 95, 104, 0.028);");
+    expect(css).toContain("0 0 0 4px rgba(63, 95, 104, 0.045),");
+    expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: \"\";");
     expect(css).toContain("top: -4px;\n  right: -4px;");
     expect(css).toContain("width: 7px;\n  height: 7px;");
-    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: none;");
+    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: \"\";");
     expect(css).toContain("bottom: -4px;\n  left: -4px;");
     expect(css).toContain("border-radius: 50%;\n  background: #ffffff;");
     expect(css).not.toContain("0 7px 18px rgba(17, 18, 23, 0.045)");
