@@ -14,7 +14,9 @@ describe("print helpers", () => {
     expect(printCss).toContain(".resume-print-mode .template-mini");
     expect(printCss).toContain(".template-mini");
     expect(printCss).toContain(".resume-print-mode .resume-paper--template-classic .resume-section--active::before");
+    expect(printCss).toContain(".resume-print-mode .resume-paper--template-classic .resume-section--active::after");
     expect(printCss).toContain(".resume-paper--template-sidebar .resume-section--active::before");
+    expect(printCss).toContain(".resume-paper--template-sidebar .resume-section--active::after");
     expect(printCss).toContain(".resume-print-mode .preview-surface::before");
     expect(printCss).toContain(".preview-surface::before");
     expect(printCss).toContain("margin: 0;");
@@ -105,6 +107,20 @@ describe("print helpers", () => {
     expect(css).toContain(".topbar__primary-action {\n    margin-left: 0;\n    min-width: 72px !important;");
   });
 
+  test("mobile editor workspace separates long stacked regions into quiet bands", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("@media (max-width: 1080px)");
+    expect(css).toContain(".editor-workspace {\n    grid-template-columns: 1fr;\n    gap: 0;");
+    expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.16), transparent 18%)");
+    expect(css).toContain(".editor-sidebar--library,\n  .canvas-panel,\n  .inspector-panel {\n    border-top: 1px solid rgba(17, 18, 23, 0.11);");
+    expect(css).toContain("box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);");
+    expect(css).toContain(".editor-sidebar--library {\n    background:\n      linear-gradient(180deg, rgba(255, 254, 251, 0.42), rgba(244, 246, 241, 0.18)),");
+    expect(css).toContain(".canvas-panel {\n    min-height: auto;\n    padding-top: 18px;");
+    expect(css).toContain("linear-gradient(180deg, #dce2df 0%, #ccd4d1 100%);");
+    expect(css).toContain(".inspector-panel {\n    background:\n      linear-gradient(180deg, rgba(255, 254, 251, 0.48), rgba(236, 238, 232, 0.88)),");
+  });
+
   test("canvas workbench uses a lighter neutral stage", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
@@ -173,6 +189,19 @@ describe("print helpers", () => {
     expect(css).toContain("background: rgba(63, 95, 104, 0.06);");
     expect(css).not.toContain(".identity-card__meta span + span::before {\n  content: \"/\";");
     expect(css).not.toContain("linear-gradient(90deg, rgba(17, 18, 23, 0.026) 1px, transparent 1px) 0 0 / 34px 34px");
+  });
+
+  test("mobile identity entry keeps the start choices in the first screen rhythm", () => {
+    const css = readFileSync("src/styles.css", "utf8");
+
+    expect(css).toContain("@media (max-width: 720px)");
+    expect(css).toContain(".identity-screen__hero {\n    gap: 10px;\n    padding: 30px 24px 24px;");
+    expect(css).toContain(".identity-screen__hero h1 {\n    font-size: 34px;");
+    expect(css).toContain(".identity-screen__hero p:last-child {\n    font-size: 14px;\n    line-height: 1.58;");
+    expect(css).toContain(".identity-screen__paper {\n    width: 100%;\n    margin-top: 2px;\n    padding: 10px;");
+    expect(css).toContain(".identity-paper__sheet {\n    min-height: 220px;\n    gap: 7px;\n    padding: 22px 24px;");
+    expect(css).toContain(".identity-screen__choices {\n    padding: 22px 24px 36px;");
+    expect(css).not.toContain(".identity-paper__sheet {\n    min-height: 300px;\n    padding: 28px 24px;");
   });
 
   test("paper templates avoid leftover hard-coded green accents", () => {
@@ -388,8 +417,16 @@ describe("print helpers", () => {
   test("timeline and list editors use compact entry wells instead of raw stacked forms", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 8px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
+    expect(css).toContain(".inspector-form {\n  gap: 12px;\n  counter-reset: inspector-entry;");
+    expect(css).toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  position: relative;\n  padding: 34px 8px 8px;");
+    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.07);\n  border-radius: 7px;");
+    expect(css).toContain("linear-gradient(180deg, rgba(255, 254, 251, 0.62), rgba(246, 248, 242, 0.42))");
+    expect(css).toContain("counter-increment: inspector-entry;");
+    expect(css).toContain(".inspector-panel .list-item::before,\n.inspector-panel .inline-row::before {\n  content: \"条目 \" counter(inspector-entry, decimal-leading-zero);");
+    expect(css).toContain(".inspector-panel .list-item::after,\n.inspector-panel .inline-row::after {\n  content: \"\";");
+    expect(css).toContain(".inspector-panel .list-item > label,\n.inspector-panel .list-item > label:has(> input:not([type])) {\n  grid-template-columns: minmax(66px, 0.62fr) minmax(0, 1fr);");
+    expect(css).toContain("min-height: 38px;\n  padding: 5px 8px;\n  border: 1px solid rgba(17, 18, 23, 0.055);");
+    expect(css).toContain(".inspector-panel .list-item > label:focus-within,\n.inspector-panel .list-item > label:has(> input:not([type])):focus-within {\n  border-color: rgba(63, 95, 104, 0.16);");
     expect(css).toContain(".inspector-panel .list-item .ghost-button,\n.inspector-panel .inline-row .ghost-button {\n  justify-self: end;\n  min-height: 26px;");
     expect(css).toContain("border-color: rgba(132, 68, 62, 0.14);");
     expect(css).toContain("background: rgba(132, 68, 62, 0.035);");
@@ -399,6 +436,7 @@ describe("print helpers", () => {
     expect(css).toContain("background: rgba(63, 95, 104, 0.07);");
     expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  padding: 12px 0;");
     expect(css).not.toContain(".inspector-panel .list-item,\n.inspector-panel .inline-row {\n  border-top: 1px solid rgba(17, 18, 23, 0.09);");
+    expect(css).not.toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 6px;\n  background: rgba(255, 254, 251, 0.38);");
   });
 
   test("inspector hint notes use solid note rows instead of dashed blue callouts", () => {
@@ -431,9 +469,14 @@ describe("print helpers", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
     expect(css).toContain(".resume-paper .resume-section--active {\n  outline: 1px solid rgba(63, 95, 104, 0.34);");
-    expect(css).toContain("background: linear-gradient(90deg, rgba(63, 95, 104, 0.085), rgba(63, 95, 104, 0.025) 44%, transparent 78%);");
+    expect(css).toContain("linear-gradient(90deg, rgba(63, 95, 104, 0.095), rgba(63, 95, 104, 0.03) 46%, transparent 80%)");
+    expect(css).toContain("inset 0 1px 0 rgba(255, 255, 255, 0.62);");
     expect(css).toContain(".resume-paper .resume-section--active::before {\n  content: \"\";");
     expect(css).toContain("width: 4px;");
+    expect(css).toContain(".resume-paper .resume-section--active::after {\n  content: \"正在编辑\";");
+    expect(css).toContain("right: 10px;\n  top: 8px;");
+    expect(css).toContain("border-radius: 999px;\n  background: rgba(255, 254, 251, 0.82);");
+    expect(css).toContain("font-size: 9px;\n  font-weight: 820;");
   });
 
   test("setPrintMode toggles the print class on body", () => {
