@@ -124,7 +124,7 @@ describe("App", () => {
 
     expect(screen.getByRole("heading", { name: "模块" })).toBeInTheDocument();
     expect(screen.getByLabelText("纸面状态")).toHaveTextContent("校招简历");
-    expect(screen.getByRole("heading", { name: "属性" })).toBeInTheDocument();
+    expect(screen.getByText("属性")).toBeInTheDocument();
     expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getTopbarIdentity()).toHaveTextContent("学生");
     expect(getPreviewHeader()).toHaveTextContent("校招简历");
@@ -219,9 +219,10 @@ describe("App", () => {
     expect(screen.getByLabelText("简历名称")).toHaveValue("新建简历");
     expect(getPreviewHeader()).toHaveTextContent("经典简历");
     expect(screen.getByLabelText("模块标题")).toHaveValue("个人信息");
-    expect(document.querySelector(".inspector-context")).toHaveTextContent("个人信息");
+    expect(document.querySelector(".inspector-context")).toHaveTextContent("模块");
+    expect(within(document.querySelector(".inspector-panel") as HTMLElement).getByRole("heading", { name: "个人信息" })).toBeInTheDocument();
     const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
-    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(inspectorPanel.querySelector(".inspector-subsection-title span")).toHaveTextContent("模块");
     expect(within(inspectorPanel).getByText("资料")).toBeInTheDocument();
     expect(within(inspectorPanel).getByText("基础字段")).toBeInTheDocument();
     expect(within(inspectorPanel).queryByRole("button", { name: "复制模块" })).not.toBeInTheDocument();
@@ -303,7 +304,7 @@ describe("App", () => {
     const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
 
     expect(screen.getAllByText("个人优势").length).toBeGreaterThan(0);
-    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(inspectorPanel.querySelector(".inspector-subsection-title span")).toHaveTextContent("模块");
     expect(inspectorPanel.querySelector(".inspector-module-card")).toBeInTheDocument();
     expect(inspectorPanel.querySelectorAll(".inspector-module-row").length).toBe(2);
     expect(within(inspectorPanel).getByText("内容")).toBeInTheDocument();
@@ -318,7 +319,7 @@ describe("App", () => {
     fireEvent.click(screen.getAllByText("项目经历")[0]);
 
     const inspectorPanel = document.querySelector(".inspector-panel") as HTMLElement;
-    expect(within(inspectorPanel).getByText("模块")).toBeInTheDocument();
+    expect(inspectorPanel.querySelector(".inspector-subsection-title span")).toHaveTextContent("模块");
     expect(within(inspectorPanel).getByText("条目")).toBeInTheDocument();
     expect(within(inspectorPanel).getByText("条目 1")).toBeInTheDocument();
     expect(within(inspectorPanel).getByRole("button", { name: "删除条目 1" })).toBeInTheDocument();

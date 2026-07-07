@@ -284,8 +284,11 @@ export function InspectorPanel({
   return (
     <aside className="inspector-panel" aria-label="属性面板">
       <div className="editor-sidebar__header">
-        <h2>属性</h2>
-        <span className="inspector-context">{activeModule ? activeModule.title : "纸张"}</span>
+        <div className="inspector-heading">
+          <p className="editor-heading__eyebrow">属性</p>
+          <h2>{activeModule ? activeModule.title : "纸张"}</h2>
+        </div>
+        <span className="inspector-context">{activeModule ? "模块" : "样式"}</span>
       </div>
 
       {activeModule ? (

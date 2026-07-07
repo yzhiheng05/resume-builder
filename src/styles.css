@@ -3720,11 +3720,11 @@ body {
 }
 
 .inspector-panel .editor-sidebar__header {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
   align-items: center;
-  padding: 2px 0 14px;
+  padding: 2px 0 12px;
   border: 0;
   border-bottom: 1px solid rgba(17, 18, 23, 0.1);
   border-radius: 0;
@@ -3732,22 +3732,43 @@ body {
   box-shadow: none;
 }
 
+.inspector-heading {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.inspector-panel .editor-sidebar__header .editor-heading__eyebrow {
+  margin: 0;
+  color: #858d89;
+  font-size: 10px;
+  font-weight: 780;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+}
+
 .inspector-panel .editor-sidebar__header h2 {
+  min-width: 0;
+  overflow: hidden;
   font-size: 17px;
   letter-spacing: 0;
+  line-height: 1.14;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .inspector-context {
   min-width: 0;
-  max-width: 156px;
+  max-width: 72px;
   overflow: hidden;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: #858d89;
-  font-size: 11px;
-  font-weight: 720;
+  padding: 3px 7px;
+  border: 1px solid rgba(17, 18, 23, 0.08);
+  border-radius: 999px;
+  background: #f7f8f6;
+  color: #6b746f;
+  font-size: 10px;
+  font-weight: 760;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3755,9 +3776,9 @@ body {
 
 .inspector-actions {
   justify-content: flex-end;
-  gap: 4px;
-  padding: 0 0 6px;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.05);
+  gap: 6px;
+  padding: 4px 0 8px;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.06);
 }
 
 .inspector-module-card {
@@ -3791,21 +3812,21 @@ body {
 
 .inspector-actions .secondary-button,
 .inspector-actions .ghost-button {
-  min-height: 24px;
-  padding: 0 6px;
-  border-color: transparent;
-  border-radius: 3px;
-  background: transparent;
-  color: #66706c;
+  min-height: 26px;
+  padding: 0 8px;
+  border-color: rgba(17, 18, 23, 0.08);
+  border-radius: 4px;
+  background: #ffffff;
+  color: #5f6864;
   font-size: 10px;
-  font-weight: 740;
+  font-weight: 760;
   box-shadow: none;
 }
 
 .inspector-actions .secondary-button:hover,
 .inspector-actions .ghost-button:hover {
-  border-color: rgba(17, 18, 23, 0.08);
-  background: rgba(17, 18, 23, 0.035);
+  border-color: rgba(63, 95, 104, 0.2);
+  background: rgba(63, 95, 104, 0.035);
   color: #252c2f;
   transform: none;
 }

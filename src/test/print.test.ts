@@ -172,8 +172,8 @@ describe("print helpers", () => {
 
     expect(css).toContain(".inspector-panel {\n  padding: 18px;\n  align-content: start;\n  background: #ffffff;");
     expect(css).toContain("border-left: 1px solid rgba(18, 18, 18, 0.1);");
-    expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
-    expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
+    expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain("padding: 2px 0 12px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
     expect(css).not.toContain(".inspector-panel {\n  padding: 18px;\n  background: #eceee8;");
   });
 
@@ -374,8 +374,8 @@ describe("print helpers", () => {
     expect(css).toContain("margin: 0 0 14px;\n  padding: 1px 1px 12px;");
     expect(css).toContain("border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);\n  border-radius: 0;");
     expect(css).toContain(".editor-sidebar__header h2 {\n  color: #17181c;\n  font-size: 17px;");
-    expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: flex;\n  justify-content: space-between;");
-    expect(css).toContain("padding: 2px 0 14px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
+    expect(css).toContain(".inspector-panel .editor-sidebar__header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;");
+    expect(css).toContain("padding: 2px 0 12px;\n  border: 0;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.1);");
     expect(css).toContain(".editor-sidebar,\n.inspector-panel {\n  top: 44px;\n  height: calc(100vh - 44px);");
     expect(css).toContain(".editor-sidebar,\n  .inspector-panel {\n    position: static;\n    height: auto;");
   });
@@ -420,11 +420,11 @@ describe("print helpers", () => {
 
     expect(css).toContain(".inspector-module-card {\n  display: grid;\n  gap: 0;");
     expect(css).toContain("padding: 2px 0 4px;\n  border-top: 1px solid rgba(17, 18, 23, 0.06);");
-    expect(css).toContain(".inspector-actions {\n  justify-content: flex-end;\n  gap: 4px;");
-    expect(css).toContain("padding: 0 0 6px;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.05);");
-    expect(css).toContain(".inspector-actions .secondary-button,\n.inspector-actions .ghost-button {\n  min-height: 24px;");
-    expect(css).toContain("border-color: transparent;\n  border-radius: 3px;\n  background: transparent;");
-    expect(css).toContain(".inspector-actions .secondary-button:hover,\n.inspector-actions .ghost-button:hover {\n  border-color: rgba(17, 18, 23, 0.08);");
+    expect(css).toContain(".inspector-actions {\n  justify-content: flex-end;\n  gap: 6px;");
+    expect(css).toContain("padding: 4px 0 8px;\n  border-bottom: 1px solid rgba(17, 18, 23, 0.06);");
+    expect(css).toContain(".inspector-actions .secondary-button,\n.inspector-actions .ghost-button {\n  min-height: 26px;");
+    expect(css).toContain("border-color: rgba(17, 18, 23, 0.08);\n  border-radius: 4px;\n  background: #ffffff;");
+    expect(css).toContain(".inspector-actions .secondary-button:hover,\n.inspector-actions .ghost-button:hover {\n  border-color: rgba(63, 95, 104, 0.2);");
     expect(css).toContain(".inspector-panel .inspector-module-row,\n.inspector-panel .inspector-module-row:has(> input:not([type])) {\n  display: grid;");
     expect(css).toContain("grid-template-columns: minmax(72px, 0.55fr) minmax(0, 1fr);");
     expect(css).toContain("min-height: 36px;\n  padding: 5px 0;");
@@ -560,16 +560,17 @@ describe("print helpers", () => {
     expect(css).not.toContain("linear-gradient(180deg, rgba(247, 250, 255, 0.96), rgba(239, 246, 255, 0.74));");
   });
 
-  test("inspector context label is plain text instead of a capsule badge", () => {
+  test("inspector context label uses a compact object-type badge", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-panel .editor-sidebar__header h2 {\n  font-size: 17px;");
-    expect(css).toContain(".inspector-context {\n  min-width: 0;\n  max-width: 156px;");
-    expect(css).toContain("padding: 0;\n  border: 0;\n  border-radius: 0;");
-    expect(css).toContain("background: transparent;\n  color: #858d89;");
-    expect(css).toContain("font-size: 11px;\n  font-weight: 720;");
-    expect(css).not.toContain(".inspector-context {\n  min-width: 0;\n  max-width: 156px;\n  overflow: hidden;\n  padding: 3px 8px;");
-    expect(css).not.toContain("border: 1px solid rgba(63, 95, 104, 0.14);\n  border-radius: 999px;\n  background: rgba(255, 254, 251, 0.42);");
+    expect(css).toContain(".inspector-heading {\n  display: grid;\n  gap: 3px;");
+    expect(css).toContain(".inspector-panel .editor-sidebar__header .editor-heading__eyebrow {\n  margin: 0;");
+    expect(css).toContain(".inspector-panel .editor-sidebar__header h2 {\n  min-width: 0;");
+    expect(css).toContain(".inspector-context {\n  min-width: 0;\n  max-width: 72px;");
+    expect(css).toContain("padding: 3px 7px;\n  border: 1px solid rgba(17, 18, 23, 0.08);");
+    expect(css).toContain("border-radius: 999px;\n  background: #f7f8f6;");
+    expect(css).toContain("font-size: 10px;\n  font-weight: 760;");
+    expect(css).not.toContain("background: transparent;\n  color: #858d89;\n  font-size: 11px;\n  font-weight: 720;");
   });
 
   test("secondary controls use compact rails instead of bare text and underline buttons", () => {
