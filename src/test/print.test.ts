@@ -346,25 +346,29 @@ describe("print helpers", () => {
   test("paper style controls sit in the left rail as a quiet tool tray", () => {
     const css = readFileSync("src/styles.css", "utf8");
 
-    expect(css).toContain(".inspector-section--style {\n  gap: 10px;\n  padding: 10px 0 0;");
+    expect(css).toContain(".inspector-section--style {\n  gap: 0;\n  padding: 10px 0 0;");
     expect(css).toContain("padding: 10px 0 0;\n  border: 0;\n  border-top: 1px solid rgba(17, 18, 23, 0.09);");
     expect(css).toContain("border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
-    expect(css).toContain(".style-board,\n.numeric-field-grid,\n.segmented-field {\n  padding: 9px 0;");
-    expect(css).toContain(".color-field {\n  position: relative;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 48px auto;");
-    expect(css).toContain("min-height: 42px;\n  padding: 8px 9px;\n  border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 7px;");
-    expect(css).toContain(".numeric-field-grid {\n  display: grid;\n  gap: 9px;\n  padding: 9px 8px;");
-    expect(css).toContain("border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 7px;");
+    expect(css).toContain(".style-panel__section {\n  display: grid;\n  gap: 8px;");
+    expect(css).toContain(".style-panel__section-header {\n  display: flex;\n  gap: 8px;");
+    expect(css).toContain(".style-panel__section-header h4 {\n  margin: 0;\n  color: #2f3538;");
+    expect(css).toContain(".color-preset-row {\n  display: grid;\n  grid-template-columns: repeat(6, minmax(0, 1fr));");
+    expect(css).toContain(".color-preset-row button.is-active {\n  border-color: #111111;");
+    expect(css).toContain(".color-field {\n  position: relative;\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 48px;");
+    expect(css).toContain("min-height: 34px;\n  padding: 6px 8px;\n  border: 1px solid rgba(17, 18, 23, 0.075);\n  border-radius: 5px;");
+    expect(css).toContain(".numeric-field-grid {\n  display: grid;\n  gap: 6px;\n  padding: 0;");
+    expect(css).toContain("border: 0;\n  border-radius: 0;\n  background: transparent;\n  box-shadow: none;");
     expect(css).toContain(".numeric-field {\n  display: grid;\n  grid-template-columns: minmax(80px, 1fr) 62px 24px;");
-    expect(css).toContain("min-height: 32px;\n  padding: 4px 6px;");
-    expect(css).toContain("border-radius: 5px;\n  background: rgba(255, 254, 251, 0.32);");
+    expect(css).toContain("min-height: 30px;\n  padding: 3px 0;");
+    expect(css).toContain("border-top: 1px solid rgba(17, 18, 23, 0.06);\n  border-radius: 5px;\n  background: transparent;");
     expect(css).toContain(".numeric-field input {\n  width: 100%;\n  min-width: 0;\n  height: 24px;");
     expect(css).toContain("border-radius: 5px;\n  background: rgba(255, 254, 251, 0.72);");
     expect(css).toContain(".inspector-panel .numeric-field input {\n  min-height: 0;\n  height: 24px;\n  padding: 2px 7px;");
     expect(css).toContain("border-color: rgba(17, 18, 23, 0.085);\n  background: rgba(255, 254, 251, 0.72);");
     expect(css).toContain(".numeric-field code {\n  justify-self: start;\n  min-width: 18px;");
     expect(css).toContain(".segmented-field {\n  display: grid;\n  grid-template-columns: minmax(74px, 0.56fr) minmax(0, 1fr);");
-    expect(css).toContain("align-items: center;\n  min-height: 38px;");
-    expect(css).toContain(".numeric-field-group__header::after {\n  content: \"\";\n  flex: 1;");
+    expect(css).toContain("align-items: center;\n  min-height: 34px;");
+    expect(css).not.toContain(".numeric-field-group__header::after");
   });
 
   test("inspector text fields use compact property rows instead of bare underlines", () => {

@@ -75,6 +75,7 @@ export function GlobalStylePanel({
     { value: "bar", label: "色条" },
     { value: "plain", label: "简洁" }
   ];
+  const presetColors = ["#3f5f68", "#111111", "#4e5b68", "#6f4d3f", "#6a6f3f", "#8a4841"];
   const numericFields: Array<{
     key: NumericStyleKey;
     label: string;
@@ -89,63 +90,78 @@ export function GlobalStylePanel({
     { key: "pageMarginXmm", label: "左右页边距", unit: "mm", min: 6, max: 30, step: 0.5 },
     { key: "pageMarginYmm", label: "上下页边距", unit: "mm", min: 6, max: 30, step: 0.5 }
   ];
-  const numericFieldGroups = [
-    {
-      label: "排版",
-      fields: numericFields.filter((field) =>
-        field.key === "fontSizePx" || field.key === "lineHeight" || field.key === "paragraphSpacingPx"
-      )
-    },
-    {
-      label: "留白",
-      fields: numericFields.filter((field) => field.key === "pageMarginXmm" || field.key === "pageMarginYmm")
-    }
-  ];
+  const typographyFields = numericFields.filter((field) =>
+    field.key === "fontSizePx" || field.key === "lineHeight" || field.key === "paragraphSpacingPx"
+  );
+  const spacingFields = numericFields.filter((field) => field.key === "pageMarginXmm" || field.key === "pageMarginYmm");
   const updateNumericStyle = (key: NumericStyleKey, value: number) => {
     onStyleChange({ [key]: value } as Partial<ResumeStyleSettings>);
   };
 
   return (
     <div className="inspector-section inspector-section--style">
-      <h3>纸张样式</h3>
-      <div className="style-board">
-        <div className="style-board__row">
-          <span>当前模板</span>
-          <strong>{selectedTemplate?.name ?? "经典简历"}</strong>
+      <h3 className="style-panel__title">纸张样式</h3>
+
+      <section className="style-panel__section" aria-labelledby="style-template-title">
+        <div className="style-panel__section-header">
+          <h4 id="style-template-title">模板</h4>
         </div>
-        <div className="template-chip-group" role="group" aria-label="当前模板">
-          {templates.map((template) => (
+        <div className="style-board">
+          <div className="style-board__row">
+            <span>当前模板</span>
+            <strong>{selectedTemplate?.name ?? "经典简历"}</strong>
+          </div>
+          <div className="template-chip-group" role="group" aria-label="当前模板">
+            {templates.map((template) => (
+              <button
+                key={template.id}
+                type="button"
+                className={`template-chip${template.id === templateId ? " template-chip--active" : ""}`}
+                onClick={() => onTemplateChange(template.id)}
+              >
+                {template.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="style-panel__section" aria-labelledby="style-color-title">
+        <div className="style-panel__section-header">
+          <h4 id="style-color-title">主题色</h4>
+          <code>{resumeStyle.accentColor.toUpperCase()}</code>
+        </div>
+        <div className="color-preset-row" role="group" aria-label="主题色预设">
+          {presetColors.map((color) => (
             <button
-              key={template.id}
+              key={color}
               type="button"
-              className={`template-chip${template.id === templateId ? " template-chip--active" : ""}`}
-              onClick={() => onTemplateChange(template.id)}
-            >
-              {template.name}
-            </button>
+              className={color.toLowerCase() === resumeStyle.accentColor.toLowerCase() ? "is-active" : ""}
+              style={{ backgroundColor: color }}
+              onClick={() => onStyleChange({ accentColor: color })}
+              aria-label={`应用主题色 ${color.toUpperCase()}`}
+            />
           ))}
         </div>
-      </div>
+        <label className="color-field">
+          <span>自定义</span>
+          <input
+            aria-label="主题色"
+            type="color"
+            value={resumeStyle.accentColor}
+            onChange={(event) => onStyleChange({ accentColor: event.target.value })}
+          />
+          <span className="color-field__swatch" style={{ backgroundColor: resumeStyle.accentColor }} />
+        </label>
+      </section>
 
-      <label className="color-field">
-        <span>主题色</span>
-        <input
-          aria-label="主题色"
-          type="color"
-          value={resumeStyle.accentColor}
-          onChange={(event) => onStyleChange({ accentColor: event.target.value })}
-        />
-        <span className="color-field__swatch" style={{ backgroundColor: resumeStyle.accentColor }} />
-        <code>{resumeStyle.accentColor.toUpperCase()}</code>
-      </label>
-
-      <div className="numeric-field-grid" aria-label="手动排版参数">
-        {numericFieldGroups.map((group) => (
-          <div key={group.label} className="numeric-field-group" role="group" aria-label={group.label}>
-            <div className="numeric-field-group__header">
-              <span>{group.label}</span>
-            </div>
-            {group.fields.map((field) => (
+      <section className="style-panel__section" aria-labelledby="style-typography-title">
+        <div className="style-panel__section-header">
+          <h4 id="style-typography-title">排版</h4>
+        </div>
+        <div className="numeric-field-grid" aria-label="手动排版参数">
+          <div className="numeric-field-group" role="group" aria-label="排版">
+            {typographyFields.map((field) => (
               <NumericStyleField
                 key={field.key}
                 label={field.label}
@@ -158,56 +174,83 @@ export function GlobalStylePanel({
               />
             ))}
           </div>
-        ))}
-      </div>
-
-      <div className="segmented-field">
-        <span>字体密度</span>
-        <div className="segmented-control" role="group" aria-label="字体密度">
-          {densityOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className={option.value === resumeStyle.density ? "is-active" : ""}
-              onClick={() => onStyleChange({ density: option.value })}
-            >
-              {option.label}
-            </button>
-          ))}
         </div>
-      </div>
+      </section>
 
-      <div className="segmented-field segmented-field--three">
-        <span>模块间距</span>
-        <div className="segmented-control" role="group" aria-label="模块间距">
-          {spacingOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className={option.value === resumeStyle.sectionSpacing ? "is-active" : ""}
-              onClick={() => onStyleChange({ sectionSpacing: option.value })}
-            >
-              {option.label}
-            </button>
-          ))}
+      <section className="style-panel__section" aria-labelledby="style-spacing-title">
+        <div className="style-panel__section-header">
+          <h4 id="style-spacing-title">间距</h4>
         </div>
-      </div>
+        <div className="numeric-field-grid" aria-label="页边距参数">
+          <div className="numeric-field-group" role="group" aria-label="间距">
+            {spacingFields.map((field) => (
+              <NumericStyleField
+                key={field.key}
+                label={field.label}
+                unit={field.unit}
+                min={field.min}
+                max={field.max}
+                step={field.step}
+                value={resumeStyle[field.key]}
+                onChange={(value) => updateNumericStyle(field.key, value)}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <div className="segmented-field segmented-field--three">
-        <span>标题样式</span>
-        <div className="segmented-control" role="group" aria-label="标题样式">
-          {headingOptions.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className={option.value === resumeStyle.headingStyle ? "is-active" : ""}
-              onClick={() => onStyleChange({ headingStyle: option.value })}
-            >
-              {option.label}
-            </button>
-          ))}
+      <section className="style-panel__section style-panel__section--mode" aria-labelledby="style-mode-title">
+        <div className="style-panel__section-header">
+          <h4 id="style-mode-title">模式</h4>
         </div>
-      </div>
+        <div className="segmented-field">
+          <span>字体密度</span>
+          <div className="segmented-control" role="group" aria-label="字体密度">
+            {densityOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={option.value === resumeStyle.density ? "is-active" : ""}
+                onClick={() => onStyleChange({ density: option.value })}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="segmented-field segmented-field--three">
+          <span>模块间距</span>
+          <div className="segmented-control" role="group" aria-label="模块间距">
+            {spacingOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={option.value === resumeStyle.sectionSpacing ? "is-active" : ""}
+                onClick={() => onStyleChange({ sectionSpacing: option.value })}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="segmented-field segmented-field--three">
+          <span>标题样式</span>
+          <div className="segmented-control" role="group" aria-label="标题样式">
+            {headingOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className={option.value === resumeStyle.headingStyle ? "is-active" : ""}
+                onClick={() => onStyleChange({ headingStyle: option.value })}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

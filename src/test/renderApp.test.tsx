@@ -282,7 +282,9 @@ describe("App", () => {
     seedStoredResume("general");
     render(<App />);
 
-    fireEvent.change(screen.getByLabelText("主题色"), { target: { value: "#0f766e" } });
+    fireEvent.change(screen.getByLabelText("主题色", { selector: "input" }), { target: { value: "#0f766e" } });
+    fireEvent.click(within(screen.getByRole("group", { name: "主题色预设" })).getByRole("button", { name: "应用主题色 #111111" }));
+    fireEvent.change(screen.getByLabelText("主题色", { selector: "input" }), { target: { value: "#0f766e" } });
     fireEvent.click(within(screen.getByRole("group", { name: "字体密度" })).getByRole("button", { name: "紧凑" }));
     fireEvent.click(within(screen.getByRole("group", { name: "标题样式" })).getByRole("button", { name: "色条" }));
     fireEvent.change(screen.getByLabelText("字号"), { target: { value: "15.5" } });
@@ -292,7 +294,7 @@ describe("App", () => {
     fireEvent.change(screen.getByLabelText("上下页边距"), { target: { value: "22" } });
 
     const typographyGroup = screen.getByRole("group", { name: "排版" });
-    const spacingGroup = screen.getByRole("group", { name: "留白" });
+    const spacingGroup = screen.getByRole("group", { name: "间距" });
 
     expect(within(typographyGroup).getByLabelText("字号")).toHaveValue(15.5);
     expect(within(typographyGroup).getByLabelText("行距")).toHaveValue(1.7);
@@ -311,6 +313,9 @@ describe("App", () => {
       "template-chip--active"
     );
     expect(screen.getByText("#0F766E")).toBeInTheDocument();
+    expect(within(screen.getByRole("group", { name: "主题色预设" })).getByRole("button", { name: "应用主题色 #111111" })).not.toHaveClass(
+      "is-active"
+    );
   });
 
   test("renders empty resume content as draft skeletons instead of visible form prompts", () => {

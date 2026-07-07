@@ -3817,7 +3817,7 @@ body {
 }
 
 .inspector-section--style {
-  gap: 10px;
+  gap: 0;
   padding: 10px 0 0;
   border: 0;
   border-top: 1px solid rgba(17, 18, 23, 0.09);
@@ -3830,23 +3830,50 @@ body {
   content: none;
 }
 
-.inspector-section--style h3 {
+.style-panel__title {
   padding: 0 0 9px;
   border-bottom: 1px solid rgba(17, 18, 23, 0.09);
   color: #2d342f;
   font-size: 12px;
 }
 
-.style-board,
-.numeric-field-grid,
-.segmented-field {
-  padding: 9px 0;
+.style-panel__section {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.09);
+}
+
+.style-panel__section:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.style-panel__section-header {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 18px;
+}
+
+.style-panel__section-header h4 {
+  margin: 0;
+  color: #2f3538;
+  font-size: 11px;
+  font-weight: 820;
+}
+
+.style-panel__section-header code {
+  color: #8a918e;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 10px;
+  font-weight: 760;
 }
 
 .style-board {
   display: grid;
   gap: 8px;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.09);
 }
 
 .style-board__row {
@@ -3916,17 +3943,15 @@ body {
 .color-field {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 48px auto;
+  grid-template-columns: minmax(0, 1fr) 48px;
   gap: 9px;
   align-items: center;
-  min-height: 42px;
-  padding: 8px 9px;
+  min-height: 34px;
+  padding: 6px 8px;
   border: 1px solid rgba(17, 18, 23, 0.075);
-  border-radius: 7px;
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.5), rgba(244, 246, 241, 0.3)),
-    rgba(255, 254, 251, 0.26);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  border-radius: 5px;
+  background: rgba(255, 254, 251, 0.32);
+  box-shadow: none;
 }
 
 .color-field input[type="color"] {
@@ -3951,55 +3976,48 @@ body {
     0 1px 3px rgba(39, 47, 43, 0.045);
 }
 
-.color-field code {
-  padding: 2px 5px;
-  border-radius: 4px;
-  background: rgba(255, 254, 251, 0.46);
-  color: #525b62;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 11px;
-  font-weight: 760;
+.color-preset-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.color-preset-row button {
+  min-width: 0;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(17, 18, 23, 0.12);
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34);
+}
+
+.color-preset-row button:hover,
+.color-preset-row button:focus-visible {
+  border-color: rgba(17, 18, 23, 0.34);
+  transform: none;
+}
+
+.color-preset-row button.is-active {
+  border-color: #111111;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.64),
+    0 0 0 1px #111111;
 }
 
 .numeric-field-grid {
   display: grid;
-  gap: 9px;
-  padding: 9px 8px;
-  border: 1px solid rgba(17, 18, 23, 0.075);
-  border-radius: 7px;
-  background:
-    linear-gradient(180deg, rgba(255, 254, 251, 0.42), rgba(243, 246, 241, 0.28)),
-    rgba(255, 254, 251, 0.24);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .numeric-field-group {
   display: grid;
-  gap: 5px;
-  padding: 0 0 8px;
-  border-top: 1px solid rgba(17, 18, 23, 0.07);
-}
-
-.numeric-field-group:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.numeric-field-group__header {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  min-height: 18px;
-  color: #8a918e;
-  font-size: 10px;
-  font-weight: 820;
-}
-
-.numeric-field-group__header::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: rgba(17, 18, 23, 0.07);
+  gap: 3px;
+  padding: 0;
 }
 
 .numeric-field {
@@ -4007,11 +4025,11 @@ body {
   grid-template-columns: minmax(80px, 1fr) 62px 24px;
   gap: 7px;
   align-items: center;
-  min-height: 32px;
-  padding: 4px 6px;
-  border-top: 0;
+  min-height: 30px;
+  padding: 3px 0;
+  border-top: 1px solid rgba(17, 18, 23, 0.06);
   border-radius: 5px;
-  background: rgba(255, 254, 251, 0.32);
+  background: transparent;
 }
 
 .numeric-field:first-child {
@@ -4063,8 +4081,9 @@ body {
   grid-template-columns: minmax(74px, 0.56fr) minmax(0, 1fr);
   gap: 10px;
   align-items: center;
-  min-height: 38px;
-  border-bottom: 1px solid rgba(17, 18, 23, 0.09);
+  min-height: 34px;
+  padding: 0;
+  border-bottom: 1px solid rgba(17, 18, 23, 0.06);
 }
 
 .segmented-field:last-child {
